@@ -98,8 +98,8 @@ html.lenis body {
   width: clamp(250px, 45vw, 600px); /* The tracking area */
   height: 2px;
   background: transparent;
-  --mouse-x: 50%;
   overflow: visible;
+  /* --mouse-x is inherited from the parent div's inline style */
 }
 
 /* The long ultra-thin streak that fades perfectly to 0 at the edges */
@@ -112,24 +112,25 @@ html.lenis body {
   width: 800px; /* Extremely wide so the gradient has room to fade out seamlessly */
   height: 2px; /* Razor thin */
   
+  /* Smooth taper blur with whitish-blue palette */
   background: linear-gradient(
     90deg,
     transparent 0%,
-    transparent 15%,
-    rgba(0, 30, 255, 0.2) 25%,
-    rgba(0, 80, 255, 0.8) 42%,
-    rgba(140, 220, 255, 1) 48%,
+    transparent 20%,
+    rgba(140, 220, 255, 0.1) 35%,
+    rgba(180, 240, 255, 0.5) 45%,
+    rgba(220, 250, 255, 0.9) 48%,
     #ffffff 50%,
-    rgba(140, 220, 255, 1) 52%,
-    rgba(0, 80, 255, 0.8) 58%,
-    rgba(0, 30, 255, 0.2) 75%,
-    transparent 85%,
+    rgba(220, 250, 255, 0.9) 52%,
+    rgba(180, 240, 255, 0.5) 55%,
+    rgba(140, 220, 255, 0.1) 65%,
+    transparent 80%,
     transparent 100%
   );
   
   box-shadow: 
-    0 0 10px 1px rgba(0, 100, 255, 0.5),
-    0 0 20px 2px rgba(0, 50, 255, 0.3);
+    0 0 10px 1px rgba(170, 230, 255, 0.4),
+    0 0 20px 2px rgba(170, 230, 255, 0.2);
     
   pointer-events: none;
   z-index: 2;
@@ -149,9 +150,9 @@ html.lenis body {
   background: radial-gradient(
     ellipse at center,
     rgba(255, 255, 255, 0.95) 0%,
-    rgba(100, 200, 255, 0.7) 15%,
-    rgba(0, 100, 255, 0.3) 40%,
-    transparent 75%
+    rgba(180, 240, 255, 0.7) 20%,
+    rgba(140, 220, 255, 0.2) 50%,
+    transparent 80%
   );
   
   filter: blur(4px);
@@ -187,9 +188,9 @@ html.lenis body {
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(170, 230, 255, 0.4) 20%,
-    rgba(0, 210, 255, 0.7) 50%,
-    rgba(170, 230, 255, 0.4) 80%,
+    rgba(140, 220, 255, 0.2) 20%,
+    rgba(180, 240, 255, 0.7) 50%,
+    rgba(140, 220, 255, 0.2) 80%,
     transparent 100%
   );
   margin: 0 auto;
@@ -208,8 +209,8 @@ html.lenis body {
   background: #ffffff;
   box-shadow: 
     0 0 8px 2px rgba(255, 255, 255, 0.9),
-    0 0 16px 6px rgba(170, 230, 255, 0.8),
-    0 0 24px 10px rgba(0, 210, 255, 0.5);
+    0 0 16px 6px rgba(180, 240, 255, 0.8),
+    0 0 24px 10px rgba(140, 220, 255, 0.5);
   filter: blur(1.5px);
   animation: descend-flare 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   z-index: 2;
