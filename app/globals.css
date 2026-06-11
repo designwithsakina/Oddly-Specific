@@ -73,30 +73,50 @@ html.lenis body {
   );
 }
 
-/* ---- "ideas": moving neon purple ↔ cyan ↔ pink gradient text ---- */
+/* ---- "ideas": animated neon chromatic aberration glow ---- */
 .ideas-grad {
-  background-image: linear-gradient(
-    90deg,
-    #2acbfd, /* sky blue */
-    #4d85fd, /* cornflower blue */
-    #8b47fc, /* violet-purple */
-    #ffd0e6, /* baby pink */
-    #2acbfd  /* sky blue loop */
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: textShimmer 4s linear infinite;
-  filter: drop-shadow(0 0 10px rgba(77, 133, 253, 0.35)) drop-shadow(0 0 2px rgba(255, 208, 230, 0.25));
+  color: #ffffff;
+  background-image: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  
+  text-shadow:
+    -1.5px -0.8px 0px rgba(42, 203, 253, 0.95),
+    1.5px 0.8px 0px rgba(255, 110, 180, 0.95),
+    0 0 10px rgba(77, 133, 253, 0.55),
+    0 0 25px rgba(139, 71, 252, 0.4);
+  animation: chromaticGlow 1.6s ease-in-out infinite;
 }
-@keyframes textShimmer {
-  0% {
-    background-position: 0% 50%;
+
+@keyframes chromaticGlow {
+  0%, 100% {
+    text-shadow:
+      -1.5px -0.8px 0px rgba(42, 203, 253, 0.95),
+      1.5px 0.8px 0px rgba(255, 110, 180, 0.95),
+      0 0 10px rgba(77, 133, 253, 0.55),
+      0 0 25px rgba(139, 71, 252, 0.4);
   }
-  100% {
-    background-position: 200% 50%;
+  25% {
+    text-shadow:
+      -1.2px 1.0px 1px rgba(42, 203, 253, 0.95),
+      1.2px -1.0px 1px rgba(255, 110, 180, 0.95),
+      0 0 12px rgba(77, 133, 253, 0.65),
+      0 0 28px rgba(139, 71, 252, 0.45);
+  }
+  50% {
+    text-shadow:
+      1.0px -1.2px 0px rgba(42, 203, 253, 0.95),
+      -1.0px 1.2px 0px rgba(255, 110, 180, 0.95),
+      0 0 8px rgba(77, 133, 253, 0.6),
+      0 0 22px rgba(139, 71, 252, 0.35);
+  }
+  75% {
+    text-shadow:
+      0.8px 1.5px 1px rgba(42, 203, 253, 0.95),
+      -0.8px -1.5px 1px rgba(255, 110, 180, 0.95),
+      0 0 11px rgba(77, 133, 253, 0.58),
+      0 0 27px rgba(139, 71, 252, 0.42);
   }
 }
 
