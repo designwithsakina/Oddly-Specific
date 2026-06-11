@@ -5,6 +5,8 @@ import SmoothScroll from "@/components/SmoothScroll";
 import HeroOverlay from "@/components/HeroOverlay";
 import LogoReveal from "@/components/LogoReveal";
 
+import SoundToggle from "@/components/SoundToggle";
+
 // WebGL can't server-render — load the stage on the client only.
 const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
   ssr: false,
@@ -16,6 +18,7 @@ export default function Page() {
       {/* fixed WebGL stage + typographic overlay */}
       <HeroExperience />
       <HeroOverlay />
+      <SoundToggle />
 
       <main className="relative z-10">
         {/* logo holds centre after the headline fades; section below covers it */}

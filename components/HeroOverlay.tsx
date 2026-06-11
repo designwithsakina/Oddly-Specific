@@ -101,15 +101,15 @@ export default function HeroOverlay() {
               descenders like the g's are never clipped. */}
           <h1 
             className="font-display font-light leading-[1.06] tracking-[-0.015em] text-white text-[clamp(2.1rem,5.2vw,4.4rem)]"
-            style={{ textShadow: "0 10px 30px rgba(3, 3, 15, 0.85), 0 2px 8px rgba(3, 3, 15, 0.6)" }}
+            style={{ textShadow: "0 12px 40px rgba(3, 3, 15, 0.9), 0 4px 16px rgba(3, 3, 15, 0.7), 0 0 60px rgba(3, 3, 15, 0.4)" }}
           >
-            <span className="block overflow-hidden pb-[0.18em] -mb-[0.16em]">
+            <span className="block overflow-visible pb-[0.18em] -mb-[0.16em]">
               <span data-reveal className="inline-block px-2">
                 Making{" "}
                 <span className="ideas-grad italic font-normal">ideas</span>
               </span>
             </span>
-            <span className="block overflow-hidden pb-[0.18em] -mb-[0.12em]">
+            <span className="block overflow-visible pb-[0.18em] -mb-[0.12em]">
               <span data-reveal className="inline-block px-2">
                 harder to ignore.
               </span>
@@ -134,8 +134,8 @@ export default function HeroOverlay() {
       {/* centred scroll cue */}
       <footer className="flex flex-col items-center gap-3 pb-[1vh]">
         <span 
-          className="font-sans text-[0.75rem] uppercase tracking-[0.38em] text-white/85"
-          style={{ textShadow: "0 4px 10px rgba(3, 3, 15, 0.8)" }}
+          className="font-sans text-[0.82rem] uppercase tracking-[0.38em] text-white/85"
+          style={{ textShadow: "0 4px 14px rgba(3, 3, 15, 0.85), 0 0 8px rgba(3, 3, 15, 0.5)" }}
         >
           Scroll to descend
         </span>
