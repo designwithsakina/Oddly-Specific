@@ -77,18 +77,19 @@ html.lenis body {
 .ideas-grad {
   background-image: linear-gradient(
     90deg,
-    #00f0ff,
-    #b026ff,
-    #ff007f,
-    #00f0ff
+    #2acbfd, /* sky blue */
+    #4d85fd, /* cornflower blue */
+    #8b47fc, /* violet-purple */
+    #ffd0e6, /* baby pink */
+    #2acbfd  /* sky blue loop */
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: textShimmer 3s linear infinite;
-  filter: drop-shadow(0 0 12px rgba(176, 38, 255, 0.45));
+  animation: textShimmer 4s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(77, 133, 253, 0.35)) drop-shadow(0 0 2px rgba(255, 208, 230, 0.25));
 }
 @keyframes textShimmer {
   0% {
