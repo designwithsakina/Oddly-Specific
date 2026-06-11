@@ -14,6 +14,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   background: var(--bg);
   color: #eef1ff;
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -94,64 +95,66 @@ html.lenis body {
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(250px, 45vw, 600px); /* Wide enough to match the long line in the image */
-  height: 2px; /* Very thin streak */
-  overflow: visible;
-  /* Dynamic sharp blue streak that shifts exactly with the cursor */
-  background: linear-gradient(
-    90deg,
-    transparent calc(var(--mouse-x, 50%) - 40%),
-    rgba(0, 50, 255, 0.4) calc(var(--mouse-x, 50%) - 20%),
-    rgba(0, 150, 255, 0.9) calc(var(--mouse-x, 50%) - 5%),
-    rgba(255, 255, 255, 1) var(--mouse-x, 50%),
-    rgba(0, 150, 255, 0.9) calc(var(--mouse-x, 50%) + 5%),
-    rgba(0, 50, 255, 0.4) calc(var(--mouse-x, 50%) + 20%),
-    transparent calc(var(--mouse-x, 50%) + 40%)
-  );
-  box-shadow: 0 0 10px rgba(0, 100, 255, 0.6);
-  /* The core tracks the mouse horizontally via an inline variable */
+  width: clamp(250px, 45vw, 600px); /* The tracking area */
+  height: 2px;
+  background: transparent;
   --mouse-x: 50%;
+  overflow: visible;
 }
 
-/* The flare core / glow ball (sharp elliptical white center tracking mouse) */
+/* The long ultra-thin streak that fades perfectly to 0 at the edges */
 .glow-line-h::before {
   content: "";
   position: absolute;
   top: 50%;
   left: var(--mouse-x, 50%);
   transform: translate(-50%, -50%);
-  /* Elliptical shape for the bright core */
-  width: 40px;
-  height: 4px;
-  border-radius: 50%;
-  background: #ffffff;
-  /* Intense layered blue glows exactly matching the reference */
+  width: 800px; /* Extremely wide so the gradient has room to fade out seamlessly */
+  height: 2px; /* Razor thin */
+  
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 15%,
+    rgba(0, 30, 255, 0.2) 25%,
+    rgba(0, 80, 255, 0.8) 42%,
+    rgba(140, 220, 255, 1) 48%,
+    #ffffff 50%,
+    rgba(140, 220, 255, 1) 52%,
+    rgba(0, 80, 255, 0.8) 58%,
+    rgba(0, 30, 255, 0.2) 75%,
+    transparent 85%,
+    transparent 100%
+  );
+  
   box-shadow: 
-    0 0 4px 1px rgba(255, 255, 255, 1),
-    0 0 10px 3px rgba(100, 200, 255, 0.9),
-    0 0 20px 6px rgba(0, 100, 255, 0.8),
-    0 0 40px 12px rgba(0, 50, 255, 0.6);
-  filter: blur(1px);
-  z-index: 2;
+    0 0 10px 1px rgba(0, 100, 255, 0.5),
+    0 0 20px 2px rgba(0, 50, 255, 0.3);
+    
   pointer-events: none;
+  z-index: 2;
 }
 
-/* Diffused background aura for the flare */
+/* The bright center diamond core and bloom */
 .glow-line-h::after {
   content: "";
   position: absolute;
-  top: -20px;
+  top: 50%;
   left: var(--mouse-x, 50%);
-  transform: translateX(-50%);
-  bottom: -20px;
-  width: 140px;
+  transform: translate(-50%, -50%);
+  
+  width: 160px;
+  height: 24px;
+  
   background: radial-gradient(
     ellipse at center,
-    rgba(0, 100, 255, 0.45) 0%,
-    rgba(0, 50, 255, 0.15) 40%,
-    transparent 70%
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(100, 200, 255, 0.7) 15%,
+    rgba(0, 100, 255, 0.3) 40%,
+    transparent 75%
   );
-  filter: blur(8px);
+  
+  filter: blur(4px);
   pointer-events: none;
   z-index: 1;
 }
