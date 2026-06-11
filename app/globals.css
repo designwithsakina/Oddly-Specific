@@ -98,19 +98,21 @@ html.lenis body {
   width: clamp(250px, 55vw, 800px); /* Wide enough to look like the reference */
   height: 1px; /* 1 point stroke as requested */
   
-  /* Smooth taper blur with blue-white palette, fading purely to 0 opacity */
+  /* Smooth taper blur, pure white fading perfectly to 0 opacity */
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(180, 230, 255, 0.05) 15%,
-    rgba(180, 230, 255, 0.5) 45%,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(255, 255, 255, 0.7) 45%,
     #ffffff 50%,
-    rgba(180, 230, 255, 0.5) 55%,
-    rgba(180, 230, 255, 0.05) 85%,
+    rgba(255, 255, 255, 0.7) 55%,
+    rgba(255, 255, 255, 0.15) 75%,
+    rgba(255, 255, 255, 0) 90%,
     transparent 100%
   );
   
-  box-shadow: 0 0 10px rgba(180, 230, 255, 0.4);
+  /* NO box-shadow! Box-shadow creates a hard visible rectangular edge. */
   margin: 0 auto;
 }
 
