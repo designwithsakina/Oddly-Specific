@@ -64,11 +64,14 @@ export default function HeroOverlay() {
       <header className="flex w-full items-start justify-between">
         <span 
           className="font-sans text-[0.7rem] uppercase tracking-[0.42em] text-white/85"
-          style={{ textShadow: "0 4px 12px rgba(0,0,0,0.7), 0 0 10px rgba(180,80,255,0.2)" }}
+          style={{ textShadow: "0 4px 10px rgba(3, 3, 15, 0.8), 0 0 8px rgba(180, 80, 255, 0.25)" }}
         >
           Oddly&nbsp;Specific
         </span>
-        <span className="hidden font-sans text-[0.62rem] uppercase tracking-[0.34em] text-white/55 sm:block">
+        <span 
+          className="hidden font-sans text-[0.62rem] uppercase tracking-[0.34em] text-white/55 sm:block"
+          style={{ textShadow: "0 4px 10px rgba(3, 3, 15, 0.8)" }}
+        >
           Boutique&nbsp;Creative&nbsp;Studio
         </span>
       </header>
@@ -83,7 +86,10 @@ export default function HeroOverlay() {
               className="flex items-center gap-4 text-white/85"
             >
               <span className="h-px w-7 bg-white/30" />
-              <span className="font-sans text-[0.6rem] uppercase tracking-[0.4em]">
+              <span 
+                className="font-sans text-[0.6rem] uppercase tracking-[0.4em]"
+                style={{ textShadow: "0 4px 10px rgba(3, 3, 15, 0.8)" }}
+              >
                 Strategy · Storytelling · Design
               </span>
               <span className="h-px w-7 bg-white/30" />
@@ -93,7 +99,10 @@ export default function HeroOverlay() {
           {/* headline — two centred lines, italic accent for character.
               masks carry bottom padding (with matching negative margin) so
               descenders like the g's are never clipped. */}
-          <h1 className="font-display font-light leading-[1.06] tracking-[-0.015em] text-white text-[clamp(2.1rem,5.2vw,4.4rem)]">
+          <h1 
+            className="font-display font-light leading-[1.06] tracking-[-0.015em] text-white text-[clamp(2.1rem,5.2vw,4.4rem)]"
+            style={{ textShadow: "0 10px 30px rgba(3, 3, 15, 0.85), 0 2px 8px rgba(3, 3, 15, 0.6)" }}
+          >
             <span className="block overflow-hidden pb-[0.18em] -mb-[0.16em]">
               <span data-reveal className="inline-block px-2">
                 Making{" "}
@@ -114,7 +123,7 @@ export default function HeroOverlay() {
             <p
               data-reveal
               className="font-sans text-[clamp(0.95rem,1.35vw,1.15rem)] font-light leading-relaxed text-white/90"
-              style={{ textShadow: "0 1px 18px rgba(4,4,22,0.65), 0 0 2px rgba(4,4,22,0.5)" }}
+              style={{ textShadow: "0 4px 16px rgba(3,3,15,0.9), 0 1px 3px rgba(3,3,15,0.7)" }}
             >
               Brands, stories, interfaces and other rabbit holes.
             </p>
@@ -124,7 +133,10 @@ export default function HeroOverlay() {
 
       {/* centred scroll cue */}
       <footer className="flex flex-col items-center gap-3 pb-[1vh]">
-        <span className="font-sans text-[0.6rem] uppercase tracking-[0.34em] text-white/70">
+        <span 
+          className="font-sans text-[0.75rem] uppercase tracking-[0.38em] text-white/85"
+          style={{ textShadow: "0 4px 10px rgba(3, 3, 15, 0.8)" }}
+        >
           Scroll to descend
         </span>
         <span className="scroll-line" />

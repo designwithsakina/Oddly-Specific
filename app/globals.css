@@ -94,16 +94,20 @@ html.lenis body {
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(120px, 16vw, 210px);
-  height: 1px;
+  width: clamp(140px, 18vw, 240px);
+  height: 2px;
   overflow: hidden;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 200, 230, 0.8) 38%,
-    rgba(180, 200, 255, 0.85) 62%,
+    #ffffff 35%,
+    #ffffff 65%,
     transparent
   );
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.8),
+    0 0 14px rgba(0, 210, 255, 0.65),
+    0 0 24px rgba(176, 38, 255, 0.45);
 }
 .glow-line-h::after {
   content: "";
@@ -136,22 +140,26 @@ html.lenis body {
 .scroll-line {
   position: relative;
   display: block;
-  width: 1px;
-  height: 30px;
-  background: rgba(188, 208, 255, 0.22);
+  width: 2px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.12); /* dim track */
+  border-radius: 2px;
   overflow: hidden;
+  box-shadow: 0 0 8px rgba(91, 123, 255, 0.15);
 }
 .scroll-line::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    #6fd0ff,
-    transparent
-  );
-  animation: descend 2.4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 18px; /* thick sliding spark */
+  background: linear-gradient(to bottom, transparent, #ffffff, transparent);
+  box-shadow: 
+    0 0 6px #ffffff,
+    0 0 12px #00d2ff,
+    0 0 20px #b026ff;
+  animation: descend 2.0s cubic-bezier(0.7, 0, 0.3, 1) infinite;
 }
 
 @keyframes descend {
