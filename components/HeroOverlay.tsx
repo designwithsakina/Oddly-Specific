@@ -119,7 +119,18 @@ export default function HeroOverlay() {
           {/* subline — glowing accent line above it, plus a soft shadow so it
               lifts off the bright image rather than blending in */}
           <div className="mt-7 flex flex-col items-center gap-4">
-            <span data-reveal className="glow-line-h" />
+            <span 
+              data-reveal 
+              className="glow-line-h" 
+              onPointerMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                e.currentTarget.style.setProperty('--mouse-x', `${x}%`);
+              }}
+              onPointerLeave={(e) => {
+                e.currentTarget.style.setProperty('--mouse-x', '50%');
+              }}
+            />
             <p
               data-reveal
               className="font-sans text-[clamp(0.95rem,1.35vw,1.15rem)] font-light leading-relaxed text-white/90"

@@ -94,71 +94,60 @@ html.lenis body {
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(160px, 20vw, 280px); /* Slightly wider to let the flare fade out smoothly */
-  height: 2px;
+  width: clamp(200px, 35vw, 400px); /* Wide enough for long tapered streak */
+  height: 6px; /* Fat in the middle */
   overflow: visible;
-  /* Thin horizontal streak */
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 182, 193, 0.4) 30%, /* baby pink */
-    rgba(0, 210, 255, 0.8) 45%,   /* cyan */
-    #ffffff 50%,
-    rgba(176, 38, 255, 0.8) 55%,  /* purple */
-    rgba(255, 182, 193, 0.4) 70%,
+  /* Stretched radial gradient naturally creates a streak that tapers side-to-side and top-to-bottom */
+  background: radial-gradient(
+    ellipse 50% 100% at 50% 50%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(0, 210, 255, 0.8) 15%,
+    rgba(176, 38, 255, 0.6) 35%,
+    rgba(255, 182, 193, 0.3) 60%,
     transparent 100%
   );
-  box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
-  cursor: pointer;
+  /* The core tracks the mouse horizontally via an inline variable */
+  --mouse-x: 50%;
 }
 
-/* The flare core / glow ball */
+/* The flare core / glow ball (smaller and circular) */
 .glow-line-h::before {
   content: "";
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: var(--mouse-x, 50%);
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ffffff;
   box-shadow: 
-    0 0 10px 4px rgba(255, 255, 255, 0.9),
-    0 0 20px 8px rgba(0, 210, 255, 0.8),
-    0 0 30px 12px rgba(176, 38, 255, 0.6),
-    0 0 50px 20px rgba(255, 182, 193, 0.4);
-  filter: blur(1.5px);
-  /* Use a smooth transition if it moves, or just let animation handle it */
+    0 0 8px 3px rgba(255, 255, 255, 1),
+    0 0 16px 6px rgba(0, 210, 255, 0.8),
+    0 0 28px 12px rgba(176, 38, 255, 0.6),
+    0 0 45px 22px rgba(255, 182, 193, 0.4);
+  filter: blur(1px);
   z-index: 2;
+  transition: left 0.15s ease-out; /* Smoothly tracks cursor */
+  pointer-events: none;
 }
 
-/* Move the flare back and forth on hover */
-.glow-line-h:hover::before {
-  animation: flare-sweep 1.8s ease-in-out infinite alternate;
-}
-
-@keyframes flare-sweep {
-  0% { left: 15%; }
-  100% { left: 85%; }
-}
-
-/* Glow aura behind the line */
+/* Diffused glow aura over the whole line */
 .glow-line-h::after {
   content: "";
   position: absolute;
-  top: -10px;
-  left: 10%;
-  right: 10%;
-  bottom: -10px;
+  top: -15px;
+  left: 5%;
+  right: 5%;
+  bottom: -15px;
   background: radial-gradient(
-    ellipse at 50% 50%,
+    ellipse at center,
     rgba(0, 210, 255, 0.35) 0%,
-    rgba(176, 38, 255, 0.2) 40%,
-    transparent 70%
+    rgba(176, 38, 255, 0.25) 40%,
+    rgba(255, 182, 193, 0.15) 60%,
+    transparent 80%
   );
-  filter: blur(8px);
-  animation: glow-pulse 3.6s ease-in-out infinite;
+  filter: blur(12px);
   pointer-events: none;
   z-index: 1;
 }
