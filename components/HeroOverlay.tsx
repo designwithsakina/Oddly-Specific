@@ -39,6 +39,16 @@ export default function HeroOverlay() {
         el.style.transform = `translateY(${-scroll.hero * 50}px)`;
         el.style.pointerEvents = fade < 0.1 ? "none" : "auto";
       }
+
+      // Animate the SVG liquid filter base frequency for fluid organic motion
+      const turb = document.getElementById("liquid-turb");
+      if (turb && !reduce) {
+        const time = Date.now() * 0.0012;
+        const baseFreqX = 0.035 + Math.sin(time * 0.6) * 0.008;
+        const baseFreqY = 0.11 + Math.cos(time * 0.9) * 0.025;
+        turb.setAttribute("baseFrequency", `${baseFreqX} ${baseFreqY}`);
+      }
+
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -119,6 +129,16 @@ export default function HeroOverlay() {
         </span>
         <span className="scroll-line" />
       </footer>
+
+      {/* SVG liquid displacement filter */}
+      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true" style={{ visibility: "hidden" }}>
+        <defs>
+          <filter id="liquid-splash">
+            <feTurbulence id="liquid-turb" type="fractalNoise" baseFrequency="0.04 0.12" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   );
 }
