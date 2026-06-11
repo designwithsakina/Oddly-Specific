@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #06060f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: #eef1ff;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #6fd0ff;
+  color: #06060f;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* ---- pretty blue-purple gradient wash over the 3D ---- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.32;
+  background:
+    radial-gradient(58% 48% at 50% 74%, rgba(58, 92, 224, 0.45), transparent 70%),
+    radial-gradient(46% 40% at 22% 30%, rgba(126, 72, 206, 0.3), transparent 72%),
+    radial-gradient(48% 42% at 82% 32%, rgba(70, 96, 214, 0.26), transparent 72%);
+}
+
+/* ---- atmospheric overlays ---- */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 42%,
+    transparent 55%,
+    rgba(3, 3, 10, 0.55) 100%
+  );
+}
+
+/* ---- "ideas": moving neon purple ↔ cyan ↔ pink gradient text ---- */
+.ideas-grad {
+  background-image: linear-gradient(
+    90deg,
+    #00f0ff,
+    #b026ff,
+    #ff007f,
+    #00f0ff
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: textShimmer 3s linear infinite;
+  filter: drop-shadow(0 0 12px rgba(176, 38, 255, 0.45));
+}
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* ---- glowing gradient accent line (under the subline) ---- */
+.glow-line-h {
+  position: relative;
+  display: block;
+  width: clamp(120px, 16vw, 210px);
+  height: 1px;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 200, 230, 0.8) 38%,
+    rgba(180, 200, 255, 0.85) 62%,
+    transparent
+  );
+}
+.glow-line-h::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  transform: translateX(-120%);
+  animation: sheen 3.6s ease-in-out infinite;
+}
+@keyframes sheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  60%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ideas-grad {
+    animation: none;
+  }
+  .glow-line-h::after {
+    animation: none;
+  }
+}
+
+/* ---- scroll cue ---- */
+.scroll-line {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 30px;
+  background: rgba(188, 208, 255, 0.22);
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    #6fd0ff,
+    transparent
+  );
+  animation: descend 2.4s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+}
+
+@keyframes descend {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-line::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,186 @@
+"use client";
+
+import * as THREE from "three";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+
+/**
+ * The valley backdrop — an AI-animated clip of mountains rendered on a large plane.
+ * To solve the jumpy loop transition, this component uses dual video elements
+ * and crossfades them dynamically on the GPU via a custom ShaderMaterial.
+ */
+export default function Backdrop() {
+  const gl = useThree((s) => s.gl);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const activeRef = useRef<"A" | "B">("A");
+
+  // Create two HTML video elements for crossfading
+  const [videos] = useState(() => {
+    if (typeof window === "undefined") return { videoA: null, videoB: null };
+    const createVid = () => {
+      const v = document.createElement("video");
+      v.src = "/custom-mountains.mp4";
+      v.loop = false; // We control the loop programmatically
+      v.muted = true;
+      v.playsInline = true;
+      v.setAttribute("crossorigin", "anonymous");
+      v.setAttribute("preload", "auto");
+      return v;
+    };
+    return { videoA: createVid(), videoB: createVid() };
+  });
+
+  // Create two VideoTexture instances
+  const textures = useMemo(() => {
+    if (!videos.videoA || !videos.videoB) return null;
+    const texA = new THREE.VideoTexture(videos.videoA);
+    const texB = new THREE.VideoTexture(videos.videoB);
+    texA.colorSpace = THREE.SRGBColorSpace;
+    texB.colorSpace = THREE.SRGBColorSpace;
+    return { texA, texB };
+  }, [videos]);
+
+  // Configure texture parameters
+  useEffect(() => {
+    if (textures) {
+      const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
+      [textures.texA, textures.texB].forEach((tex) => {
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = false;
+        tex.anisotropy = maxAnisotropy;
+      });
+    }
+  }, [textures, gl]);
+
+  // Start the first video on mount
+  useEffect(() => {
+    if (videos.videoA) {
+      videos.videoA.play().catch((e) => console.log("Failed to play videoA:", e));
+    }
+    return () => {
+      videos.videoA?.pause();
+      videos.videoB?.pause();
+    };
+  }, [videos]);
+
+  // Dynamic crossfade logic in the frame loop
+  useFrame(() => {
+    if (!videos.videoA || !videos.videoB || !textures) return;
+
+    const vidA = videos.videoA;
+    const vidB = videos.videoB;
+
+    if (isNaN(vidA.duration) || isNaN(vidB.duration) || vidA.duration === 0) return;
+
+    const duration = vidA.duration;
+    const crossfade = 1.0; // Duration of the crossfade in seconds
+    const threshold = duration - crossfade;
+
+    let mixVal = 0;
+
+    if (activeRef.current === "A") {
+      const t = vidA.currentTime;
+      if (t >= threshold) {
+        // Start video B if it's paused
+        if (vidB.paused) {
+          vidB.currentTime = 0;
+          vidB.play().catch((e) => console.log("Failed to start videoB:", e));
+        }
+        // Fade A out and B in
+        mixVal = (t - threshold) / crossfade;
+
+        // Switch active role when A completes
+        if (t >= duration - 0.05) {
+          vidA.pause();
+          vidA.currentTime = 0;
+          activeRef.current = "B";
+          mixVal = 1;
+        }
+      } else {
+        // Guarantee B is reset and paused
+        if (!vidB.paused) {
+          vidB.pause();
+          vidB.currentTime = 0;
+        }
+        mixVal = 0;
+      }
+    } else {
+      const t = vidB.currentTime;
+      if (t >= threshold) {
+        // Start video A if it's paused
+        if (vidA.paused) {
+          vidA.currentTime = 0;
+          vidA.play().catch((e) => console.log("Failed to start videoA:", e));
+        }
+        // Fade B out and A in
+        mixVal = 1.0 - (t - threshold) / crossfade;
+
+        // Switch active role when B completes
+        if (t >= duration - 0.05) {
+          vidB.pause();
+          vidB.currentTime = 0;
+          activeRef.current = "A";
+          mixVal = 0;
+        }
+      } else {
+        // Guarantee A is reset and paused
+        if (!vidA.paused) {
+          vidA.pause();
+          vidA.currentTime = 0;
+        }
+        mixVal = 1;
+      }
+    }
+
+    // Force frame update
+    textures.texA.needsUpdate = true;
+    textures.texB.needsUpdate = true;
+
+    if (materialRef.current) {
+      materialRef.current.uniforms.uMix.value = THREE.MathUtils.clamp(mixVal, 0, 1);
+    }
+  });
+
+  // Shader to blend the two video textures
+  const shaderMaterial = useMemo(() => {
+    if (!textures) return null;
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        uTexA: { value: textures.texA },
+        uTexB: { value: textures.texB },
+        uMix: { value: 0.0 },
+      },
+      vertexShader: /* glsl */ `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform sampler2D uTexA;
+        uniform sampler2D uTexB;
+        uniform float uMix;
+        varying vec2 vUv;
+        void main() {
+          vec4 colA = texture2D(uTexA, vUv);
+          vec4 colB = texture2D(uTexB, vUv);
+          gl_FragColor = mix(colA, colB, uMix);
+        }
+      `,
+      fog: false,
+      toneMapped: false,
+      depthWrite: false,
+    });
+  }, [textures]);
+
+  if (!shaderMaterial) return null;
+
+  return (
+    <mesh position={[0, 5.5, -30]} renderOrder={-10}>
+      <planeGeometry args={[112, 64]} />
+      <primitive object={shaderMaterial} ref={materialRef} attach="material" />
+    </mesh>
+  );
+}
