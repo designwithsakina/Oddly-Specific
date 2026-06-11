@@ -91,49 +91,27 @@ html.lenis body {
     0 0 12px rgba(255, 255, 255, 0.25);
 }
 
-/* ---- glowing accent line (optical flare style) ---- */
+/* ---- glowing accent line (static tapered flare) ---- */
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(250px, 45vw, 600px); /* The tracking area */
-  height: 2px;
-  background: transparent;
-  overflow: visible;
-  /* --mouse-x is inherited from the parent div's inline style */
-}
-
-/* The long ultra-thin streak that fades perfectly to 0 at the edges */
-.glow-line-h::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: var(--mouse-x, 50%);
-  transform: translate(-50%, -50%);
-  width: 800px; /* Extremely wide so the gradient has room to fade out seamlessly */
-  height: 2px; /* Razor thin */
+  width: clamp(250px, 55vw, 800px); /* Wide enough to look like the reference */
+  height: 1px; /* 1 point stroke as requested */
   
-  /* Smooth taper blur with whitish-blue palette */
+  /* Smooth taper blur with blue-white palette, fading purely to 0 opacity */
   background: linear-gradient(
     90deg,
     transparent 0%,
-    transparent 20%,
-    rgba(140, 220, 255, 0.1) 35%,
-    rgba(180, 240, 255, 0.5) 45%,
-    rgba(220, 250, 255, 0.9) 48%,
+    rgba(180, 230, 255, 0.05) 15%,
+    rgba(180, 230, 255, 0.5) 45%,
     #ffffff 50%,
-    rgba(220, 250, 255, 0.9) 52%,
-    rgba(180, 240, 255, 0.5) 55%,
-    rgba(140, 220, 255, 0.1) 65%,
-    transparent 80%,
+    rgba(180, 230, 255, 0.5) 55%,
+    rgba(180, 230, 255, 0.05) 85%,
     transparent 100%
   );
   
-  box-shadow: 
-    0 0 10px 1px rgba(170, 230, 255, 0.4),
-    0 0 20px 2px rgba(170, 230, 255, 0.2);
-    
-  pointer-events: none;
-  z-index: 2;
+  box-shadow: 0 0 10px rgba(180, 230, 255, 0.4);
+  margin: 0 auto;
 }
 
 /* The bright center diamond core and bloom */
@@ -141,21 +119,21 @@ html.lenis body {
   content: "";
   position: absolute;
   top: 50%;
-  left: var(--mouse-x, 50%);
+  left: 50%;
   transform: translate(-50%, -50%);
   
-  width: 160px;
-  height: 24px;
+  width: 140px;
+  height: 18px;
   
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(180, 240, 255, 0.7) 20%,
-    rgba(140, 220, 255, 0.2) 50%,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(180, 230, 255, 0.6) 20%,
+    rgba(180, 230, 255, 0.1) 50%,
     transparent 80%
   );
   
-  filter: blur(4px);
+  filter: blur(3px);
   pointer-events: none;
   z-index: 1;
 }
