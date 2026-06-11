@@ -166,7 +166,11 @@ export default function Backdrop() {
         void main() {
           vec4 colA = texture2D(uTexA, vUv);
           vec4 colB = texture2D(uTexB, vUv);
-          gl_FragColor = mix(colA, colB, uMix);
+          vec4 video = mix(colA, colB, uMix);
+          // dark deep blue overlay at ~10% opacity
+          vec3 tint = vec3(0.016, 0.016, 0.07); // #040412
+          video.rgb = mix(video.rgb, tint, 0.10);
+          gl_FragColor = video;
         }
       `,
       fog: false,
