@@ -94,58 +94,64 @@ html.lenis body {
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(200px, 35vw, 400px); /* Wide enough for long tapered streak */
-  height: 6px; /* Fat in the middle */
+  width: clamp(250px, 45vw, 600px); /* Wide enough to match the long line in the image */
+  height: 2px; /* Very thin streak */
   overflow: visible;
-  /* Stretched radial gradient naturally creates a streak that tapers side-to-side and top-to-bottom */
-  background: radial-gradient(
-    ellipse 50% 100% at 50% 50%,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(170, 230, 255, 0.7) 20%,
-    rgba(0, 210, 255, 0.4) 50%,
-    transparent 100%
+  /* Dynamic sharp blue streak that shifts exactly with the cursor */
+  background: linear-gradient(
+    90deg,
+    transparent calc(var(--mouse-x, 50%) - 40%),
+    rgba(0, 50, 255, 0.4) calc(var(--mouse-x, 50%) - 20%),
+    rgba(0, 150, 255, 0.9) calc(var(--mouse-x, 50%) - 5%),
+    rgba(255, 255, 255, 1) var(--mouse-x, 50%),
+    rgba(0, 150, 255, 0.9) calc(var(--mouse-x, 50%) + 5%),
+    rgba(0, 50, 255, 0.4) calc(var(--mouse-x, 50%) + 20%),
+    transparent calc(var(--mouse-x, 50%) + 40%)
   );
+  box-shadow: 0 0 10px rgba(0, 100, 255, 0.6);
   /* The core tracks the mouse horizontally via an inline variable */
   --mouse-x: 50%;
 }
 
-/* The flare core / glow ball (smaller and circular) */
+/* The flare core / glow ball (sharp elliptical white center tracking mouse) */
 .glow-line-h::before {
   content: "";
   position: absolute;
   top: 50%;
   left: var(--mouse-x, 50%);
   transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
+  /* Elliptical shape for the bright core */
+  width: 40px;
+  height: 4px;
   border-radius: 50%;
   background: #ffffff;
+  /* Intense layered blue glows exactly matching the reference */
   box-shadow: 
-    0 0 8px 3px rgba(255, 255, 255, 1),
-    0 0 16px 6px rgba(170, 230, 255, 0.8),
-    0 0 28px 12px rgba(0, 210, 255, 0.5),
-    0 0 45px 22px rgba(0, 210, 255, 0.2);
+    0 0 4px 1px rgba(255, 255, 255, 1),
+    0 0 10px 3px rgba(100, 200, 255, 0.9),
+    0 0 20px 6px rgba(0, 100, 255, 0.8),
+    0 0 40px 12px rgba(0, 50, 255, 0.6);
   filter: blur(1px);
   z-index: 2;
-  transition: left 0.15s ease-out; /* Smoothly tracks cursor */
   pointer-events: none;
 }
 
-/* Diffused glow aura over the whole line */
+/* Diffused background aura for the flare */
 .glow-line-h::after {
   content: "";
   position: absolute;
-  top: -15px;
-  left: 5%;
-  right: 5%;
-  bottom: -15px;
+  top: -20px;
+  left: var(--mouse-x, 50%);
+  transform: translateX(-50%);
+  bottom: -20px;
+  width: 140px;
   background: radial-gradient(
     ellipse at center,
-    rgba(170, 230, 255, 0.35) 0%,
-    rgba(0, 210, 255, 0.2) 40%,
-    transparent 80%
+    rgba(0, 100, 255, 0.45) 0%,
+    rgba(0, 50, 255, 0.15) 40%,
+    transparent 70%
   );
-  filter: blur(12px);
+  filter: blur(8px);
   pointer-events: none;
   z-index: 1;
 }
