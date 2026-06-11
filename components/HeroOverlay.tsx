@@ -120,7 +120,7 @@ export default function HeroOverlay() {
               lifts off the bright image rather than blending in */}
           <div className="mt-7 flex flex-col items-center gap-4">
             <div 
-              className="py-6 w-full flex justify-center"
+              className="py-6 w-full flex justify-center pointer-events-auto"
               onPointerMove={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const rawX = ((e.clientX - rect.left) / rect.width) * 100;
