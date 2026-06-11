@@ -90,55 +90,81 @@ html.lenis body {
     0 0 12px rgba(255, 255, 255, 0.25);
 }
 
-/* ---- glowing accent line (tapered: fat centre, pointy ends) ---- */
+/* ---- glowing accent line (optical flare style) ---- */
 .glow-line-h {
   position: relative;
   display: block;
-  width: clamp(140px, 18vw, 240px);
-  height: 6px;
+  width: clamp(160px, 20vw, 280px); /* Slightly wider to let the flare fade out smoothly */
+  height: 2px;
   overflow: visible;
-}
-/* The tapered beam shape via SVG-style clip + gradient */
-.glow-line-h::before {
-  content: "";
-  position: absolute;
-  inset: 0;
+  /* Thin horizontal streak */
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.5) 15%,
-    #ffffff 40%,
-    #ffffff 60%,
-    rgba(255, 255, 255, 0.5) 85%,
+    rgba(255, 182, 193, 0.4) 30%, /* baby pink */
+    rgba(0, 210, 255, 0.8) 45%,   /* cyan */
+    #ffffff 50%,
+    rgba(176, 38, 255, 0.8) 55%,  /* purple */
+    rgba(255, 182, 193, 0.4) 70%,
     transparent 100%
   );
-  clip-path: ellipse(50% 42% at 50% 50%);
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.9),
-    0 0 20px rgba(0, 210, 255, 0.7),
-    0 0 40px rgba(176, 38, 255, 0.5),
-    0 0 60px rgba(0, 210, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+  cursor: pointer;
 }
+
+/* The flare core / glow ball */
+.glow-line-h::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 
+    0 0 10px 4px rgba(255, 255, 255, 0.9),
+    0 0 20px 8px rgba(0, 210, 255, 0.8),
+    0 0 30px 12px rgba(176, 38, 255, 0.6),
+    0 0 50px 20px rgba(255, 182, 193, 0.4);
+  filter: blur(1.5px);
+  /* Use a smooth transition if it moves, or just let animation handle it */
+  z-index: 2;
+}
+
+/* Move the flare back and forth on hover */
+.glow-line-h:hover::before {
+  animation: flare-sweep 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes flare-sweep {
+  0% { left: 15%; }
+  100% { left: 85%; }
+}
+
 /* Glow aura behind the line */
 .glow-line-h::after {
   content: "";
   position: absolute;
-  top: -8px;
-  left: 5%;
-  right: 5%;
-  bottom: -8px;
+  top: -10px;
+  left: 10%;
+  right: 10%;
+  bottom: -10px;
   background: radial-gradient(
     ellipse at 50% 50%,
     rgba(0, 210, 255, 0.35) 0%,
     rgba(176, 38, 255, 0.2) 40%,
     transparent 70%
   );
-  filter: blur(6px);
+  filter: blur(8px);
   animation: glow-pulse 3.6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.7; }
+  0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
 
@@ -149,59 +175,59 @@ html.lenis body {
   .glow-line-h::after {
     animation: none;
   }
+  .glow-line-h:hover::before {
+    animation: none;
+  }
 }
 
-/* ---- scroll cue: tapered triangle that points down ---- */
+/* ---- scroll cue: vertical optical flare ---- */
 .scroll-line {
   position: relative;
   display: block;
-  width: 6px;
-  height: 50px;
+  width: 2px;
+  height: 60px;
   overflow: visible;
-  background: transparent;
+  /* Thin vertical streak */
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 182, 193, 0.4) 20%,
+    rgba(0, 210, 255, 0.6) 50%,
+    rgba(176, 38, 255, 0.4) 80%,
+    transparent 100%
+  );
+  margin: 0 auto;
 }
-/* Triangle shape: wide at top, pointed at bottom */
+
+/* Vertical flare core that descends automatically */
 .scroll-line::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.15) 60%,
-    transparent 100%
-  );
-  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-}
-/* Animated spark that descends through the triangle */
-.scroll-line::after {
-  content: "";
-  position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 14px;
-  background: linear-gradient(to bottom, transparent, #ffffff, transparent);
-  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
   box-shadow: 
-    0 0 6px #ffffff,
-    0 0 12px #00d2ff,
-    0 0 20px #b026ff;
-  animation: descend 2.0s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+    0 0 8px 2px rgba(255, 255, 255, 0.9),
+    0 0 16px 6px rgba(0, 210, 255, 0.8),
+    0 0 24px 10px rgba(176, 38, 255, 0.6);
+  filter: blur(1.5px);
+  animation: descend-flare 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  z-index: 2;
 }
 
-@keyframes descend {
-  0% {
-    transform: translateY(-100%);
-  }
-  60%,
-  100% {
-    transform: translateY(260%);
-  }
+@keyframes descend-flare {
+  0% { top: -10%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-line::after {
+  .scroll-line::before {
     animation: none;
   }
 }
