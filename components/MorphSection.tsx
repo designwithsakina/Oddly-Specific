@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { scroll, HERO_SCROLL_VH, smoothstep } from "@/lib/state";
-import CursorTrail from "./CursorTrail";
+import GlassButterflyCursor from "./GlassButterflyCursor";
 import InteractiveTypography from "./InteractiveTypography";
 
 export default function MorphSection({ children, className }: { children: React.ReactNode, className?: string }) {
@@ -36,7 +36,7 @@ export default function MorphSection({ children, className }: { children: React.
   return (
     <>
       <section ref={sectionRef} className="fixed inset-0 z-50 pointer-events-none flex flex-col items-center justify-center px-[6vw] text-center" style={{ opacity: 0 }}>
-        <CursorTrail />
+        <GlassButterflyCursor />
         <div className="mb-2 w-full overflow-hidden">
           <h2 className="w-full font-display text-[clamp(1.5rem,2.5vw,2.5rem)] font-light leading-tight text-white/90">
             For Those Who Look Closer

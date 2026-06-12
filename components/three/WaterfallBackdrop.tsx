@@ -179,9 +179,9 @@ export default function WaterfallBackdrop() {
           vec4 colB = texture2D(uTexB, vUv);
           vec4 video = mix(colA, colB, uMix);
           
-          // Dark deep blue overlay at ~10% opacity
+          // Dark deep blue overlay at ~20% opacity
           vec3 tint = vec3(0.016, 0.016, 0.07); // #040412
-          video.rgb = mix(video.rgb, tint, 0.10);
+          video.rgb = mix(video.rgb, tint, 0.20);
           
           gl_FragColor = vec4(video.rgb, uOpacity);
         }

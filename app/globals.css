@@ -370,3 +370,8 @@ html.lenis body {
   .sound-toggle-wrap.active .sound-light-ring { animation: none; }
   .sound-toggle-wrap.active .sound-glow-orb { animation: none; }
 }
+
+/* Custom cursor visibility management */
+.hide-cursor, .hide-cursor * {
+  cursor: none !important;
+}
