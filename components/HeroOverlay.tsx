@@ -13,6 +13,7 @@ import { scroll, smoothstep } from "@/lib/state";
 export default function HeroOverlay() {
   const root = useRef<HTMLDivElement>(null);
   const reveal = useRef<HTMLDivElement>(null);
+  const blurOverlay = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -32,12 +33,18 @@ export default function HeroOverlay() {
 
     let raf = 0;
     const tick = () => {
-      const el = root.current;
-      if (el) {
-        const fade = 1 - smoothstep(0.04, 0.4, scroll.hero);
-        el.style.opacity = String(fade);
-        el.style.transform = `translateY(${-scroll.hero * 50}px)`;
-        el.style.pointerEvents = fade < 0.1 ? "none" : "auto";
+      if (root.current) {
+        const textFade = 1 - smoothstep(0.04, 0.4, scroll.hero);
+        root.current.style.opacity = String(textFade);
+        root.current.style.transform = `translateY(${-scroll.hero * 50}px)`;
+        root.current.style.pointerEvents = textFade < 0.1 ? "none" : "auto";
+      }
+      
+      // Blur fades out AFTER the text is fully dissolved, 
+      // exactly as the Logo starts coming up (0.4 to 0.58)
+      if (blurOverlay.current) {
+        const blurFade = 1 - smoothstep(0.4, 0.58, scroll.hero);
+        blurOverlay.current.style.opacity = String(blurFade);
       }
 
       // Animate the SVG liquid filter base frequency for fluid organic motion
@@ -56,10 +63,19 @@ export default function HeroOverlay() {
   }, []);
 
   return (
-    <div
-      ref={root}
-      className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center px-[6vw] py-[3.2vh] text-center"
-    >
+    <>
+      {/* subtle blur overlay to improve text legibility over busy video.
+          Placed outside `root` so it can fade independently. */}
+      <div 
+        ref={blurOverlay}
+        className="pointer-events-none fixed inset-0 z-20 bg-[#0a0916]/10 backdrop-blur-[8px]" 
+      />
+
+      <div
+        ref={root}
+        className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center px-[6vw] py-[3.2vh] text-center"
+      >
+
       {/* top bar */}
       <header className="flex w-full items-start justify-between">
         <span 
@@ -127,7 +143,7 @@ export default function HeroOverlay() {
               className="font-sans text-[clamp(0.95rem,1.35vw,1.15rem)] font-light leading-relaxed text-white/90"
               style={{ textShadow: "0 4px 16px rgba(3,3,15,0.9), 0 1px 3px rgba(3,3,15,0.7)" }}
             >
-              Brands, stories, interfaces and other rabbit holes.
+              Brands, Stories, Interfaces and Other Rabbit Holes.
             </p>
           </div>
         </div>
@@ -154,5 +170,6 @@ export default function HeroOverlay() {
         </defs>
       </svg>
     </div>
+    </>
   );
 }

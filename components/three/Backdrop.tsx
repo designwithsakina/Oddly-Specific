@@ -19,7 +19,7 @@ export default function Backdrop() {
     if (typeof window === "undefined") return { videoA: null, videoB: null };
     const createVid = () => {
       const v = document.createElement("video");
-      v.src = "/custom-mountains.mp4?v=2";
+      v.src = "/hero-video.mp4";
       v.loop = false; // We control the loop programmatically
       v.muted = true;
       v.playsInline = true;
