@@ -10,6 +10,7 @@ interface Particle {
   size: number;
   vx: number;
   vy: number;
+  color: { r: number; g: number; b: number };
 }
 
 export default function GlassButterflyCursor() {
@@ -27,7 +28,7 @@ export default function GlassButterflyCursor() {
   // Load and process image to make background transparent
   useEffect(() => {
     const img = new Image();
-    img.src = "/butterfly.jpg";
+    img.src = "/butterfly.png";
     img.onload = () => {
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = img.width;
@@ -41,8 +42,8 @@ export default function GlassButterflyCursor() {
 
       // Smooth luma keying with noise gate to clean black background,
       // and a gamma curve (< 1.0) to preserve dark glass facets inside the wings
-      const threshold = 28; // pixels with luma below this start fading out
-      const fadeRange = 22;   // fade range to 0 (fades out between 6 and 28)
+      const threshold = 32; // pixels with luma below this start fading out
+      const fadeRange = 26;   // fade range to 0 (fades out between 6 and 32)
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -59,11 +60,20 @@ export default function GlassButterflyCursor() {
           alphaFactor = (luma - (threshold - fadeRange)) / fadeRange;
         }
 
-        // Boost shadows/midtones using gamma = 0.68 to keep glass wings solid and smooth,
+        // Boost shadows/midtones using gamma = 0.65 to keep glass wings solid and smooth,
         // and scale alpha to make highlights pop.
-        const glassAlpha = Math.pow(luma / 255.0, 0.68) * 1.5;
+        const glassAlpha = Math.pow(luma / 255.0, 0.65) * 1.5;
+        const finalAlpha = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255));
         
-        data[i + 3] = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255));
+        data[i + 3] = finalAlpha;
+
+        if (finalAlpha > 0) {
+          // Un-premultiply: divide pixel color channels by alpha to remove dark halo
+          const aNorm = Math.max(0.12, finalAlpha / 255.0);
+          data[i] = Math.min(255, Math.floor(r / aNorm));
+          data[i + 1] = Math.min(255, Math.floor(g / aNorm));
+          data[i + 2] = Math.min(255, Math.floor(b / aNorm));
+        }
       }
       tempCtx.putImageData(imgData, 0, 0);
       setButterflyImage(tempCanvas);
@@ -172,11 +182,22 @@ export default function GlassButterflyCursor() {
       const tailX = m.x + tailOffset * Math.cos(bodyAngle);
       const tailY = m.y + tailOffset * Math.sin(bodyAngle);
 
+      // Signature glass refraction colors to match the butterfly wing highlights:
+      // - Cyan/Icy Blue: rgb(160, 235, 255)
+      // - Golden Amber/Orange: rgb(255, 180, 100)
+      // - Soft Magenta/Lilac: rgb(225, 175, 255)
+      const colors = [
+        { r: 160, g: 235, b: 255 },
+        { r: 255, g: 180, b: 100 },
+        { r: 225, g: 175, b: 255 }
+      ];
+
       // Spawn trail particles if active and cursor is moving or breathing
       if (opacity > 0.05 && isHoveringRef.current) {
         // Spawn more particles when moving fast
         const spawnChance = 0.2 + speedFactor * 0.8;
         if (Math.random() < spawnChance) {
+          const color = colors[Math.floor(Math.random() * colors.length)];
           particlesRef.current.push({
             x: tailX + (Math.random() - 0.5) * 6,
             y: tailY + (Math.random() - 0.5) * 6,
@@ -184,6 +205,7 @@ export default function GlassButterflyCursor() {
             size: Math.random() * 1.5 + 2.8, // 2.8px to 4.3px
             vx: (Math.random() - 0.5) * 0.6 - Math.cos(bodyAngle) * 0.4, // float backwards away from tail
             vy: (Math.random() - 0.5) * 0.6 - Math.sin(bodyAngle) * 0.4 - 0.1, // float slightly up
+            color: color
           });
         }
       }
@@ -198,9 +220,9 @@ export default function GlassButterflyCursor() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         // Fade particles out based on global opacity too
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * opacity})`;
+        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
         ctx.shadowBlur = 10;
-        ctx.shadowColor = `rgba(180, 230, 255, ${p.alpha * opacity})`; // Soft cyan-white glow
+        ctx.shadowColor = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
         ctx.fill();
 
         p.alpha -= 0.014; // decay rate
