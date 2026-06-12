@@ -23,12 +23,13 @@ export default function GlassButterflyCursor() {
   const timeRef = useRef(0);
   const lastTimeRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
+  const historyRef = useRef<{ x: number; y: number; angle: number }[]>([]);
   const isHoveringRef = useRef(false);
 
   // Load and process image to make background transparent
   useEffect(() => {
     const img = new Image();
-    img.src = "/butterfly.png";
+    img.src = "/butterfly.png?v=" + Date.now(); // Cache buster to force browser image reload
     img.onload = () => {
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = img.width;
@@ -60,15 +61,38 @@ export default function GlassButterflyCursor() {
         const distToTop = y;
         const distToBottom = img.height - y;
         const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
-        
-        // Create a border vignette factor to force outer edges/corners to transparent
-        let edgeFactor = 1.0;
-        if (minDist < 35) {
-          edgeFactor = minDist / 35;
-        }
 
         // Luminance calculation
         const luma = r * 0.299 + g * 0.587 + b * 0.114;
+
+        // 1. Strict border fade: force everything at the outer 25px of the image to fade out to 0.
+        // This is 100% safe because the butterfly is centered with at least 35-40px padding.
+        let borderFactor = 1.0;
+        const strictBorder = 25;
+        if (minDist < strictBorder) {
+          const tBorder = minDist / strictBorder;
+          borderFactor = tBorder * tBorder * (3.0 - 2.0 * tBorder); // smoothstep
+        }
+
+        // 2. Semantic edge vignette:
+        // Diffuse and blur background light rays (luma < 55) using a wide 80px fade,
+        // but keep bright glass highlights (luma > 85) 100% sharp and solid.
+        let semanticFactor = 1.0;
+        let fadeWidth = 0;
+        if (luma < 55) {
+          fadeWidth = 80;
+        } else if (luma < 85) {
+          const tLuma = (luma - 55) / 30; // 0..1
+          fadeWidth = 80 * (1.0 - tLuma);
+        }
+        
+        if (fadeWidth > 0 && minDist < fadeWidth) {
+          const tEdge = minDist / fadeWidth;
+          semanticFactor = tEdge * tEdge * (3.0 - 2.0 * tEdge); // smoothstep
+        }
+
+        // Combine both vignette factors
+        const edgeFactor = borderFactor * semanticFactor;
 
         let alphaFactor = 1.0;
         if (luma < threshold - fadeRange) {
@@ -194,24 +218,90 @@ export default function GlassButterflyCursor() {
 
       // 4. Draw fairy dust trail particles from the tail
       // Tail is located opposite to the direction of travel
-      const tailOffset = 22; // px offset from center body
+      const tailOffset = 30; // px offset from center body (adjusted for 124px size)
       const bodyAngle = drawAngle + 3 * Math.PI / 4; // 135 deg offset is opposite the head
       const tailX = m.x + tailOffset * Math.cos(bodyAngle);
       const tailY = m.y + tailOffset * Math.sin(bodyAngle);
 
-      // Spawn trail particles if active and cursor is moving or breathing
+      // Track tail coordinate history for the wind stream effect
       if (opacity > 0.05 && isHoveringRef.current) {
-        // Spawn more particles when moving fast
-        const spawnChance = 0.2 + speedFactor * 0.8;
+        historyRef.current.push({ x: tailX, y: tailY, angle: rotationRef.current });
+        if (historyRef.current.length > 20) {
+          historyRef.current.shift();
+        }
+      } else {
+        // Clear history if inactive so it doesn't snap when returning
+        historyRef.current = [];
+      }
+
+      // 4a. Draw the waving wind ribbon streams
+      const history = historyRef.current;
+      if (history.length >= 2) {
+        const drawStream = (offsetSide: number) => {
+          ctx.beginPath();
+          for (let i = 0; i < history.length; i++) {
+            const p = history[i];
+            const perpAngle = p.angle + Math.PI / 2;
+            
+            // Add a gentle waving wave to simulate wind turbulence
+            const wave = Math.sin(timeRef.current * 14 - i * 0.4) * 4.5 * (1.0 - i / history.length);
+            const offsetDist = offsetSide * 15 + wave;
+            
+            const sx = p.x + Math.cos(perpAngle) * offsetDist;
+            const sy = p.y + Math.sin(perpAngle) * offsetDist;
+            
+            if (i === 0) {
+              ctx.moveTo(sx, sy);
+            } else {
+              ctx.lineTo(sx, sy);
+            }
+          }
+          
+          // Create a gradient that fades out towards the oldest points in history
+          const lastIdx = history.length - 1;
+          const grad = ctx.createLinearGradient(
+            history[0].x, history[0].y,
+            history[lastIdx].x, history[lastIdx].y
+          );
+          
+          // Beautiful soft blue tint wind glow
+          grad.addColorStop(0.0, "rgba(130, 205, 255, 0.0)");
+          grad.addColorStop(0.4, `rgba(145, 215, 255, ${opacity * 0.12})`);
+          grad.addColorStop(1.0, `rgba(175, 235, 255, ${opacity * 0.38})`);
+          
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = offsetSide === 0 ? 1.8 : 1.2; // center stream is slightly thicker
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          
+          // Add soft blue wind glow
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = `rgba(130, 205, 255, ${opacity * 0.35})`;
+          
+          ctx.stroke();
+        };
+
+        // Draw Center, Left, and Right streams
+        ctx.save();
+        drawStream(0);   // Center
+        drawStream(1);   // Left
+        drawStream(-1);  // Right
+        ctx.restore();
+      }
+
+      // 4b. Spawn a few very fine drifting sparks with a blue tint
+      if (opacity > 0.05 && isHoveringRef.current) {
+        // Lower spawn rate, makes it feel like subtle crystal dust in the wind
+        const spawnChance = 0.1 + speedFactor * 0.45;
         if (Math.random() < spawnChance) {
           particlesRef.current.push({
             x: tailX + (Math.random() - 0.5) * 6,
             y: tailY + (Math.random() - 0.5) * 6,
-            alpha: Math.random() * 0.45 + 0.55,
-            size: Math.random() * 1.5 + 2.8, // 2.8px to 4.3px
-            vx: (Math.random() - 0.5) * 0.6 - Math.cos(bodyAngle) * 0.4, // float backwards away from tail
-            vy: (Math.random() - 0.5) * 0.6 - Math.sin(bodyAngle) * 0.4 - 0.1, // float slightly up
-            color: { r: 255, g: 255, b: 255 } // Reset particle color to white
+            alpha: Math.random() * 0.4 + 0.6,
+            size: Math.random() * 1.0 + 1.2, // Very fine sparks (1.2px to 2.2px)
+            vx: (Math.random() - 0.5) * 0.4 - Math.cos(bodyAngle) * 0.9, // blow backwards faster
+            vy: (Math.random() - 0.5) * 0.4 - Math.sin(bodyAngle) * 0.9 - 0.1,
+            color: { r: 160, g: 228, b: 255 } // Soft blue tint
           });
         }
       }
@@ -225,13 +315,13 @@ export default function GlassButterflyCursor() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        // Fade particles out based on global opacity, draw white glowing dots
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * opacity})`;
-        ctx.shadowBlur = 12; // Beautiful glow
-        ctx.shadowColor = `rgba(255, 255, 255, ${p.alpha * opacity})`;
+        // Fade particles out based on global opacity, draw soft blue glowing dust
+        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
         ctx.fill();
 
-        p.alpha -= 0.014; // decay rate
+        p.alpha -= 0.016; // decay rate
         if (p.alpha > 0) {
           activeParticles.push(p);
         }
@@ -246,11 +336,12 @@ export default function GlassButterflyCursor() {
         ctx.rotate(drawAngle);
         ctx.scale(scaleX, 1.0); // Compress horizontal local axis to flap wings
 
-        const drawSize = 96; // px size (increased by 4 points)
+        const drawSize = 124; // px size (increased to be clearly larger)
         
-        // Disable shadow/glow on the butterfly itself to prevent bounding box halo artifacts
-        ctx.shadowBlur = 0;
-        ctx.shadowColor = "transparent";
+        // Add a soft, delicate outer glow matching the glass highlights to lift it off the page.
+        // This is now fully safe because the border vignette ensures no bounding box artifacts.
+        ctx.shadowBlur = 24;
+        ctx.shadowColor = "rgba(180, 230, 255, 0.28)";
         
         ctx.drawImage(
           butterflyImage,
