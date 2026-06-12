@@ -3,7 +3,10 @@
 import dynamic from "next/dynamic";
 import SmoothScroll from "@/components/SmoothScroll";
 import HeroOverlay from "@/components/HeroOverlay";
+import SmokeyCursor from "@/components/SmokeyCursor";
 import LogoReveal from "@/components/LogoReveal";
+
+import MorphSection from "@/components/MorphSection";
 
 import SoundToggle from "@/components/SoundToggle";
 
@@ -17,33 +20,21 @@ export default function Page() {
     <SmoothScroll>
       {/* fixed WebGL stage + typographic overlay */}
       <HeroExperience />
+      <SmokeyCursor />
       <HeroOverlay />
       <SoundToggle />
 
-      <main className="relative z-10">
+
+      <main className="relative z-40">
         {/* logo holds centre after the headline fades; section below covers it */}
         <LogoReveal />
 
-        {/* hero descent scroll region — empty space that drives scroll.hero */}
-        <section style={{ height: "320vh" }} aria-label="Hero" />
+        {/* hero descent scroll region — exactly 2.2vh (220vh) so it hits 1.0 at the end */}
+        <section style={{ height: "220vh" }} aria-label="Hero" />
 
-        {/* placeholder for the river→spiral morph (next build phase). Opaque,
-            so it slides up over the fixed canvas as a new chapter. */}
-        <section className="relative z-20 min-h-screen bg-[#06060f]">
-          <div className="flex min-h-screen flex-col items-center justify-center px-[6vw] text-center">
-            <span className="mb-6 font-sans text-[0.62rem] uppercase tracking-[0.36em] text-glow/60">
-              02 — The Work
-            </span>
-            <h2 className="max-w-[18ch] font-display text-[clamp(1.8rem,4vw,3.4rem)] font-light leading-tight text-white/90">
-              The river coils into six rabbit holes.
-            </h2>
-            <p className="mt-6 max-w-[42ch] font-sans text-sm font-light leading-relaxed text-mist/45">
-              Next phase: the light-thread lifts off the valley floor and winds
-              into the project spiral — Organic Delight, Muneer, Padah, Leo Club
-              MCR, Kalara, F1 Campaign.
-            </p>
-          </div>
-        </section>
+        {/* MorphSection remains opacity-0 until scroll.hero hits the flash threshold,
+            then it jumps to opacity-1 seamlessly while the flash is solid. */}
+        <MorphSection className="relative z-50 min-h-[200vh] bg-transparent" />
       </main>
     </SmoothScroll>
   );

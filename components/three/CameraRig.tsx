@@ -25,22 +25,45 @@ export default function CameraRig() {
 
     const p = smoothstep(0, 1, scroll.hero);
 
-    // dolly forward + descend as we travel toward the monolith
-    const baseZ = lerp(15, 4.5, p);
-    const baseY = lerp(2.4, 1.15, p);
+    let targetX = 0;
+    let targetY = 0;
+    let lookTargetY = 0;
+    let baseZ = 0;
+    let baseY = 0;
 
-    // cursor parallax — stronger sideways than vertical
-    const targetX = pointer.x * lerp(1.1, 0.5, p);
-    const targetY = baseY + pointer.y * 0.35;
+    if (p <= 0.98) {
+      // SECTION 1 (HERO)
+      // dolly forward + descend as we travel toward the monolith
+      baseZ = lerp(15, 4.5, p);
+      baseY = lerp(2.4, 1.15, p);
+
+      // cursor parallax
+      targetX = pointer.x * lerp(1.1, 0.5, p);
+      targetY = baseY + pointer.y * 0.35;
+      lookTargetY = lerp(1.4, 1.9, p) + pointer.y * 0.25;
+      lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.6, 3, d);
+
+    } else {
+      // SECTION 2 (WATERFALL)
+      // Camera is completely stationary in Z and Y. No zoom effects.
+      const s2 = smoothstep(0, 1, scroll.section2);
+      baseZ = 4.5;
+      baseY = 1.15;
+
+      // cursor parallax (slightly subdued since we are deep in the scene)
+      targetX = pointer.x * 0.8;
+      targetY = baseY + pointer.y * 0.4;
+      lookTargetY = 1.15 + pointer.y * 0.3;
+      lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.8, 3, d);
+    }
 
     camera.position.x = damp(camera.position.x, targetX, 3, d);
     camera.position.y = damp(camera.position.y, targetY, 3, d);
     camera.position.z = damp(camera.position.z, baseZ, 3, d);
 
-    // look toward the monolith, nudged by the cursor for the perspective shift
-    lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.6, 3, d);
-    lookAt.current.y = damp(lookAt.current.y, lerp(1.4, 1.9, p) + pointer.y * 0.25, 3, d);
-    lookAt.current.z = 0;
+    // look toward the active subject
+    lookAt.current.y = damp(lookAt.current.y, lookTargetY, 3, d);
+    lookAt.current.z = p <= 0.98 ? 0 : -100; // Look deep into the waterfall
     camera.lookAt(lookAt.current);
   });
 

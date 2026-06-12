@@ -25,7 +25,9 @@ export default function LogoReveal() {
       // then keep growing with the crystal as it advances toward the viewer —
       // the mark reads as living on the face of the approaching block.
       const grow = smoothstep(0.4, 1.0, p);
-      if (wrap.current) wrap.current.style.opacity = String(reveal);
+      
+      const morphFadeOut = 1.0 - smoothstep(0.8, 1.0, p);
+      if (wrap.current) wrap.current.style.opacity = String(reveal * morphFadeOut);
       if (img.current) {
         const blur = (1 - reveal) * 18;
         const scale = 0.85 + grow * 1.0; // 0.85 → 1.85

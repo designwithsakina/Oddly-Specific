@@ -27,8 +27,14 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     const onScroll = () => {
       scroll.raw = lenis.scroll;
-      const span = window.innerHeight * HERO_SCROLL_VH;
+      const vh = window.innerHeight;
+      const span = vh * HERO_SCROLL_VH;
       scroll.hero = clamp01(lenis.scroll / span);
+      
+      // section 2 starts at `span` (2.2vh) and lasts for 2vh (200vh)
+      const section2Start = span;
+      const section2Span = 2.0 * vh;
+      scroll.section2 = clamp01((lenis.scroll - section2Start) / section2Span);
     };
     lenis.on("scroll", onScroll);
     onScroll();

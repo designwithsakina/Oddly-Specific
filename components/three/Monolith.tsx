@@ -32,6 +32,7 @@ export default function Monolith() {
         fog: true,
         uniforms: {
           uTime: { value: 0 },
+          uOpacity: { value: 1.0 },
           uCore: { value: new THREE.Color("#1a1746") },
           uRim: { value: new THREE.Color("#79e3ff") },
           uHot: { value: new THREE.Color("#b69bff") },
@@ -54,6 +55,7 @@ export default function Monolith() {
           varying vec3 vNormal;
           varying vec3 vView;
           uniform float uTime;
+          uniform float uOpacity;
           uniform vec3 uCore;
           uniform vec3 uRim;
           uniform vec3 uHot;
@@ -64,7 +66,7 @@ export default function Monolith() {
             vec3 col = mix(uCore, uRim, rim);
             col += uHot * pow(f, 5.0) * (0.6 + 0.4 * pulse);
             float alpha = 0.34 + rim * 0.66;
-            gl_FragColor = vec4(col, alpha);
+            gl_FragColor = vec4(col, alpha * uOpacity);
             #include <fog_fragment>
           }
         `,
@@ -79,17 +81,20 @@ export default function Monolith() {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
         fog: false,
-        uniforms: { uColor: { value: new THREE.Color("#5b7bff") } },
+        uniforms: { 
+          uColor: { value: new THREE.Color("#5b7bff") },
+          uOpacity: { value: 1.0 }
+        },
         vertexShader: /* glsl */ `
           varying vec2 vUv;
           void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
         `,
         fragmentShader: /* glsl */ `
-          varying vec2 vUv; uniform vec3 uColor;
+          varying vec2 vUv; uniform vec3 uColor; uniform float uOpacity;
           void main(){
             float d = length(vUv - 0.5) * 2.0;
             float a = smoothstep(1.0, 0.0, d);
-            gl_FragColor = vec4(uColor, pow(a, 2.0) * 0.5);
+            gl_FragColor = vec4(uColor, pow(a, 2.0) * 0.5 * uOpacity);
           }
         `,
       }),
@@ -100,14 +105,24 @@ export default function Monolith() {
     const t = state.clock.elapsedTime;
     const p = smoothstep(0, 1, scroll.hero);
 
-    if (fresnel.current) fresnel.current.uniforms.uTime.value = t;
+    const morphProgress = smoothstep(0.8, 1.0, scroll.hero);
+
+    if (fresnel.current) {
+      fresnel.current.uniforms.uTime.value = t;
+      fresnel.current.uniforms.uOpacity.value = 1.0 - morphProgress;
+    }
+    
+    if (halo) {
+      halo.uniforms.uOpacity.value = 1.0 - morphProgress;
+    }
 
     if (group.current) {
-      const s = lerp(0.7, 2.45, p);
+      const diveScale = morphProgress * 2.0; // Grows by +2.0 scale as it fades out
+      const s = lerp(0.7, 2.45, p) + diveScale;
       group.current.scale.setScalar(s);
       // gentle idle float + faster spin as you approach
       group.current.position.y = 1.45 + Math.sin(t * 0.6) * 0.06;
-      group.current.rotation.y = t * (0.12 + p * 0.25);
+      group.current.rotation.y = t * (0.12 + p * 0.25) + diveScale;
       group.current.rotation.z = Math.sin(t * 0.3) * 0.05;
     }
     if (light.current) light.current.intensity = lerp(6, 16, p);

@@ -5,6 +5,8 @@
 export const scroll = {
   /** 0..1 progress through the hero "descent" (grow + dolly). */
   hero: 0,
+  /** 0..1 progress through the second section (waterfall). */
+  section2: 0,
   /** raw pixels scrolled. */
   raw: 0,
 };

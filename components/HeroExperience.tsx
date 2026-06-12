@@ -7,6 +7,7 @@ import CameraRig from "./three/CameraRig";
 import Backdrop from "./three/Backdrop";
 import Monolith from "./three/Monolith";
 import Atmosphere from "./three/Atmosphere";
+import WaterfallBackdrop from "./three/WaterfallBackdrop";
 
 /**
  * Fixed full-viewport WebGL stage for the hero "descent". A tall scroll spacer
@@ -32,6 +33,7 @@ export default function HeroExperience() {
           <Backdrop />
           <Monolith />
           <Atmosphere />
+          <WaterfallBackdrop />
         </Suspense>
 
         <CameraRig />

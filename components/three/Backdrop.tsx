@@ -3,11 +3,12 @@
 import * as THREE from "three";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
+import { scroll, smoothstep } from "@/lib/state";
 
 /**
  * The valley backdrop — an AI-animated clip of mountains rendered on a large plane.
- * To solve the jumpy loop transition, this component uses dual video elements
- * and crossfades them dynamically on the GPU via a custom ShaderMaterial.
+ * Uses dual video elements for a seamless GPU crossfade loop, 
+ * but auto-pauses when out of view to save performance.
  */
 export default function Backdrop() {
   const gl = useThree((s) => s.gl);
@@ -70,6 +71,16 @@ export default function Backdrop() {
 
     const vidA = videos.videoA;
     const vidB = videos.videoB;
+
+    // Optimization: Pause the hero videos completely when invisible
+    if (scroll.hero >= 0.99) {
+      if (!vidA.paused) vidA.pause();
+      if (!vidB.paused) vidB.pause();
+      if (materialRef.current) {
+        materialRef.current.uniforms.uOpacity.value = 0;
+      }
+      return;
+    }
 
     if (isNaN(vidA.duration) || isNaN(vidB.duration) || vidA.duration === 0) return;
 
@@ -138,7 +149,12 @@ export default function Backdrop() {
     textures.texB.needsUpdate = true;
 
     if (materialRef.current) {
+      const morphProgress = smoothstep(0.8, 1.0, scroll.hero);
+      
       materialRef.current.uniforms.uMix.value = THREE.MathUtils.clamp(mixVal, 0, 1);
+      // Fade out seamlessly as the Waterfall fades in
+      materialRef.current.uniforms.uOpacity.value = 0.6 * (1.0 - morphProgress);
+      materialRef.current.uniforms.uBlurZoom.value = morphProgress;
     }
   });
 
@@ -150,27 +166,53 @@ export default function Backdrop() {
         uTexA: { value: textures.texA },
         uTexB: { value: textures.texB },
         uMix: { value: 0.0 },
+        uOpacity: { value: 0.6 },
+        uBlurZoom: { value: 0.0 }, // 0.0 to 1.0 driving the radial blur during morph
       },
-      vertexShader: /* glsl */ `
+      transparent: true,
+      vertexShader: `
         varying vec2 vUv;
         void main() {
           vUv = uv;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
-      fragmentShader: /* glsl */ `
+      fragmentShader: `
         uniform sampler2D uTexA;
         uniform sampler2D uTexB;
         uniform float uMix;
+        uniform float uOpacity;
+        uniform float uBlurZoom;
         varying vec2 vUv;
+
+        // Radial blur function for the hyperspeed woosh effect
+        vec4 radialBlur(sampler2D tex, vec2 uv, float amount) {
+            vec2 center = vec2(0.5, 0.5);
+            vec2 dir = uv - center;
+            vec4 color = vec4(0.0);
+            float total = 0.0;
+            const int samples = 12;
+            
+            for (int i = 0; i < samples; i++) {
+                float scale = 1.0 - (float(i) * amount * 0.05);
+                vec2 sampleUv = center + dir * scale;
+                color += texture2D(tex, sampleUv);
+                total += 1.0;
+            }
+            return color / total;
+        }
+
         void main() {
-          vec4 colA = texture2D(uTexA, vUv);
-          vec4 colB = texture2D(uTexB, vUv);
-          vec4 video = mix(colA, colB, uMix);
-          // dark deep blue overlay at ~10% opacity
-          vec3 tint = vec3(0.016, 0.016, 0.07); // #040412
-          video.rgb = mix(video.rgb, tint, 0.10);
-          gl_FragColor = video;
+            vec4 colA = radialBlur(uTexA, vUv, uBlurZoom);
+            vec4 colB = radialBlur(uTexB, vUv, uBlurZoom);
+            vec4 col = mix(colA, colB, uMix);
+            
+            // dark deep blue overlay at ~10% opacity
+            vec3 tint = vec3(0.016, 0.016, 0.07); // #040412
+            col.rgb = mix(col.rgb, tint, 0.10);
+            col.a *= uOpacity;
+            
+            gl_FragColor = col;
         }
       `,
       fog: false,
