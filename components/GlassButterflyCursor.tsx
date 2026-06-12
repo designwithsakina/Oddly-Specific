@@ -50,6 +50,23 @@ export default function GlassButterflyCursor() {
         const g = data[i + 1];
         const b = data[i + 2];
         
+        // Coordinate in the 2D grid
+        const x = (i / 4) % img.width;
+        const y = Math.floor((i / 4) / img.width);
+        
+        // Distance to the nearest image boundary
+        const distToLeft = x;
+        const distToRight = img.width - x;
+        const distToTop = y;
+        const distToBottom = img.height - y;
+        const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
+        
+        // Create a border vignette factor to force outer edges/corners to transparent
+        let edgeFactor = 1.0;
+        if (minDist < 35) {
+          edgeFactor = minDist / 35;
+        }
+
         // Luminance calculation
         const luma = r * 0.299 + g * 0.587 + b * 0.114;
 
@@ -63,7 +80,7 @@ export default function GlassButterflyCursor() {
         // Boost shadows/midtones using gamma = 0.65 to keep glass wings solid and smooth,
         // and scale alpha to make highlights pop.
         const glassAlpha = Math.pow(luma / 255.0, 0.65) * 1.5;
-        const finalAlpha = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255));
+        const finalAlpha = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255 * edgeFactor));
         
         data[i + 3] = finalAlpha;
 
@@ -229,7 +246,7 @@ export default function GlassButterflyCursor() {
         ctx.rotate(drawAngle);
         ctx.scale(scaleX, 1.0); // Compress horizontal local axis to flap wings
 
-        const drawSize = 92; // px size
+        const drawSize = 96; // px size (increased by 4 points)
         
         // Disable shadow/glow on the butterfly itself to prevent bounding box halo artifacts
         ctx.shadowBlur = 0;
