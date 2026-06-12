@@ -39,7 +39,11 @@ export default function GlassButterflyCursor() {
       const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
       const data = imgData.data;
 
-      // Make black background transparent based on luminance
+      // Smooth luma keying with noise gate to clean black background,
+      // and a gamma curve (< 1.0) to preserve dark glass facets inside the wings
+      const threshold = 28; // pixels with luma below this start fading out
+      const fadeRange = 22;   // fade range to 0 (fades out between 6 and 28)
+
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
         const g = data[i + 1];
@@ -48,12 +52,18 @@ export default function GlassButterflyCursor() {
         // Luminance calculation
         const luma = r * 0.299 + g * 0.587 + b * 0.114;
 
-        if (luma < 12) {
-          data[i + 3] = 0; // Completely transparent
-        } else {
-          // Glass alpha curve: keep reflections opaque, map midtones
-          data[i + 3] = Math.min(255, Math.pow(luma / 255.0, 1.1) * 255 * 1.6);
+        let alphaFactor = 1.0;
+        if (luma < threshold - fadeRange) {
+          alphaFactor = 0.0;
+        } else if (luma < threshold) {
+          alphaFactor = (luma - (threshold - fadeRange)) / fadeRange;
         }
+
+        // Boost shadows/midtones using gamma = 0.68 to keep glass wings solid and smooth,
+        // and scale alpha to make highlights pop.
+        const glassAlpha = Math.pow(luma / 255.0, 0.68) * 1.5;
+        
+        data[i + 3] = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255));
       }
       tempCtx.putImageData(imgData, 0, 0);
       setButterflyImage(tempCanvas);
@@ -70,8 +80,11 @@ export default function GlassButterflyCursor() {
     let animationFrameId: number;
 
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
     };
 
     window.addEventListener("resize", resizeCanvas);
@@ -97,8 +110,15 @@ export default function GlassButterflyCursor() {
       const dt = Math.min(0.03, (now - lastTimeRef.current) / 1000); // clamp dt to prevent giant jumps
       lastTimeRef.current = now;
 
-      // Clear the canvas
+      // Clear the physical canvas coordinates
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Save context state, apply device pixel ratio scaling, and configure high-quality smoothing
+      ctx.save();
+      const dpr = window.devicePixelRatio || 1;
+      ctx.scale(dpr, dpr);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
@@ -213,6 +233,9 @@ export default function GlassButterflyCursor() {
         );
         ctx.restore();
       }
+
+      // Restore outer context state (DPR scale)
+      ctx.restore();
 
       animationFrameId = requestAnimationFrame(render);
     };
