@@ -182,22 +182,11 @@ export default function GlassButterflyCursor() {
       const tailX = m.x + tailOffset * Math.cos(bodyAngle);
       const tailY = m.y + tailOffset * Math.sin(bodyAngle);
 
-      // Signature glass refraction colors to match the butterfly wing highlights:
-      // - Cyan/Icy Blue: rgb(160, 235, 255)
-      // - Golden Amber/Orange: rgb(255, 180, 100)
-      // - Soft Magenta/Lilac: rgb(225, 175, 255)
-      const colors = [
-        { r: 160, g: 235, b: 255 },
-        { r: 255, g: 180, b: 100 },
-        { r: 225, g: 175, b: 255 }
-      ];
-
       // Spawn trail particles if active and cursor is moving or breathing
       if (opacity > 0.05 && isHoveringRef.current) {
         // Spawn more particles when moving fast
         const spawnChance = 0.2 + speedFactor * 0.8;
         if (Math.random() < spawnChance) {
-          const color = colors[Math.floor(Math.random() * colors.length)];
           particlesRef.current.push({
             x: tailX + (Math.random() - 0.5) * 6,
             y: tailY + (Math.random() - 0.5) * 6,
@@ -205,7 +194,7 @@ export default function GlassButterflyCursor() {
             size: Math.random() * 1.5 + 2.8, // 2.8px to 4.3px
             vx: (Math.random() - 0.5) * 0.6 - Math.cos(bodyAngle) * 0.4, // float backwards away from tail
             vy: (Math.random() - 0.5) * 0.6 - Math.sin(bodyAngle) * 0.4 - 0.1, // float slightly up
-            color: color
+            color: { r: 255, g: 255, b: 255 } // Reset particle color to white
           });
         }
       }
@@ -219,10 +208,10 @@ export default function GlassButterflyCursor() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        // Fade particles out based on global opacity too
-        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.alpha * opacity})`;
+        // Fade particles out based on global opacity, draw white glowing dots
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * opacity})`;
+        ctx.shadowBlur = 12; // Beautiful glow
+        ctx.shadowColor = `rgba(255, 255, 255, ${p.alpha * opacity})`;
         ctx.fill();
 
         p.alpha -= 0.014; // decay rate
@@ -242,9 +231,9 @@ export default function GlassButterflyCursor() {
 
         const drawSize = 92; // px size
         
-        // Add subtle glow backing the butterfly
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "rgba(180, 230, 255, 0.4)";
+        // Disable shadow/glow on the butterfly itself to prevent bounding box halo artifacts
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "transparent";
         
         ctx.drawImage(
           butterflyImage,
