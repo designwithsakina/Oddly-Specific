@@ -156,6 +156,9 @@ export default function InteractiveTypography({ text, className = "" }: Interact
         className={`relative drop-shadow-sm transition-colors duration-500 ${
           isHovered ? "text-cyan-100" : "text-white/95"
         }`}
+        style={{
+          textShadow: "0 2px 4px rgba(6, 18, 56, 0.4), 0 6px 12px rgba(6, 18, 56, 0.4), 0 12px 24px rgba(6, 18, 56, 0.4)"
+        }}
       >
         {renderWords()}
       </p>

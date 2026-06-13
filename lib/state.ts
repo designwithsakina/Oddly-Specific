@@ -2,13 +2,34 @@
 // listener and the R3F render loop. Kept outside React so reading it inside
 // useFrame never triggers re-renders — the scene stays buttery at 60fps.
 
+let initialHero = 0;
+let initialSection2 = 0;
+let initialRaw = 0;
+
+if (typeof window !== "undefined") {
+  const path = window.location.pathname;
+  const isAbout = path === "/about" || sessionStorage.getItem("wasScrolled") === "true";
+  const isWork = path === "/work" || sessionStorage.getItem("wasWorkScrolled") === "true";
+
+  if (isWork) {
+    initialHero = 1.0;
+    initialSection2 = 1.0;
+    initialRaw = window.innerHeight * 5.6;
+  } else if (isAbout) {
+    initialHero = 1.0;
+    initialRaw = window.innerHeight * 2.2;
+  }
+}
+
 export const scroll = {
   /** 0..1 progress through the hero "descent" (grow + dolly). */
-  hero: 0,
+  hero: initialHero,
   /** 0..1 progress through the second section (waterfall). */
-  section2: 0,
+  section2: initialSection2,
+  /** 0..1 progress through the third section (underwater projects). */
+  section3: 0,
   /** raw pixels scrolled. */
-  raw: 0,
+  raw: initialRaw,
 };
 
 export const pointer = {

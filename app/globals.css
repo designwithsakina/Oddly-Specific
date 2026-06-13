@@ -91,6 +91,44 @@ html.lenis body {
     0 0 12px rgba(255, 255, 255, 0.25);
 }
 
+/* ---- Moving gradient inside the main hero headline ---- */
+.hero-glow-text {
+  display: inline-block;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+  vertical-align: bottom;
+  
+  background-image: 
+    radial-gradient(circle at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.72) 20%, rgba(255,255,255,0) 65%),
+    radial-gradient(circle at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.65) 20%, rgba(255,255,255,0) 65%),
+    linear-gradient(to right, rgba(174, 211, 255, 0.55), rgba(174, 211, 255, 0.55));
+    
+  background-size: 100px 100px, 140px 140px, 100% 100%;
+  background-repeat: no-repeat;
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  
+  animation: ballShimmer 6s ease-in-out infinite;
+  
+  /* Soft white bloom that adds a subtle glow outside the text borders */
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.15));
+}
+
+@keyframes ballShimmer {
+  0% {
+    background-position: -120px center, calc(100% + 160px) center, 0 0;
+  }
+  50% {
+    background-position: calc(100% + 120px) center, -160px center, 0 0;
+  }
+  100% {
+    background-position: -120px center, calc(100% + 160px) center, 0 0;
+  }
+}
+
 /* ---- glowing accent line (static tapered flare) ---- */
 .glow-line-h {
   position: relative;
@@ -375,3 +413,321 @@ html.lenis body {
 .hide-cursor, .hide-cursor * {
   cursor: none !important;
 }
+
+/* ---- Iridescent Rainbow Glass Bevel Header ---- */
+.bevel-sweep-container {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bevel-sweep-container:hover {
+  filter: url(#liquid-splash);
+}
+
+.bevel-sweep-header {
+  position: relative;
+  z-index: 10;
+  
+  /* Flowing pastel iridescent rainbow gradient inside the text */
+  background: linear-gradient(
+    90deg,
+    #b5e2ff 0%,
+    #ffd3ec 20%,
+    #ffe8ad 40%,
+    #c5ffed 60%,
+    #d2baff 80%,
+    #b5e2ff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Bevel Glass Outline */
+  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.65);
+  
+  /* Stacked highlights + multi-colored drop glows */
+  text-shadow:
+    -1px -1px 0px rgba(255, 255, 255, 0.8),
+    1px 1px 0px rgba(0, 0, 0, 0.75),
+    0 0 8px rgba(181, 226, 255, 0.4),
+    0 0 18px rgba(255, 211, 236, 0.3);
+
+  animation: iridescent-flow 6s linear infinite, text-glow-orbit 8s ease-in-out infinite;
+}
+
+/* Foreground shimmer overlay for extra glass shine */
+.bevel-sweep-header::after {
+  content: "For Those Who Look Closer";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 35%,
+    rgba(255, 255, 255, 0.1) 42%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.1) 58%,
+    transparent 65%,
+    transparent 100%
+  );
+  background-size: 280% 280%;
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  animation: liquid-sweep 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes iridescent-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes liquid-sweep {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+@keyframes glow-rotate-liquid {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.95);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.15);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) scale(0.95);
+  }
+}
+
+@keyframes text-glow-orbit {
+  0%, 100% {
+    text-shadow:
+      -1px -1px 0px rgba(255, 255, 255, 0.8),
+      1px 1px 0px rgba(0, 0, 0, 0.75),
+      -2px 0px 8px rgba(181, 226, 255, 0.45),
+      2px 0px 16px rgba(255, 211, 236, 0.3);
+  }
+  25% {
+    text-shadow:
+      -1px -1px 0px rgba(255, 255, 255, 0.8),
+      1px 1px 0px rgba(0, 0, 0, 0.75),
+      0px -2px 8px rgba(181, 226, 255, 0.45),
+      0px 2px 16px rgba(255, 211, 236, 0.3);
+  }
+  50% {
+    text-shadow:
+      -1px -1px 0px rgba(255, 255, 255, 0.8),
+      1px 1px 0px rgba(0, 0, 0, 0.75),
+      2px 0px 8px rgba(181, 226, 255, 0.45),
+      -2px 0px 16px rgba(255, 211, 236, 0.3);
+  }
+  75% {
+    text-shadow:
+      -1px -1px 0px rgba(255, 255, 255, 0.8),
+      1px 1px 0px rgba(0, 0, 0, 0.75),
+      0px 2px 8px rgba(181, 226, 255, 0.45),
+      0px -2px 16px rgba(255, 211, 236, 0.3);
+  }
+}
+
+/* ---- Holographic Highlight for Splash Screen ---- */
+.holo-highlight {
+  background: linear-gradient(
+    90deg,
+    #b5e2ff 0%,
+    #ffd3ec 20%,
+    #ffe8ad 40%,
+    #c5ffed 60%,
+    #d2baff 80%,
+    #b5e2ff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: iridescent-flow 4s linear infinite;
+  display: inline-block;
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(181, 226, 255, 0.2);
+}
+
+/* ---- Capsule Glass Button with Moving Gradient Stroke & Spotlight Golden Glow ---- */
+.glass-btn-sound-styled {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Removed padding to avoid duplicate static stroke */
+  border-radius: 9999px;
+  background: transparent; /* Removed solid border background */
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 320px;
+  max-width: 90vw;
+}
+
+/* Static mask container for the capsule border, clipping the rotating gradient to exactly 2px thickness */
+.glass-btn-border-wrap {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  padding: 2px; /* Increased stroke to 2px */
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 3; /* Position on top of the content layer for razor sharp visibility */
+  overflow: hidden;
+}
+
+/* The rotating conic gradient light ring, using continuous blue and pink to prevent transparent/dark gaps */
+.glass-btn-border-light {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotate(0deg);
+  background: conic-gradient(
+    from 0deg,
+    #00d2ff 0%,
+    #b026ff 25%,
+    #00d2ff 50%,
+    #b026ff 75%,
+    #00d2ff 100%
+  );
+  animation: border-ring-spin 3s linear infinite;
+  opacity: 0.6;
+  transition: opacity 0.4s ease, background 0.4s ease;
+}
+
+/* Speed up and brighten on hover, matching the sound button spin speed-up */
+.glass-btn-sound-styled:hover .glass-btn-border-light {
+  opacity: 1;
+  animation-duration: 1.8s;
+  background: conic-gradient(
+    from 0deg,
+    #00e5ff 0%,
+    #b026ff 25%,
+    #00e5ff 50%,
+    #b026ff 75%,
+    #00e5ff 100%
+  );
+}
+
+@keyframes border-ring-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.glass-btn-sound-styled:hover {
+  transform: translateY(-2.5px) scale(1.015);
+  box-shadow: 
+    0 15px 35px -10px rgba(250, 150, 50, 0.35),
+    inset 0 0 12px rgba(250, 180, 80, 0.08);
+}
+
+.glass-btn-sound-styled:active {
+  transform: translateY(0.5px) scale(0.985);
+}
+
+/* Glass background content overlay inside the animated border */
+.glass-btn-sound-content {
+  position: relative;
+  background: rgba(8, 8, 20, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.9rem clamp(1.2rem, 5vw, 2.8rem);
+  border-radius: 9999px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
+  transition: background-color 0.4s ease;
+  isolation: isolate; /* Create isolated context for the spotlight glow inside content to sit between bg and text */
+  overflow: hidden; /* Contains the spotlight glow exactly inside the capsule boundary so it does not spill out */
+}
+
+/* The tight golden hover spotlight ball that tracks the cursor, contained inside the glass layer to prevent diffusion */
+.glass-btn-sound-content::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* Matches the container size exactly to keep the glow inside the capsule */
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle 65px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 160, 40, 0.85) 0%,
+    rgba(255, 140, 30, 0.4) 35%,
+    rgba(255, 120, 20, 0.15) 60%,
+    rgba(255, 120, 20, 0) 80%
+  );
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1; /* Sit above the container background but behind the text */
+}
+
+.glass-btn-sound-styled:hover .glass-btn-sound-content::before {
+  opacity: 1;
+}
+
+.glass-btn-sound-styled:hover .glass-btn-sound-content {
+  background: rgba(14, 14, 32, 0.75);
+}
+
+.glass-btn-sound-text {
+  color: rgba(238, 241, 255, 0.88);
+  font-family: var(--font-sans), sans-serif;
+  font-size: clamp(0.64rem, 1.8vw, 0.76rem);
+  letter-spacing: clamp(0.18em, 0.5vw, 0.28em);
+  font-weight: 400;
+  text-transform: uppercase;
+  user-select: none;
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2; /* Positioned relative to stack above the spotlight glow ::before */
+}
+
+.glass-btn-sound-styled:hover .glass-btn-sound-text {
+  color: #fae0b4;
+  text-shadow: 0 0 8px rgba(250, 180, 80, 0.3);
+}
+
+
+

@@ -192,7 +192,7 @@ const SmokeyCursor = () => {
       gl.shaderSource(shader, shaderSource);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
+        console.warn(gl.getShaderInfoLog(shader));
       }
       return shader;
     };
@@ -206,7 +206,7 @@ const SmokeyCursor = () => {
       gl.attachShader(program, fragmentShader);
       gl.linkProgram(program);
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error(gl.getProgramInfoLog(program));
+        console.warn(gl.getProgramInfoLog(program));
       }
       return program;
     };
@@ -1193,7 +1193,7 @@ const SmokeyCursor = () => {
         setIsInitialized(true);
         return cleanup;
       } catch (error: any) {
-        console.error("Failed to initialize fluid simulation:", error);
+        console.warn("Failed to initialize fluid simulation:", error);
         setError(error.message);
         return null;
       }

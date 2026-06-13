@@ -10,7 +10,7 @@ import { scroll, smoothstep } from "@/lib/state";
  * a centred scroll cue beneath the monolith — composed like the dusk reference.
  * Reveals on load with GSAP, recedes as the descent begins.
  */
-export default function HeroOverlay() {
+export default function HeroOverlay({ isAboutRoute = false }: { isAboutRoute?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const reveal = useRef<HTMLDivElement>(null);
   const blurOverlay = useRef<HTMLDivElement>(null);
@@ -69,11 +69,13 @@ export default function HeroOverlay() {
       <div 
         ref={blurOverlay}
         className="pointer-events-none fixed inset-0 z-20 bg-[#0a0916]/10 backdrop-blur-[8px]" 
+        style={isAboutRoute ? { opacity: 0 } : undefined}
       />
 
       <div
         ref={root}
         className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center px-[6vw] py-[3.2vh] text-center"
+        style={isAboutRoute ? { opacity: 0, pointerEvents: "none" } : undefined}
       >
 
       {/* top bar */}
@@ -115,22 +117,22 @@ export default function HeroOverlay() {
           {/* headline — two centred lines, italic accent for character.
               masks carry bottom padding (with matching negative margin) so
               descenders like the g's are never clipped. */}
-          <h1 
-            className="font-display font-light leading-[1.06] tracking-[-0.015em] text-white text-[clamp(2.1rem,5.2vw,4.4rem)]"
-            style={{ textShadow: "0 12px 40px rgba(3, 3, 15, 0.9), 0 4px 16px rgba(3, 3, 15, 0.7), 0 0 60px rgba(3, 3, 15, 0.4)" }}
-          >
-            <span className="block overflow-visible pb-[0.18em] -mb-[0.16em]">
-              <span data-reveal className="inline-block px-2">
-                Making{" "}
-                <span className="ideas-grad italic font-normal">ideas</span>
+            <h1 
+              className="font-display font-light leading-[1.06] tracking-[-0.015em] text-white text-[clamp(2.1rem,5.2vw,4.4rem)]"
+              style={{ textShadow: "0 12px 40px rgba(3, 3, 15, 0.9), 0 4px 16px rgba(3, 3, 15, 0.7), 0 0 60px rgba(3, 3, 15, 0.4)" }}
+            >
+              <span className="block overflow-visible pb-[0.18em] -mb-[0.16em]">
+                <span data-reveal className="inline-block px-2">
+                  <span className="hero-glow-text">Making</span>{" "}
+                  <span className="ideas-grad italic font-normal">ideas</span>
+                </span>
               </span>
-            </span>
-            <span className="block overflow-visible pb-[0.18em] -mb-[0.12em]">
-              <span data-reveal className="inline-block px-2">
-                harder to ignore.
+              <span className="block overflow-visible pb-[0.18em] -mb-[0.12em]">
+                <span data-reveal className="inline-block px-2 hero-glow-text">
+                  harder to ignore.
+                </span>
               </span>
-            </span>
-          </h1>
+            </h1>
 
           {/* subline — glowing accent line above it, plus a soft shadow so it
               lifts off the bright image rather than blending in */}
@@ -155,21 +157,21 @@ export default function HeroOverlay() {
           className="font-sans text-[0.82rem] uppercase tracking-[0.38em] text-white/85"
           style={{ textShadow: "0 4px 14px rgba(3, 3, 15, 0.85), 0 0 8px rgba(3, 3, 15, 0.5)" }}
         >
-          Scroll to descend
+          Scroll to enter
         </span>
         <span className="scroll-line" />
       </footer>
-
-      {/* SVG liquid displacement filter */}
-      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true" style={{ visibility: "hidden" }}>
-        <defs>
-          <filter id="liquid-splash">
-            <feTurbulence id="liquid-turb" type="fractalNoise" baseFrequency="0.04 0.12" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </defs>
-      </svg>
     </div>
+
+    {/* SVG liquid displacement filter - placed outside of root so it stays active when root fades out */}
+    <svg className="absolute pointer-events-none" aria-hidden="true" style={{ width: 0, height: 0, opacity: 0, overflow: "hidden" }}>
+      <defs>
+        <filter id="liquid-splash">
+          <feTurbulence id="liquid-turb" type="fractalNoise" baseFrequency="0.04 0.12" numOctaves="3" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
     </>
   );
 }

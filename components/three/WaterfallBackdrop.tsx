@@ -200,8 +200,9 @@ export default function WaterfallBackdrop() {
     
     // Dynamically calculate the perfect scale for the current camera position
     const distance = Math.abs(-35 - state.camera.position.z);
-    const viewHeight = 2 * Math.tan((state.camera.fov * Math.PI) / 360) * distance;
-    const viewWidth = viewHeight * state.camera.aspect;
+    const cam = state.camera as any;
+    const viewHeight = 2 * Math.tan((cam.fov * Math.PI) / 360) * distance;
+    const viewWidth = viewHeight * cam.aspect;
     
     // We use Math.max to ensure it covers the screen (no side gaps)
     const scaleMultiplier = Math.max(viewWidth / 16, viewHeight / 9);
@@ -209,15 +210,21 @@ export default function WaterfallBackdrop() {
     const finalWidth = 16 * scaleMultiplier * 1.05; 
     const finalHeight = 9 * scaleMultiplier * 1.05;
 
+    // Dolly zoom factor: starts at 1.15x zoomed in, scales down to 1.0x (current settings) as we scroll
+    const zoomFactor = 1.0 + (1.0 - scroll.section2) * 0.15;
+
     // Align the bottom of the video to the bottom of the camera view
-    const baseYPos = state.camera.position.y + (finalHeight - viewHeight) / 2;
+    // At scroll.section2 = 0, the video is centered. As we scroll, it aligns to the bottom
+    // to reveal the water at the bottom, matching current layout settings when scrolling stops.
+    const alignmentFactor = scroll.section2;
+    const baseYPos = state.camera.position.y + ((finalHeight * zoomFactor - viewHeight) / 2) * alignmentFactor;
 
     // Pan / Tilt effect based on mouse movement
     const targetX = state.pointer.x * (viewWidth * 0.05); // Move horizontally by 5% of screen width
     const targetY = state.pointer.y * (viewHeight * 0.05); // Move vertically by 5% of screen height
 
     if (meshRef.current) {
-      meshRef.current.scale.set(finalWidth, finalHeight, 1);
+      meshRef.current.scale.set(finalWidth * zoomFactor, finalHeight * zoomFactor, 1);
       meshRef.current.position.x += (targetX - meshRef.current.position.x) * 0.05;
       meshRef.current.position.y += ((baseYPos + targetY) - meshRef.current.position.y) * 0.05;
     }

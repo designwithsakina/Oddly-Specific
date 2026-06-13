@@ -7,3 +7,5 @@ next-env.d.ts
 .DS_Store
 .env*.local
 /_frames
+/public/space_stars.mov
+/public/space_stars.mp4

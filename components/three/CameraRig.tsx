@@ -13,7 +13,7 @@ import { scroll, pointer, damp, lerp, smoothstep } from "@/lib/state";
  *                   perspective as the cursor moves, like looking through glass.
  */
 export default function CameraRig() {
-  const { camera } = useThree();
+  const { camera, scene } = useThree();
   const lookAt = useRef(new THREE.Vector3(0, 1.4, 0));
 
   useFrame((_, dt) => {
@@ -44,17 +44,35 @@ export default function CameraRig() {
       lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.6, 3, d);
 
     } else {
-      // SECTION 2 (WATERFALL)
-      // Camera is completely stationary in Z and Y. No zoom effects.
-      const s2 = smoothstep(0, 1, scroll.section2);
+      // SECTION 2 (WATERFALL) & SECTION 3 (UNDERWATER PROJECTS)
       baseZ = 4.5;
-      baseY = 1.15;
+      
+      const s3 = smoothstep(0.0, 0.3333, scroll.section3);
+      
+      // Plunge the camera from 1.15 to -6.5 as s3 goes 0 -> 1
+      baseY = lerp(1.15, -6.5, s3);
 
-      // cursor parallax (slightly subdued since we are deep in the scene)
+      // Pitch camera down during the plunge and level off at the bottom
+      // Using a parabolic pitch offset that peaks at s3 = 0.5
+      const pitchOffset = -2.5 * s3 * (1.0 - s3);
+      const targetLookY = lerp(1.15, -6.5, s3) + pitchOffset;
+
+      // Cursor parallax
       targetX = pointer.x * 0.8;
       targetY = baseY + pointer.y * 0.4;
-      lookTargetY = 1.15 + pointer.y * 0.3;
+      lookTargetY = targetLookY + pointer.y * 0.3;
       lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.8, 3, d);
+
+      // Update scene background and fog colors dynamically
+      if (scene.fog && (scene.fog as any).color) {
+        const cStart = new THREE.Color("#0a0916");
+        const cEnd = new THREE.Color("#040a1d");
+        cStart.lerp(cEnd, s3);
+        ;(scene.fog as any).color.copy(cStart);
+        if (scene.background && scene.background instanceof THREE.Color) {
+          scene.background.copy(cStart);
+        }
+      }
     }
 
     camera.position.x = damp(camera.position.x, targetX, 3, d);
@@ -63,7 +81,7 @@ export default function CameraRig() {
 
     // look toward the active subject
     lookAt.current.y = damp(lookAt.current.y, lookTargetY, 3, d);
-    lookAt.current.z = p <= 0.98 ? 0 : -100; // Look deep into the waterfall
+    lookAt.current.z = p <= 0.98 ? 0 : -100; // Look deep into the scene
     camera.lookAt(lookAt.current);
   });
 
