@@ -79,7 +79,7 @@ export default function Page({ isAboutRoute = false, isWorkRoute = false }: { is
 
           {/* MorphSection remains opacity-0 until scroll.hero hits the flash threshold,
               then it jumps to opacity-1 seamlessly while the flash is solid. */}
-          <MorphSection className="relative z-50 min-h-[520vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
+          <MorphSection className="relative z-50 min-h-[600vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
         </main>
       </SmoothScroll>
     </>

@@ -176,9 +176,9 @@ export default function GlassButterflyCursor() {
 
       // Show the butterfly and custom cursor when we scroll down into the Morph/About section
       // Transition starts at 2.0vh (200vh) and is fully active by 2.2vh (220vh)
-      // Never activate while the splash screen is active
+      // Never activate while the splash screen is active or on Section 3 (past 5.2vh)
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isActive = !isSplashActive && rawScroll > 2.0 * vh;
+      const isActive = !isSplashActive && rawScroll > 2.0 * vh && rawScroll < 5.2 * vh;
       const opacity = isActive ? Math.min(1.0, Math.max(0.0, (rawScroll - 2.0 * vh) / (0.2 * vh))) : 0;
 
       // Add or remove body class to hide standard cursor

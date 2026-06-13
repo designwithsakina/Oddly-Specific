@@ -22,7 +22,7 @@ export default function MorphSection({ children, className, isAboutRoute = false
         // We use scroll.section2 to trigger smooth opacity transition from 0.0 to 0.15 AFTER the morph
         // We also apply fadeOut as scroll.section3 starts to transition to Section 3
         const fadeIn = smoothstep(0.0, 0.15, scroll.section2);
-        const fadeOut = 1.0 - smoothstep(0.0, 0.3333, scroll.section3);
+        const fadeOut = 1.0 - smoothstep(0.0, 0.2, scroll.section3);
         const opacity = fadeIn * fadeOut;
 
         if (opacity > 0.01) {

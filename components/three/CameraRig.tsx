@@ -47,7 +47,7 @@ export default function CameraRig() {
       // SECTION 2 (WATERFALL) & SECTION 3 (UNDERWATER PROJECTS)
       baseZ = 4.5;
       
-      const s3 = smoothstep(0.0, 0.3333, scroll.section3);
+      const s3 = smoothstep(0.0, 0.2, scroll.section3);
       
       // Plunge the camera from 1.15 to -6.5 as s3 goes 0 -> 1
       baseY = lerp(1.15, -6.5, s3);

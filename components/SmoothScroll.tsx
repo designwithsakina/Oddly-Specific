@@ -63,9 +63,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       const section2Span = 3.0 * vh;
       scroll.section2 = clamp01((lenis.scroll - section2Start) / section2Span);
 
-      // section 3 starts at 5.2vh and lasts for 1.2vh (120vh)
+      // section 3 starts at 5.2vh and lasts for 2.0vh (200vh)
       const section3Start = section2Start + section2Span;
-      const section3Span = 1.2 * vh;
+      const section3Span = 2.0 * vh;
       scroll.section3 = clamp01((lenis.scroll - section3Start) / section3Span);
 
       // Save scroll state and position in sessionStorage to detect refresh on scrolled sections
