@@ -82,7 +82,14 @@ export default function WaterfallBackdrop() {
       if (materialRef.current) {
         materialRef.current.uniforms.uOpacity.value = 0;
       }
+      if (meshRef.current) {
+        meshRef.current.visible = false;
+      }
       return;
+    } else {
+      if (meshRef.current) {
+        meshRef.current.visible = true;
+      }
     }
 
     if (isNaN(vidA.duration) || isNaN(vidB.duration) || vidA.duration === 0) return;
@@ -150,6 +157,10 @@ export default function WaterfallBackdrop() {
       const fadeIn = smoothstep(0.8, 1.0, scroll.hero);
       const fadeOut = 1.0 - smoothstep(0.0, 0.2, scroll.section3);
       materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut;
+      
+      // Check if both videos are ready to render to prevent a white fallback texture in WebGL
+      const ready = (vidA.readyState >= 2 && vidB.readyState >= 2) ? 1.0 : 0.0;
+      materialRef.current.uniforms.uVideoReady.value = ready;
     }
   });
 
@@ -162,6 +173,7 @@ export default function WaterfallBackdrop() {
         uTexB: { value: textures.texB },
         uMix: { value: 0.0 },
         uOpacity: { value: 0.0 },
+        uVideoReady: { value: 0.0 },
       },
       vertexShader: /* glsl */ `
         varying vec2 vUv;
@@ -175,17 +187,22 @@ export default function WaterfallBackdrop() {
         uniform sampler2D uTexB;
         uniform float uMix;
         uniform float uOpacity;
+        uniform float uVideoReady;
         varying vec2 vUv;
         void main() {
+          vec3 bgCol = vec3(0.039, 0.035, 0.086); // #0a0916 (dark solid background)
+          
           vec4 colA = texture2D(uTexA, vUv);
           vec4 colB = texture2D(uTexB, vUv);
           vec4 video = mix(colA, colB, uMix);
           
+          vec3 finalRgb = mix(bgCol, video.rgb, uVideoReady);
+          
           // Dark deep blue overlay at ~20% opacity
           vec3 tint = vec3(0.016, 0.016, 0.07); // #040412
-          video.rgb = mix(video.rgb, tint, 0.20);
+          finalRgb = mix(finalRgb, tint, 0.20);
           
-          gl_FragColor = vec4(video.rgb, uOpacity);
+          gl_FragColor = vec4(finalRgb, uOpacity);
         }
       `,
       transparent: true,
@@ -199,6 +216,14 @@ export default function WaterfallBackdrop() {
 
   useFrame((state) => {
     if (!materialRef.current || !activeRef.current) return;
+    
+    // Hide mesh when out of active scroll range
+    if (scroll.hero < 0.01 || scroll.section3 >= 0.2) {
+      if (meshRef.current) meshRef.current.visible = false;
+      return;
+    } else {
+      if (meshRef.current) meshRef.current.visible = true;
+    }
     
     // Dynamically calculate the perfect scale for the current camera position
     const distance = Math.abs(-35 - state.camera.position.z);
