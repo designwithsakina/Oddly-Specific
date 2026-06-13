@@ -44,16 +44,25 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
 
   return (
     <>
-      {/* Dynamic plain dark blue background */}
+      {/* Dynamic background with underwater video */}
       <div
         ref={bgRef}
         id="projects-section-bg"
-        className="fixed inset-0 z-45 bg-[#040a1d] pointer-events-none"
+        className="fixed inset-0 z-45 bg-[#040a1d] pointer-events-none overflow-hidden"
         style={{
           opacity: isWorkRoute ? 1 : 0,
           display: isWorkRoute ? "block" : "none",
         }}
-      />
+      >
+        <video
+          src="/underwater.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
 
       {/* Swish pan motion blur overlay */}
       <div
