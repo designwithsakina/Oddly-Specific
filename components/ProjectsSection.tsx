@@ -29,11 +29,11 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
           // Parabolic curve peaking at t = 0.5 (progress = 0.1)
           const blurVal = 4.0 * t * (1.0 - t) * 20.0;
           blurRef.current.style.backdropFilter = `blur(${blurVal}px)`;
-          blurRef.current.style.WebkitBackdropFilter = `blur(${blurVal}px)`;
+          blurRef.current.style.setProperty("-webkit-backdrop-filter", `blur(${blurVal}px)`);
           blurRef.current.style.display = "block";
         } else {
           blurRef.current.style.backdropFilter = "blur(0px)";
-          blurRef.current.style.WebkitBackdropFilter = "blur(0px)";
+          blurRef.current.style.setProperty("-webkit-backdrop-filter", "blur(0px)");
           blurRef.current.style.display = "none";
         }
       }
@@ -89,22 +89,34 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
         }
       }
 
-      // 4. Parallax Pan/Tilt effect on mouse hover + Progressive Unblur
+      // 4. Parallax Pan/Tilt effect on mouse hover + Progressive Unblur + Zoom
       if (v1 && v2) {
-        // Shift background video in opposite direction of mouse
-        const xShift = -pointer.x * 24.0;
-        const yShift = -pointer.y * 24.0;
-        const xRot = -pointer.y * 2.5; // Pitch tilt
-        const yRot = pointer.x * 2.5;  // Yaw tilt
+        // Calculate scroll zoom: from 1.0 at progress <= 0.4, up to 1.25 at progress = 1.0
+        let scrollZoom = 1.0;
+        let shiftFactor = 0.0; // scale parallax shifts with zoom to avoid exposed edges
         
-        const transformStr = `translate3d(${xShift}px, ${yShift}px, 0) rotateX(${xRot}deg) rotateY(${yRot}deg) scale(1.08)`;
+        if (progress > 0.4) {
+          const tZoom = Math.min(Math.max((progress - 0.4) / 0.6, 0.0), 1.0);
+          // Smooth zoom curve
+          const easedT = tZoom * tZoom * (3 - 2 * tZoom);
+          scrollZoom = 1.0 + easedT * 0.25; // zooms from 1.0 to 1.25
+          shiftFactor = easedT; // shifts grow from 0.0 to 1.0
+        }
+
+        // Shift background video in opposite direction of mouse (scaled by shiftFactor)
+        const xShift = -pointer.x * 24.0 * shiftFactor;
+        const yShift = -pointer.y * 24.0 * shiftFactor;
+        const xRot = -pointer.y * 2.5 * shiftFactor; // Pitch tilt
+        const yRot = pointer.x * 2.5 * shiftFactor;  // Yaw tilt
+        
+        const transformStr = `translate3d(${xShift}px, ${yShift}px, 0) rotateX(${xRot}deg) rotateY(${yRot}deg) scale(${scrollZoom})`;
         v1.style.transform = transformStr;
         v2.style.transform = transformStr;
 
-        // Progressive Unblur: murkiness fades from 8px at progress 0.2 down to 0px at progress 0.8
+        // Progressive Unblur: murkiness fades from 8px at progress 0.2 down to 0px at progress 0.4
         let vBlur = 8.0;
         if (progress >= 0.2) {
-          const tBlur = Math.min(Math.max((progress - 0.2) / 0.6, 0.0), 1.0);
+          const tBlur = Math.min(Math.max((progress - 0.2) / 0.2, 0.0), 1.0);
           vBlur = (1.0 - tBlur) * 8.0;
         }
         
@@ -128,8 +140,9 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
       <div
         ref={bgRef}
         id="projects-section-bg"
-        className="fixed inset-0 z-45 bg-[#040a1d] pointer-events-none overflow-hidden"
+        className="fixed inset-0 bg-[#040a1d] pointer-events-none overflow-hidden"
         style={{
+          zIndex: 2,
           opacity: isWorkRoute ? 1 : 0,
           display: isWorkRoute ? "block" : "none",
           perspective: "1000px", // Enables 3D rotation tilt
@@ -151,6 +164,14 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0 }}
+        />
+        {/* Deep blue color overlay to match the waterfall backdrop's tint */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundColor: "#040412",
+            opacity: 0.20,
+          }}
         />
       </div>
 

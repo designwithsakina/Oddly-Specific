@@ -75,8 +75,8 @@ export default function WaterfallBackdrop() {
     const vidA = videos.videoA;
     const vidB = videos.videoB;
 
-    // Optimization: Pause the waterfall videos completely when invisible at the top
-    if (scroll.hero < 0.01) {
+    // Optimization: Pause the waterfall videos completely when invisible at the top or bottom
+    if (scroll.hero < 0.01 || scroll.section3 >= 0.2) {
       if (!vidA.paused) vidA.pause();
       if (!vidB.paused) vidB.pause();
       if (materialRef.current) {
@@ -146,8 +146,10 @@ export default function WaterfallBackdrop() {
 
     if (materialRef.current) {
       materialRef.current.uniforms.uMix.value = THREE.MathUtils.clamp(mixVal, 0, 1);
-      // Fade in seamlessly at the end of the Hero scroll
-      materialRef.current.uniforms.uOpacity.value = smoothstep(0.8, 1.0, scroll.hero);
+      // Fade in seamlessly at the end of the Hero scroll, and fade out as Section 3 starts
+      const fadeIn = smoothstep(0.8, 1.0, scroll.hero);
+      const fadeOut = 1.0 - smoothstep(0.0, 0.2, scroll.section3);
+      materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut;
     }
   });
 
@@ -225,8 +227,10 @@ export default function WaterfallBackdrop() {
 
     if (meshRef.current) {
       meshRef.current.scale.set(finalWidth * zoomFactor, finalHeight * zoomFactor, 1);
-      meshRef.current.position.x += (targetX - meshRef.current.position.x) * 0.05;
-      meshRef.current.position.y += ((baseYPos + targetY) - meshRef.current.position.y) * 0.05;
+      // Remove double-damping lag to keep the backdrop perfectly locked to the camera view
+      // and prevent visual gaps/splits during scroll jumps or fast scrolls.
+      meshRef.current.position.x = targetX;
+      meshRef.current.position.y = baseYPos + targetY;
     }
   });
 

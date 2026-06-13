@@ -63,15 +63,15 @@ export default function CameraRig() {
       lookTargetY = targetLookY + pointer.y * 0.3;
       lookAt.current.x = damp(lookAt.current.x, pointer.x * 0.8, 3, d);
 
-      // Update scene background and fog colors dynamically
+      // Update scene fog dynamically — reduce density in Section 3 so cards
+      // render cleanly against the transparent canvas (HTML underwater bg shows through)
       if (scene.fog && (scene.fog as any).color) {
         const cStart = new THREE.Color("#0a0916");
         const cEnd = new THREE.Color("#040a1d");
         cStart.lerp(cEnd, s3);
-        ;(scene.fog as any).color.copy(cStart);
-        if (scene.background && scene.background instanceof THREE.Color) {
-          scene.background.copy(cStart);
-        }
+        (scene.fog as any).color.copy(cStart);
+        // Fade fog density from 0.03 to 0.0 as camera plunges into section 3
+        (scene.fog as THREE.FogExp2).density = lerp(0.03, 0.0, s3);
       }
     }
 

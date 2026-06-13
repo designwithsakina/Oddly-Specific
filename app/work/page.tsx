@@ -1,7 +1,7 @@
 "use client";
 
-import Page from "../page";
+import { PortfolioPage } from "@/components/PortfolioPage";
 
 export default function WorkPage() {
-  return <Page isWorkRoute={true} />;
+  return <PortfolioPage isWorkRoute={true} />;
 }

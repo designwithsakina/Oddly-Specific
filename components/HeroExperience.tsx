@@ -8,6 +8,7 @@ import Backdrop from "./three/Backdrop";
 import Monolith from "./three/Monolith";
 import Atmosphere from "./three/Atmosphere";
 import WaterfallBackdrop from "./three/WaterfallBackdrop";
+import WorkSpiral from "./three/WorkSpiral";
 
 /**
  * Fixed full-viewport WebGL stage for the hero "descent". A tall scroll spacer
@@ -15,29 +16,38 @@ import WaterfallBackdrop from "./three/WaterfallBackdrop";
  */
 export default function HeroExperience() {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none">
-      <Canvas
-        dpr={[1, 2]}
-        gl={{ antialias: true, powerPreference: "high-performance" }}
-        camera={{ fov: 42, near: 0.1, far: 140, position: [0, 2.4, 15] }}
-        onCreated={({ gl, scene }) => {
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
-          scene.fog = new THREE.FogExp2("#0a0916", 0.03);
-        }}
-      >
-        <color attach="background" args={["#0a0916"]} />
-        <ambientLight intensity={0.5} color="#5a6bdc" />
+    <>
+      {/* Solid background for Section 1 & 2 */}
+      <div className="fixed inset-0 bg-[#0a0916] pointer-events-none" style={{ zIndex: 0 }} />
 
-        <Suspense fallback={null}>
-          <Backdrop />
-          <Monolith />
-          <Atmosphere />
-          <WaterfallBackdrop />
-        </Suspense>
+      {/* 3D Canvas stage (transparent background, overlays on top of video backgrounds) */}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+        <Canvas
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+          camera={{ fov: 42, near: 0.1, far: 140, position: [0, 2.4, 15] }}
+          onCreated={({ gl, scene }) => {
+            gl.toneMapping = THREE.ACESFilmicToneMapping;
+            gl.toneMappingExposure = 1.05;
+            scene.fog = new THREE.FogExp2("#0a0916", 0.03);
+          }}
+        >
+          <ambientLight intensity={0.5} color="#5a6bdc" />
 
-        <CameraRig />
-      </Canvas>
-    </div>
+          <Suspense fallback={null}>
+            <Backdrop />
+            <Monolith />
+            <Atmosphere />
+            <WaterfallBackdrop />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <WorkSpiral />
+          </Suspense>
+
+          <CameraRig />
+        </Canvas>
+      </div>
+    </>
   );
 }

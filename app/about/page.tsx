@@ -1,7 +1,7 @@
 "use client";
 
-import Page from "../page";
+import { PortfolioPage } from "@/components/PortfolioPage";
 
 export default function AboutPage() {
-  return <Page isAboutRoute={true} />;
+  return <PortfolioPage isAboutRoute={true} />;
 }
