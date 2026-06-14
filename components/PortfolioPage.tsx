@@ -19,6 +19,8 @@ const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
 export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false }: { isAboutRoute?: boolean; isWorkRoute?: boolean }) {
   const [showSplash, setShowSplash] = useState(!isAboutRoute && !isWorkRoute);
   const [webglSupported, setWebglSupported] = useState(true);
+  const [video1, setVideo1] = useState<HTMLVideoElement | null>(null);
+  const [video2, setVideo2] = useState<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     // Check if the user was already scrolled past the home/splash section before reload
@@ -64,10 +66,10 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false }: { i
       
       <SmoothScroll>
         {/* fixed WebGL stage + typographic overlay */}
-        {webglSupported && !isAboutRoute && !isWorkRoute && <HeroExperience />}
+        {webglSupported && !isAboutRoute && !isWorkRoute && <HeroExperience video1={video1} video2={video2} />}
         {webglSupported && !isAboutRoute && !isWorkRoute && <SmokeyCursor />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute} />
-        <ProjectsSection isWorkRoute={isWorkRoute} />
+        <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">

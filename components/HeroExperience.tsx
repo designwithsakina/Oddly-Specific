@@ -9,12 +9,18 @@ import Monolith from "./three/Monolith";
 import Atmosphere from "./three/Atmosphere";
 import WaterfallBackdrop from "./three/WaterfallBackdrop";
 import WorkSpiral from "./three/WorkSpiral";
+import UnderwaterRipple from "./three/UnderwaterRipple";
+
+interface HeroExperienceProps {
+  video1: HTMLVideoElement | null;
+  video2: HTMLVideoElement | null;
+}
 
 /**
  * Fixed full-viewport WebGL stage for the hero "descent". A tall scroll spacer
  * in the page drives `scroll.hero`, which the rig + monolith read each frame.
  */
-export default function HeroExperience() {
+export default function HeroExperience({ video1, video2 }: HeroExperienceProps) {
   return (
     <>
       {/* Solid background for Section 1 & 2 */}
@@ -43,6 +49,10 @@ export default function HeroExperience() {
 
           <Suspense fallback={null}>
             <WorkSpiral />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <UnderwaterRipple video1={video1} video2={video2} activeThreshold={3.0 / 15.0} />
           </Suspense>
 
           <CameraRig />

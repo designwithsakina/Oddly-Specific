@@ -136,7 +136,13 @@ function ViewAllScramble({ isHovered }: { isHovered: boolean }) {
   return <span>{displayText}</span>;
 }
 
-export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?: boolean }) {
+interface ProjectsSectionProps {
+  isWorkRoute?: boolean;
+  setVideo1: (el: HTMLVideoElement | null) => void;
+  setVideo2: (el: HTMLVideoElement | null) => void;
+}
+
+export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVideo2 }: ProjectsSectionProps) {
   const bgRef = useRef<HTMLDivElement>(null);
   const blurRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -550,6 +556,11 @@ export default function ProjectsSection({ isWorkRoute = false }: { isWorkRoute?:
     }, 120); // short transition time
     return () => clearTimeout(timer);
   }, [hoveredIdx]);
+
+  useEffect(() => {
+    if (vRef1.current) setVideo1(vRef1.current);
+    if (vRef2.current) setVideo2(vRef2.current);
+  }, [setVideo1, setVideo2]);
 
   return (
     <>
