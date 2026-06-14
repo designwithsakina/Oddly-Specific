@@ -15,7 +15,7 @@ interface Particle {
 
 export default function GlassButterflyCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [butterflyImage, setButterflyImage] = useState<HTMLCanvasElement | null>(null);
+  const [butterflyImage, setButterflyImage] = useState<HTMLImageElement | null>(null);
   
   // Physics / position tracking
   const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
@@ -27,98 +27,12 @@ export default function GlassButterflyCursor() {
   const isHoveringRef = useRef(false);
   const wasActiveRef = useRef(false);
 
-  // Load and process image to make background transparent
+  // Load image
   useEffect(() => {
     const img = new Image();
-    img.src = "/butterfly.png?v=" + Date.now(); // Cache buster to force browser image reload
+    img.src = "/butterfly.png?v=" + Date.now(); // Cache buster
     img.onload = () => {
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = img.width;
-      tempCanvas.height = img.height;
-      const tempCtx = tempCanvas.getContext("2d");
-      if (!tempCtx) return;
-
-      tempCtx.drawImage(img, 0, 0);
-      const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
-      const data = imgData.data;
-
-      // Smooth luma keying with noise gate to clean black background,
-      // and a gamma curve (< 1.0) to preserve dark glass facets inside the wings
-      const threshold = 32; // pixels with luma below this start fading out
-      const fadeRange = 26;   // fade range to 0 (fades out between 6 and 32)
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        // Coordinate in the 2D grid
-        const x = (i / 4) % img.width;
-        const y = Math.floor((i / 4) / img.width);
-        
-        // Distance to the nearest image boundary
-        const distToLeft = x;
-        const distToRight = img.width - x;
-        const distToTop = y;
-        const distToBottom = img.height - y;
-        const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
-
-        // Luminance calculation
-        const luma = r * 0.299 + g * 0.587 + b * 0.114;
-
-        // 1. Strict border fade: force everything at the outer 25px of the image to fade out to 0.
-        // This is 100% safe because the butterfly is centered with at least 35-40px padding.
-        let borderFactor = 1.0;
-        const strictBorder = 25;
-        if (minDist < strictBorder) {
-          const tBorder = minDist / strictBorder;
-          borderFactor = tBorder * tBorder * (3.0 - 2.0 * tBorder); // smoothstep
-        }
-
-        // 2. Semantic edge vignette:
-        // Diffuse and blur background light rays (luma < 55) using a wide 80px fade,
-        // but keep bright glass highlights (luma > 85) 100% sharp and solid.
-        let semanticFactor = 1.0;
-        let fadeWidth = 0;
-        if (luma < 55) {
-          fadeWidth = 80;
-        } else if (luma < 85) {
-          const tLuma = (luma - 55) / 30; // 0..1
-          fadeWidth = 80 * (1.0 - tLuma);
-        }
-        
-        if (fadeWidth > 0 && minDist < fadeWidth) {
-          const tEdge = minDist / fadeWidth;
-          semanticFactor = tEdge * tEdge * (3.0 - 2.0 * tEdge); // smoothstep
-        }
-
-        // Combine both vignette factors
-        const edgeFactor = borderFactor * semanticFactor;
-
-        let alphaFactor = 1.0;
-        if (luma < threshold - fadeRange) {
-          alphaFactor = 0.0;
-        } else if (luma < threshold) {
-          alphaFactor = (luma - (threshold - fadeRange)) / fadeRange;
-        }
-
-        // Boost shadows/midtones using gamma = 0.65 to keep glass wings solid and smooth,
-        // and scale alpha to make highlights pop.
-        const glassAlpha = Math.pow(luma / 255.0, 0.65) * 1.5;
-        const finalAlpha = Math.min(255, Math.floor(alphaFactor * glassAlpha * 255 * edgeFactor));
-        
-        data[i + 3] = finalAlpha;
-
-        if (finalAlpha > 0) {
-          // Un-premultiply: divide pixel color channels by alpha to remove dark halo
-          const aNorm = Math.max(0.12, finalAlpha / 255.0);
-          data[i] = Math.min(255, Math.floor(r / aNorm));
-          data[i + 1] = Math.min(255, Math.floor(g / aNorm));
-          data[i + 2] = Math.min(255, Math.floor(b / aNorm));
-        }
-      }
-      tempCtx.putImageData(imgData, 0, 0);
-      setButterflyImage(tempCanvas);
+      setButterflyImage(img);
     };
   }, []);
 
