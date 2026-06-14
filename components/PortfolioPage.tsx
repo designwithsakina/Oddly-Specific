@@ -10,6 +10,7 @@ import MorphSection from "@/components/MorphSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import SoundToggle from "@/components/SoundToggle";
 import SplashScreen from "@/components/SplashScreen";
+import MantaRayCursor from "@/components/MantaRayCursor";
 
 // WebGL can't server-render — load the stage on the client only.
 const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
@@ -66,10 +67,11 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false }: { i
       
       <SmoothScroll>
         {/* fixed WebGL stage + typographic overlay */}
-        {webglSupported && !isAboutRoute && !isWorkRoute && <HeroExperience video1={video1} video2={video2} />}
-        {webglSupported && !isAboutRoute && !isWorkRoute && <SmokeyCursor />}
+        {webglSupported && <HeroExperience video1={video1} video2={video2} />}
+        {webglSupported && <SmokeyCursor />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute} />
         <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
+        <MantaRayCursor isWorkRoute={isWorkRoute} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">

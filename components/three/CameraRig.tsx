@@ -83,7 +83,7 @@ export default function CameraRig() {
     lookAt.current.y = damp(lookAt.current.y, lookTargetY, 3, d);
     lookAt.current.z = p <= 0.98 ? 0 : -100; // Look deep into the scene
     camera.lookAt(lookAt.current);
-  });
+  }, -2);
 
   return null;
 }

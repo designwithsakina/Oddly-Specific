@@ -25,6 +25,7 @@ export default function GlassButterflyCursor() {
   const particlesRef = useRef<Particle[]>([]);
   const historyRef = useRef<{ x: number; y: number; angle: number }[]>([]);
   const isHoveringRef = useRef(false);
+  const wasActiveRef = useRef(false);
 
   // Load and process image to make background transparent
   useEffect(() => {
@@ -181,11 +182,17 @@ export default function GlassButterflyCursor() {
       const isActive = !isSplashActive && rawScroll > 2.0 * vh && rawScroll < 5.2 * vh;
       const opacity = isActive ? Math.min(1.0, Math.max(0.0, (rawScroll - 2.0 * vh) / (0.2 * vh))) : 0;
 
-      // Add or remove body class to hide standard cursor
-      if (isActive && isHoveringRef.current) {
-        document.body.classList.add("hide-cursor");
-      } else {
+      // Add or remove body class to hide standard cursor only on transition states
+      if (isActive) {
+        if (isHoveringRef.current) {
+          document.body.classList.add("hide-cursor");
+        } else {
+          document.body.classList.remove("hide-cursor");
+        }
+        wasActiveRef.current = true;
+      } else if (wasActiveRef.current) {
         document.body.classList.remove("hide-cursor");
+        wasActiveRef.current = false;
       }
 
       // 1. Lerp cursor position for buttery organic movement
