@@ -38,6 +38,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       wheelMultiplier: 0.9,
       touchMultiplier: 1.2,
     });
+    scroll.lenisInstance = lenis;
 
     // Manually restore scroll position if we reloaded on the About page or Work page
     if (wasWorkScrolled) {
@@ -100,11 +101,19 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     onScroll();
 
     let raf = 0;
+    let isSplashStopped = false;
     const loop = (time: number) => {
-      if (document.documentElement.classList.contains("splash-active")) {
-        lenis.stop();
+      const isSplash = document.documentElement.classList.contains("splash-active");
+      if (isSplash) {
+        if (!isSplashStopped) {
+          lenis.stop();
+          isSplashStopped = true;
+        }
       } else {
-        lenis.start();
+        if (isSplashStopped) {
+          lenis.start();
+          isSplashStopped = false;
+        }
       }
       lenis.raf(time);
       raf = requestAnimationFrame(loop);

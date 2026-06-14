@@ -22,7 +22,7 @@ export default function MorphSection({ children, className, isAboutRoute = false
         // We use scroll.section2 to trigger smooth opacity transition from 0.0 to 0.15 AFTER the morph
         // We also apply fadeOut as scroll.section3 starts to transition to Section 3
         const fadeIn = smoothstep(0.0, 0.15, scroll.section2);
-        const fadeOut = 1.0 - smoothstep(0.0, 0.2, scroll.section3);
+        const fadeOut = 1.0 - smoothstep(0.0, 0.07, scroll.section3);
         const opacity = fadeIn * fadeOut;
 
         if (opacity > 0.01) {
@@ -73,12 +73,14 @@ export default function MorphSection({ children, className, isAboutRoute = false
         {/* Dolly Zoom typography wrapper */}
         <div ref={textContainerRef} className="flex flex-col items-center justify-center w-full origin-center">
           <div className="mb-2 w-full overflow-visible py-4 flex items-center justify-center">
-            {/* Sync background bloom and beveled header */}
-            <div className="bevel-sweep-container pointer-events-auto">
-              <h2 className="bevel-sweep-header font-display text-[clamp(1.5rem,2.5vw,2.5rem)] font-light leading-tight cursor-default" data-text="For Those Who Look Closer">
-                For Those Who Look Closer
-              </h2>
-            </div>
+            <h2 
+              className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight cursor-default pointer-events-auto"
+              style={{
+                filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))"
+              }}
+            >
+              For Those Who Look Closer
+            </h2>
           </div>
           
           {/* Wrapper for the body paragraphs to control blur and opacity */}

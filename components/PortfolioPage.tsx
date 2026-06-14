@@ -64,8 +64,8 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false }: { i
       
       <SmoothScroll>
         {/* fixed WebGL stage + typographic overlay */}
-        {webglSupported && <HeroExperience />}
-        {webglSupported && <SmokeyCursor />}
+        {webglSupported && !isAboutRoute && !isWorkRoute && <HeroExperience />}
+        {webglSupported && !isAboutRoute && !isWorkRoute && <SmokeyCursor />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute} />
         <ProjectsSection isWorkRoute={isWorkRoute} />
         {!showSplash && <SoundToggle />}

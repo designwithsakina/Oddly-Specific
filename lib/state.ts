@@ -30,6 +30,8 @@ export const scroll = {
   section3: 0,
   /** raw pixels scrolled. */
   raw: initialRaw,
+  /** global Lenis instance. */
+  lenisInstance: null as any,
 };
 
 export const pointer = {

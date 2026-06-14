@@ -21,7 +21,7 @@ export default function HeroExperience() {
       <div className="fixed inset-0 bg-[#0a0916] pointer-events-none" style={{ zIndex: 0 }} />
 
       {/* 3D Canvas stage (transparent background, overlays on top of video backgrounds) */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+      <div id="webgl-canvas-container" className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, willChange: "filter, transform", transform: "translate3d(0, 0, 0)" }}>
         <Canvas
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}

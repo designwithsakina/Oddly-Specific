@@ -117,6 +117,14 @@ html.lenis body {
   filter: drop-shadow(0 0 3px rgba(255,255,255,0.15));
 }
 
+/* Specific override for the waterfall section header to have a lighter static blue base */
+.hero-glow-text-waterfall {
+  background-image: 
+    radial-gradient(circle at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.72) 20%, rgba(255,255,255,0) 65%),
+    radial-gradient(circle at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.65) 20%, rgba(255,255,255,0) 65%),
+    linear-gradient(to right, rgba(205, 228, 255, 0.8), rgba(205, 228, 255, 0.8)) !important;
+}
+
 @keyframes ballShimmer {
   0% {
     background-position: -120px center, calc(100% + 160px) center, 0 0;
@@ -414,143 +422,6 @@ html.lenis body {
   cursor: none !important;
 }
 
-/* ---- Iridescent Rainbow Glass Bevel Header ---- */
-.bevel-sweep-container {
-  position: relative;
-  display: inline-block;
-  overflow: visible;
-  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.bevel-sweep-container:hover {
-  filter: url(#liquid-splash);
-}
-
-.bevel-sweep-header {
-  position: relative;
-  z-index: 10;
-  
-  /* Flowing pastel iridescent rainbow gradient inside the text */
-  background: linear-gradient(
-    90deg,
-    #b5e2ff 0%,
-    #ffd3ec 20%,
-    #ffe8ad 40%,
-    #c5ffed 60%,
-    #d2baff 80%,
-    #b5e2ff 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  
-  /* Bevel Glass Outline */
-  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.65);
-  
-  /* Stacked highlights + multi-colored drop glows */
-  text-shadow:
-    -1px -1px 0px rgba(255, 255, 255, 0.8),
-    1px 1px 0px rgba(0, 0, 0, 0.75),
-    0 0 8px rgba(181, 226, 255, 0.4),
-    0 0 18px rgba(255, 211, 236, 0.3);
-
-  animation: iridescent-flow 6s linear infinite, text-glow-orbit 8s ease-in-out infinite;
-}
-
-/* Foreground shimmer overlay for extra glass shine */
-.bevel-sweep-header::after {
-  content: "For Those Who Look Closer";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    transparent 35%,
-    rgba(255, 255, 255, 0.1) 42%,
-    rgba(255, 255, 255, 0.85) 50%,
-    rgba(255, 255, 255, 0.1) 58%,
-    transparent 65%,
-    transparent 100%
-  );
-  background-size: 280% 280%;
-  
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  
-  animation: liquid-sweep 8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes iridescent-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-}
-
-@keyframes liquid-sweep {
-  0% {
-    background-position: 0% 0%;
-  }
-  50% {
-    background-position: 100% 100%;
-  }
-  100% {
-    background-position: 0% 0%;
-  }
-}
-
-@keyframes glow-rotate-liquid {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg) scale(0.95);
-  }
-  50% {
-    transform: translate(-50%, -50%) rotate(180deg) scale(1.15);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg) scale(0.95);
-  }
-}
-
-@keyframes text-glow-orbit {
-  0%, 100% {
-    text-shadow:
-      -1px -1px 0px rgba(255, 255, 255, 0.8),
-      1px 1px 0px rgba(0, 0, 0, 0.75),
-      -2px 0px 8px rgba(181, 226, 255, 0.45),
-      2px 0px 16px rgba(255, 211, 236, 0.3);
-  }
-  25% {
-    text-shadow:
-      -1px -1px 0px rgba(255, 255, 255, 0.8),
-      1px 1px 0px rgba(0, 0, 0, 0.75),
-      0px -2px 8px rgba(181, 226, 255, 0.45),
-      0px 2px 16px rgba(255, 211, 236, 0.3);
-  }
-  50% {
-    text-shadow:
-      -1px -1px 0px rgba(255, 255, 255, 0.8),
-      1px 1px 0px rgba(0, 0, 0, 0.75),
-      2px 0px 8px rgba(181, 226, 255, 0.45),
-      -2px 0px 16px rgba(255, 211, 236, 0.3);
-  }
-  75% {
-    text-shadow:
-      -1px -1px 0px rgba(255, 255, 255, 0.8),
-      1px 1px 0px rgba(0, 0, 0, 0.75),
-      0px 2px 8px rgba(181, 226, 255, 0.45),
-      0px -2px 16px rgba(255, 211, 236, 0.3);
-  }
-}
 
 /* ---- Holographic Highlight for Splash Screen ---- */
 .holo-highlight {
@@ -663,9 +534,14 @@ html.lenis body {
 /* Glass background content overlay inside the animated border */
 .glass-btn-sound-content {
   position: relative;
-  background: rgba(8, 8, 20, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: linear-gradient(
+    135deg, 
+    rgba(0, 180, 255, 0.12) 0%, 
+    rgba(10, 25, 45, 0.22) 100%
+  ); /* Translucent brand blue/cyan glass tint to mask browser backdrop-filter render lag */
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  will-change: opacity; /* Keep GPU layer active only for opacity transitions, preventing backdrop-filter breakage */
   padding: 0.9rem clamp(1.2rem, 5vw, 2.8rem);
   border-radius: 9999px;
   width: 100%;
@@ -674,8 +550,12 @@ html.lenis body {
   align-items: center;
   justify-content: center;
   z-index: 2;
-  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
-  transition: background-color 0.4s ease;
+  box-shadow: 
+    inset 0 2px 2px rgba(255, 255, 255, 0.35),       /* Distinct top highlight bevel */
+    inset 1px 1px 1px rgba(255, 255, 255, 0.15),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3),           /* Bottom shadow indentation */
+    inset 0 0 12px rgba(0, 210, 255, 0.08);           /* Inner cyan glow */
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
   isolation: isolate; /* Create isolated context for the spotlight glow inside content to sit between bg and text */
   overflow: hidden; /* Contains the spotlight glow exactly inside the capsule boundary so it does not spill out */
 }
@@ -705,7 +585,16 @@ html.lenis body {
 }
 
 .glass-btn-sound-styled:hover .glass-btn-sound-content {
-  background: rgba(14, 14, 32, 0.75);
+  background: linear-gradient(
+    135deg, 
+    rgba(0, 180, 255, 0.18) 0%, 
+    rgba(10, 25, 45, 0.30) 100%
+  );
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.45),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.25),
+    inset 0 0 16px rgba(0, 210, 255, 0.15);
 }
 
 .glass-btn-sound-text {
@@ -728,6 +617,96 @@ html.lenis body {
   color: #fae0b4;
   text-shadow: 0 0 8px rgba(250, 180, 80, 0.3);
 }
+
+/* ---- Overrides for the floating View All Work button in ProjectsSection ---- */
+#view-all-work-btn .glass-btn-sound-styled {
+  width: auto;
+  max-width: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform; /* Hardware rendering warm-up to prevent initial fade flicker */
+}
+
+#view-all-work-btn .glass-btn-sound-styled:hover {
+  transform: none; /* Keep button completely static, no moving/scaling on hover */
+  box-shadow: 
+    0 12px 28px rgba(0, 210, 255, 0.25),
+    0 0 15px rgba(0, 210, 255, 0.15),
+    inset 0 0 12px rgba(255, 255, 255, 0.1);
+}
+
+#view-all-work-btn .glass-btn-sound-styled:active {
+  transform: scale(0.97); /* Press scale feedback */
+}
+
+/* Blue & White rotating border conic gradient (replacing blue & purple) */
+#view-all-work-btn .glass-btn-border-light {
+  background: conic-gradient(
+    from 0deg,
+    #00d2ff 0%,
+    #ffffff 25%,
+    #00d2ff 50%,
+    #ffffff 75%,
+    #00d2ff 100%
+  );
+  opacity: 0.75;
+}
+
+#view-all-work-btn .glass-btn-sound-styled:hover .glass-btn-border-light {
+  background: conic-gradient(
+    from 0deg,
+    #00e5ff 0%,
+    #ffffff 25%,
+    #00e5ff 50%,
+    #ffffff 75%,
+    #00e5ff 100%
+  );
+  opacity: 1;
+}
+
+/* 3D Liquid Glass Effect content overlay (matching the upload button style with brand colors) */
+#view-all-work-btn .glass-btn-sound-content {
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1.6rem;
+  background: linear-gradient(
+    135deg, 
+    rgba(0, 180, 255, 0.12) 0%, 
+    rgba(10, 25, 45, 0.22) 100%
+  ); /* More opaque brand blue/cyan glass tint to mask browser backdrop-filter render lag */
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  will-change: opacity; /* Keep GPU layer active only for opacity transitions, preventing backdrop-filter breakage */
+  
+  /* Multiple inset shadows for a thick, tactile 3D liquid glass bevel */
+  box-shadow: 
+    inset 0 2px 2px rgba(255, 255, 255, 0.35),       /* Distinct top highlight bevel */
+    inset 1px 1px 1px rgba(255, 255, 255, 0.15),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3),           /* Bottom shadow indentation */
+    inset 0 0 12px rgba(0, 210, 255, 0.08);           /* Inner cyan glow */
+    
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+#view-all-work-btn .glass-btn-sound-styled:hover .glass-btn-sound-content {
+  background: linear-gradient(
+    135deg, 
+    rgba(0, 180, 255, 0.18) 0%, 
+    rgba(10, 25, 45, 0.30) 100%
+  );
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.45),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.25),
+    inset 0 0 16px rgba(0, 210, 255, 0.15);
+}
+
+/* Lock text container width to prevent button shaking during scramble */
+#view-all-work-btn .glass-btn-sound-text {
+  width: 15.5em;
+  justify-content: center;
+  white-space: nowrap;
+}
+
 
 
 

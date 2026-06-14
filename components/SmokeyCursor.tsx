@@ -30,20 +30,10 @@ const SmokeyCursor = () => {
   };
 
   useEffect(() => {
-    // --- Scroll Sync Opacity Logic ---
     let raf = 0;
-    const tick = () => {
-      if (containerRef.current) {
-        // Fade out perfectly synced with the blur overlay (0.4 -> 0.58)
-        const blurFade = 1 - smoothstep(0.4, 0.58, scroll.hero);
-        containerRef.current.style.opacity = String(blurFade);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
 
     const canvas = canvasRef.current;
-    if (!canvas) return () => cancelAnimationFrame(raf);
+    if (!canvas) return;
 
     let gl: WebGL2RenderingContext | WebGLRenderingContext | null = null;
     let ext: any;
@@ -1125,6 +1115,10 @@ const SmokeyCursor = () => {
     };
 
     const updateFrame = () => {
+      if (scroll.hero >= 0.58) {
+        animationIdRef.current = null;
+        return;
+      }
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1181,6 +1175,22 @@ const SmokeyCursor = () => {
       };
     };
 
+    const tick = () => {
+      const isVisible = scroll.hero < 0.58;
+      if (containerRef.current) {
+        const blurFade = 1 - smoothstep(0.4, 0.58, scroll.hero);
+        containerRef.current.style.opacity = String(blurFade);
+        containerRef.current.style.display = isVisible ? "block" : "none";
+      }
+
+      if (isVisible && !animationIdRef.current) {
+        lastUpdateTime = Date.now();
+        updateFrame();
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
     const init = () => {
       try {
         initializeWebGL();
@@ -1190,6 +1200,7 @@ const SmokeyCursor = () => {
         initFramebuffers();
         const cleanup = setupEventListeners();
         updateFrame();
+        tick();
         setIsInitialized(true);
         return cleanup;
       } catch (error: any) {

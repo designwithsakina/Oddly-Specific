@@ -278,7 +278,7 @@ const ScrambleText: React.FC<ScrambleTextProps> = ({ triggerText, targetText, is
   useEffect(() => {
     const from = displayText;
     const to = resolveText;
-    const duration = 25;
+    const duration = 45; // Increased duration to slow down scramble speed
     const queue = [];
     
     for (let i = 0; i < Math.max(from.length, to.length); i++) {
@@ -448,15 +448,15 @@ export default function SplashScreen({ onEnter }: SplashScreenProps) {
         {/* Typography Group (Eyebrow + Headline) */}
         <div className="flex flex-col items-center gap-6 max-w-[90vw] md:max-w-[850px]">
           {/* Eyebrow in Inter */}
-          <p className="font-sans text-[clamp(0.65rem,0.9vw,0.85rem)] font-light uppercase tracking-[0.45em] text-[#bcd0ff]/70 leading-relaxed max-w-none mx-auto whitespace-nowrap">
+          <p className="font-sans text-[clamp(0.52rem,0.7vw,0.72rem)] font-light uppercase tracking-[0.45em] text-[#bcd0ff]/70 leading-relaxed max-w-none mx-auto whitespace-nowrap">
             A Place for Details, Stories, and The Occasional Surprise.
           </p>
 
           {/* Headline in Serif (Fraunces) */}
-          <h1 className="font-display font-light text-[clamp(1.1rem,2.1vw,1.85rem)] leading-[1.65] text-[#eef1ff] tracking-wide">
-            You don't <span className="holo-highlight italic font-normal">have</span> to interact with everything.
+          <h1 className="font-display font-light text-[clamp(1.3rem,2.2vw,2.05rem)] leading-[1.65] tracking-wide">
+            <span className="hero-glow-text">You don't</span> <span className="holo-highlight italic font-normal">have</span> <span className="hero-glow-text">to interact with everything.</span>
             <br />
-            But you <span className="holo-highlight italic font-normal">might</span> want to.
+            <span className="hero-glow-text">But you</span> <span className="holo-highlight italic font-normal">might</span> <span className="hero-glow-text">want to.</span>
           </h1>
         </div>
 

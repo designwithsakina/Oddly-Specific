@@ -218,9 +218,15 @@ function SpiralCard({
       onPointerOver={(e) => {
         e.stopPropagation();
         setHoveredIndex(index);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("work-project-hover", { detail: index }));
+        }
       }}
       onPointerOut={(e) => {
         setHoveredIndex(null);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("work-project-hover", { detail: null }));
+        }
       }}
     >
       <planeGeometry args={[1.15, 0.72, 16, 16]} />

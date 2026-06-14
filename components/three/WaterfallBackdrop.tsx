@@ -76,7 +76,7 @@ export default function WaterfallBackdrop() {
     const vidB = videos.videoB;
 
     // Optimization: Pause the waterfall videos completely when invisible at the top or bottom
-    if (scroll.hero < 0.01 || scroll.section3 >= 0.2) {
+    if (scroll.hero < 0.01 || scroll.section3 >= 2.0 / 15.0) {
       if (!vidA.paused) vidA.pause();
       if (!vidB.paused) vidB.pause();
       if (materialRef.current) {
@@ -155,11 +155,11 @@ export default function WaterfallBackdrop() {
       materialRef.current.uniforms.uMix.value = THREE.MathUtils.clamp(mixVal, 0, 1);
       // Fade in seamlessly at the end of the Hero scroll, and fade out as Section 3 starts
       const fadeIn = smoothstep(0.8, 1.0, scroll.hero);
-      const fadeOut = 1.0 - smoothstep(0.0, 0.2, scroll.section3);
+      const fadeOut = 1.0 - smoothstep(0.0, 2.0 / 15.0, scroll.section3);
       materialRef.current.uniforms.uOpacity.value = fadeIn * fadeOut;
       
-      // Check if both videos are ready to render to prevent a white fallback texture in WebGL
-      const ready = (vidA.readyState >= 2 && vidB.readyState >= 2) ? 1.0 : 0.0;
+      // Check if the active video is ready to render to prevent a white fallback texture in WebGL
+      const ready = (activeRef.current === "A" && vidA.readyState >= 2) || (activeRef.current === "B" && vidB.readyState >= 2) ? 1.0 : 0.0;
       materialRef.current.uniforms.uVideoReady.value = ready;
     }
   });
@@ -218,7 +218,7 @@ export default function WaterfallBackdrop() {
     if (!materialRef.current || !activeRef.current) return;
     
     // Hide mesh when out of active scroll range
-    if (scroll.hero < 0.01 || scroll.section3 >= 0.2) {
+    if (scroll.hero < 0.01 || scroll.section3 >= 2.0 / 15.0) {
       if (meshRef.current) meshRef.current.visible = false;
       return;
     } else {
@@ -252,10 +252,10 @@ export default function WaterfallBackdrop() {
 
     if (meshRef.current) {
       meshRef.current.scale.set(finalWidth * zoomFactor, finalHeight * zoomFactor, 1);
-      // Remove double-damping lag to keep the backdrop perfectly locked to the camera view
-      // and prevent visual gaps/splits during scroll jumps or fast scrolls.
-      meshRef.current.position.x = targetX;
-      meshRef.current.position.y = baseYPos + targetY;
+      // Match camera Y and X directly, but slide Y upwards as the plunge transition progresses
+      const p = smoothstep(0.0, 2.0 / 15.0, scroll.section3);
+      meshRef.current.position.y = state.camera.position.y + p * 32.0 + targetY;
+      meshRef.current.position.x = state.camera.position.x + targetX;
     }
   });
 
