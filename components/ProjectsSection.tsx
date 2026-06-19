@@ -178,7 +178,27 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const currentScroll = scroll.raw;
       
       let initialStep = 0;
-      if (currentScroll >= section3Start + 11.0 * vh - 20) {
+      if (currentScroll >= section3Start + 19.0 * vh - 20) {
+        initialStep = 15;
+      } else if (currentScroll >= section3Start + 18.0 * vh - 20) {
+        initialStep = 14;
+      } else if (currentScroll >= section3Start + 17.0 * vh - 20) {
+        initialStep = 13;
+      } else if (currentScroll >= section3Start + 15.9 * vh - 20) {
+        initialStep = 12;
+      } else if (currentScroll >= section3Start + 15.2 * vh - 20) {
+        initialStep = 11;
+      } else if (currentScroll >= section3Start + 14.5 * vh - 20) {
+        initialStep = 10;
+      } else if (currentScroll >= section3Start + 13.8 * vh - 20) {
+        initialStep = 9;
+      } else if (currentScroll >= section3Start + 13.1 * vh - 20) {
+        initialStep = 8;
+      } else if (currentScroll >= section3Start + 12.4 * vh - 20) {
+        initialStep = 7;
+      } else if (currentScroll >= section3Start + 11.7 * vh - 20) {
+        initialStep = 6;
+      } else if (currentScroll >= section3Start + 11.0 * vh - 20) {
         initialStep = 5;
       } else if (currentScroll >= section3Start + 5.0 * vh - 20) {
         initialStep = 4;
@@ -208,7 +228,17 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         section3Start + 3.0 * vh,
         section3Start + 4.0 * vh,
         section3Start + 5.0 * vh,
-        section3Start + 11.0 * vh
+        section3Start + 11.0 * vh, // Step 5: start of manual project snaps
+        section3Start + 11.7 * vh, // Step 6
+        section3Start + 12.4 * vh, // Step 7
+        section3Start + 13.1 * vh, // Step 8
+        section3Start + 13.8 * vh, // Step 9
+        section3Start + 14.5 * vh, // Step 10
+        section3Start + 15.2 * vh, // Step 11
+        section3Start + 15.9 * vh, // Step 12: final project card snap
+        section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
+        section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services text visible)
+        section3Start + 19.0 * vh  // Step 15: 24.2 * vh (Services text invisible)
       ];
 
       const duration = targetStep === 1 ? 1.5 : 1.0;
@@ -242,19 +272,19 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 11.0 * vh;
+      const maxSnapScroll = section3Start + 19.0 * vh;
 
       const isScrollingDown = e.deltaY > 0;
 
-      // Snapping down: intercept if we are at/near Section 3 start or inside it, and not yet at Step 5
-      if (isScrollingDown && activeStepRef.current < 5) {
+      // Snapping down: intercept if we are at/near Section 3 start or inside it, and not yet at Step 15
+      if (isScrollingDown && activeStepRef.current < 15) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
           triggerStepTransition(activeStepRef.current + 1);
         }
       } 
-      // Snapping up: intercept if we are inside Section 3 (below Step 5)
+      // Snapping up: intercept if we are inside Section 3/4 (below Step 15)
       else if (!isScrollingDown && activeStepRef.current > 0) {
         if (currentScroll <= maxSnapScroll + 20) {
           e.preventDefault();
@@ -280,7 +310,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 11.0 * vh;
+      const maxSnapScroll = section3Start + 19.0 * vh;
 
       const touchEnd = e.touches[0].clientY;
       const deltaY = touchStart - touchEnd;
@@ -288,7 +318,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
 
       if (Math.abs(deltaY) > 10) {
         // Snapping down
-        if (isScrollingDown && activeStepRef.current < 5) {
+        if (isScrollingDown && activeStepRef.current < 15) {
           if (currentScroll >= section3Start - 80) {
             e.preventDefault();
             e.stopPropagation();
@@ -320,12 +350,12 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 11.0 * vh;
+      const maxSnapScroll = section3Start + 19.0 * vh;
 
       const isDownKey = e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ";
       const isUpKey = e.key === "ArrowUp" || e.key === "PageUp";
 
-      if (isDownKey && activeStepRef.current < 5) {
+      if (isDownKey && activeStepRef.current < 15) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
@@ -357,7 +387,27 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       if (!isAnimatingRef.current) {
         const currentScroll = scroll.raw;
         let currentStep = 0;
-        if (currentScroll >= section3Start + 11.0 * vh - 20) {
+        if (currentScroll >= section3Start + 19.0 * vh - 20) {
+          currentStep = 15;
+        } else if (currentScroll >= section3Start + 18.0 * vh - 20) {
+          currentStep = 14;
+        } else if (currentScroll >= section3Start + 17.0 * vh - 20) {
+          currentStep = 13;
+        } else if (currentScroll >= section3Start + 15.9 * vh - 20) {
+          currentStep = 12;
+        } else if (currentScroll >= section3Start + 15.2 * vh - 20) {
+          currentStep = 11;
+        } else if (currentScroll >= section3Start + 14.5 * vh - 20) {
+          currentStep = 10;
+        } else if (currentScroll >= section3Start + 13.8 * vh - 20) {
+          currentStep = 9;
+        } else if (currentScroll >= section3Start + 13.1 * vh - 20) {
+          currentStep = 8;
+        } else if (currentScroll >= section3Start + 12.4 * vh - 20) {
+          currentStep = 7;
+        } else if (currentScroll >= section3Start + 11.7 * vh - 20) {
+          currentStep = 6;
+        } else if (currentScroll >= section3Start + 11.0 * vh - 20) {
           currentStep = 5;
         } else if (currentScroll >= section3Start + 5.0 * vh - 20) {
           currentStep = 4;
@@ -371,17 +421,26 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         activeStepRef.current = currentStep;
       }
 
+      let exitOpacity = 1.0;
+      let exitZoomFactor = 1.0;
+      if (progress > 15.9 / 17.0) {
+        const tExit = Math.min(Math.max((progress - 15.9 / 17.0) / (1.1 / 17.0), 0.0), 1.0);
+        exitOpacity = 1.0 - smoothstep(0.0, 1.0, tExit);
+        exitZoomFactor = 1.0 + tExit * 0.28; // zooms up from 1.25 to 1.6
+      }
+
       // 1. Background opacity transition (transition completes at the end of the plunge)
       if (bgRef.current) {
-        const opacity = smoothstep(0.0, 2.0 / 15.0, progress);
+        const opacityPlunge = smoothstep(0.0, 2.0 / 17.0, progress);
+        const opacity = opacityPlunge * exitOpacity;
         bgRef.current.style.opacity = String(opacity);
         bgRef.current.style.display = opacity > 0.01 ? "block" : "none";
       }
 
       // 2. Swish pan backdrop-blur transition (transient blur peaks midway through the plunge)
       if (blurRef.current) {
-        if (progress > 0.0 && progress < 2.0 / 15.0) {
-          const t = progress / (2.0 / 15.0);
+        if (progress > 0.0 && progress < 2.0 / 17.0) {
+          const t = progress / (2.0 / 17.0);
           // Parabolic curve peaking in the middle of the plunge
           const blurVal = 4.0 * t * (1.0 - t) * 20.0;
           blurRef.current.style.backdropFilter = `blur(${blurVal}px)`;
@@ -397,70 +456,82 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       // 3. Underwater video loop crossfade logic (seamless crossfade near video end)
       const v1 = vRef1.current;
       const v2 = vRef2.current;
-      if (v1 && v2 && v1.duration && v2.duration) {
-        const crossfadeTime = 1.5;
-        const dur1 = v1.duration;
-        const dur2 = v2.duration;
+      const inSection3 = progress > 0.005 && progress < 0.995;
 
-        if (activeRef.current === 1) {
-          const t1 = v1.currentTime;
-          if (t1 >= dur1 - crossfadeTime) {
-            if (v2.paused) {
-              v2.currentTime = 0;
-              v2.play().catch(() => {});
+      if (v1 && v2) {
+        if (!inSection3) {
+          if (!v1.paused) v1.pause();
+          if (!v2.paused) v2.pause();
+        } else if (v1.duration && v2.duration) {
+          const crossfadeTime = 1.5;
+          const dur1 = v1.duration;
+          const dur2 = v2.duration;
+
+          if (activeRef.current === 1) {
+            if (v1.paused) v1.play().catch(() => {});
+            const t1 = v1.currentTime;
+            if (t1 >= dur1 - crossfadeTime) {
+              if (v2.paused) {
+                v2.currentTime = 0;
+                v2.play().catch(() => {});
+              }
+              const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
+              v1.style.opacity = String(1.0 - ratio);
+              v2.style.opacity = String(ratio);
+            } else {
+              v1.style.opacity = "1";
+              v2.style.opacity = "0";
+              if (!v2.paused) v2.pause();
             }
-            const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
-            v1.style.opacity = String(1.0 - ratio);
-            v2.style.opacity = String(ratio);
-          } else {
-            v1.style.opacity = "1";
-            v2.style.opacity = "0";
-            if (!v2.paused) v2.pause();
-          }
 
-          if (t1 >= dur1 - 0.1) {
-            activeRef.current = 2;
-          }
-        } else {
-          const t2 = v2.currentTime;
-          if (t2 >= dur2 - crossfadeTime) {
-            if (v1.paused) {
-              v1.currentTime = 0;
-              v1.play().catch(() => {});
+            if (t1 >= dur1 - 0.1) {
+              activeRef.current = 2;
             }
-            const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
-            v1.style.opacity = String(ratio);
-            v2.style.opacity = String(1.0 - ratio);
           } else {
-            v1.style.opacity = "0";
-            v2.style.opacity = "1";
-            if (!v1.paused) v1.pause();
-          }
+            if (v2.paused) v2.play().catch(() => {});
+            const t2 = v2.currentTime;
+            if (t2 >= dur2 - crossfadeTime) {
+              if (v1.paused) {
+                v1.currentTime = 0;
+                v1.play().catch(() => {});
+              }
+              const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
+              v1.style.opacity = String(ratio);
+              v2.style.opacity = String(1.0 - ratio);
+            } else {
+              v1.style.opacity = "0";
+              v2.style.opacity = "1";
+              if (!v1.paused) v1.pause();
+            }
 
-          if (t2 >= dur2 - 0.1) {
-            activeRef.current = 1;
+            if (t2 >= dur2 - 0.1) {
+              activeRef.current = 1;
+            }
           }
         }
       }
 
       // 4. Parallax Pan/Tilt effect on mouse hover + Progressive Unblur + Zoom + Swish Pan
       if (v1 && v2) {
-        // Calculate transition progress p for the plunge duration (0.0 to 2.0 / 15.0)
-        const plungeProgress = clamp01(progress / (2.0 / 15.0));
+        // Calculate transition progress p for the plunge duration (0.0 to 2.0 / 17.0)
+        const plungeProgress = clamp01(progress / (2.0 / 17.0));
 
         // Calculate vertical whip pan shift (Y translation)
         const yWhipPx = (1.0 - plungeProgress) * vh;
 
-        // Calculate scroll zoom: starts after unblur (progress > 3.0 / 15.0), up to 1.25 at progress = 1.0
+        // Calculate scroll zoom: starts after unblur (progress > 3.0 / 17.0), up to 1.25 at progress = 15.9/17.0
         let scrollZoom = 1.0;
         let shiftFactor = 0.0;
         
-        if (progress > 3.0 / 15.0) {
-          const tZoom = Math.min(Math.max((progress - 3.0 / 15.0) / (12.0 / 15.0), 0.0), 1.0);
+        if (progress > 3.0 / 17.0) {
+          const tZoom = Math.min(Math.max((progress - 3.0 / 17.0) / (12.9 / 17.0), 0.0), 1.0);
           const easedT = tZoom * tZoom * (3 - 2 * tZoom);
           scrollZoom = 1.0 + easedT * 0.25;
           shiftFactor = easedT;
         }
+
+        // Apply exit zoom factor
+        scrollZoom *= exitZoomFactor;
 
         // Shift background video in opposite direction of mouse
         const xShift = -pointer.x * 24.0 * shiftFactor;
@@ -472,10 +543,10 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         v1.style.transform = transformStr;
         v2.style.transform = transformStr;
 
-        // Snappy 1-scroll unblur: stays blurred at 12px during plunge, unblurs to 0px from progress 2/15 to 3/15
+        // Snappy 1-scroll unblur: stays blurred at 12px during plunge, unblurs to 0px from progress 2/17 to 3/17
         let vBlur = 12.0;
-        if (progress >= 2.0 / 15.0) {
-          const tBlur = Math.min(Math.max((progress - 2.0 / 15.0) / (1.0 / 15.0), 0.0), 1.0);
+        if (progress >= 2.0 / 17.0) {
+          const tBlur = Math.min(Math.max((progress - 2.0 / 17.0) / (1.0 / 17.0), 0.0), 1.0);
           vBlur = (1.0 - tBlur) * 12.0;
         }
 
@@ -503,13 +574,13 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
 
       // 5. Editorial Intro Overlay fade-in/out
       if (introRef.current) {
-        // Fade in: from Step 2 to Step 3 (progress 3.0 / 15.0 to 4.0 / 15.0)
-        // Fade out: from Step 3 to Step 4 (progress 4.0 / 15.0 to 5.0 / 15.0)
+        // Fade in: from Step 2 to Step 3 (progress 3.0 / 17.0 to 4.0 / 17.0)
+        // Fade out: from Step 3 to Step 4 (progress 4.0 / 17.0 to 5.0 / 17.0)
         let introOpacity = 0;
-        if (progress >= 3.0 / 15.0 && progress <= 4.0 / 15.0) {
-          introOpacity = smoothstep(3.0 / 15.0, 4.0 / 15.0, progress);
-        } else if (progress > 4.0 / 15.0 && progress <= 5.0 / 15.0) {
-          introOpacity = 1.0 - smoothstep(4.0 / 15.0, 5.0 / 15.0, progress);
+        if (progress >= 3.0 / 17.0 && progress <= 4.0 / 17.0) {
+          introOpacity = smoothstep(3.0 / 17.0, 4.0 / 17.0, progress);
+        } else if (progress > 4.0 / 17.0 && progress <= 5.0 / 17.0) {
+          introOpacity = 1.0 - smoothstep(4.0 / 17.0, 5.0 / 17.0, progress);
         }
 
         introRef.current.style.opacity = String(introOpacity);
@@ -519,14 +590,16 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       // 6. View All Work button fade-in
       if (btnRef.current) {
         // Toggle opacity & pointer-events at the end of the scroll snap (using CSS transitions for unified fade)
-        const showBtn = progress >= 10.8 / 15.0;
-        btnRef.current.style.opacity = showBtn ? "1" : "0";
-        btnRef.current.style.pointerEvents = showBtn ? "auto" : "none";
+        const showBtn = progress >= 15.0 / 17.0;
+        const btnOpacity = showBtn ? exitOpacity : 0;
+        btnRef.current.style.opacity = String(btnOpacity);
+        btnRef.current.style.pointerEvents = (showBtn && btnOpacity > 0.01) ? "auto" : "none";
       }
 
       // 7. Editorial active card overlay fade-in (synchronized with cards: 10th to 11th scrolls)
       if (overlayRef.current) {
-        const overlayOpacity = smoothstep(10.0 / 15.0, 11.0 / 15.0, progress);
+        const overlayOpacityPlunge = smoothstep(10.0 / 17.0, 11.0 / 17.0, progress);
+        const overlayOpacity = overlayOpacityPlunge * exitOpacity;
         overlayRef.current.style.opacity = String(overlayOpacity);
         overlayRef.current.style.display = overlayOpacity > 0.01 ? "block" : "none";
       }

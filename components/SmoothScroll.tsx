@@ -16,14 +16,16 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   useEffect(() => {
     const isAboutPath = typeof window !== "undefined" && window.location.pathname === "/about";
     const isWorkPath = typeof window !== "undefined" && window.location.pathname === "/work";
+    const isServicesPath = typeof window !== "undefined" && window.location.pathname === "/services";
 
     const wasScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasScrolled") === "true" || isAboutPath);
     const wasWorkScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasWorkScrolled") === "true" || isWorkPath);
+    const wasServicesScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasServicesScrolled") === "true" || isServicesPath);
 
     // Configure manual scroll restoration to prevent browser default scroll jumps
     if (typeof window !== "undefined") {
       window.history.scrollRestoration = "manual";
-      if (!wasScrolled && !wasWorkScrolled) {
+      if (!wasScrolled && !wasWorkScrolled && !wasServicesScrolled) {
         window.scrollTo(0, 0);
       }
     }
@@ -40,8 +42,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     });
     scroll.lenisInstance = lenis;
 
-    // Manually restore scroll position if we reloaded on the About page or Work page
-    if (wasWorkScrolled) {
+    // Manually restore scroll position if we reloaded on the About page, Work page, or Services page
+    if (wasServicesScrolled) {
+      const savedPos = parseFloat(sessionStorage.getItem("servicesScrollPosition") || "0");
+      const vh = window.innerHeight;
+      const targetPos = savedPos > 0 ? savedPos : vh * 22.2;
+      lenis.scrollTo(targetPos, { immediate: true });
+    } else if (wasWorkScrolled) {
       const savedPos = parseFloat(sessionStorage.getItem("workScrollPosition") || "0");
       const vh = window.innerHeight;
       const targetPos = savedPos > 0 ? savedPos : vh * 5.6;
@@ -64,35 +71,56 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       const section2Span = 3.0 * vh;
       scroll.section2 = clamp01((lenis.scroll - section2Start) / section2Span);
 
-      // section 3 starts at 5.2vh and lasts for 15.0vh (1500vh)
+      // section 3 starts at 5.2vh and lasts for 17.0vh (1700vh)
       const section3Start = section2Start + section2Span;
-      const section3Span = 15.0 * vh;
+      const section3Span = 17.0 * vh;
       scroll.section3 = clamp01((lenis.scroll - section3Start) / section3Span);
+
+      // section 4 starts at 20.2vh and lasts for 5.0vh (500vh)
+      const section4Start = section3Start + section3Span;
+      const section4Span = 5.0 * vh;
+      scroll.section4 = clamp01((lenis.scroll - section4Start) / section4Span);
 
       // Save scroll state and position in sessionStorage to detect refresh on scrolled sections
       // Also update the browser URL dynamically as the user scrolls between sections.
       if (typeof window !== "undefined") {
-        if (lenis.scroll >= section3Start) {
+        if (lenis.scroll >= section4Start) {
+          sessionStorage.setItem("wasServicesScrolled", "true");
+          sessionStorage.setItem("servicesScrollPosition", String(lenis.scroll));
+          sessionStorage.setItem("wasWorkScrolled", "false");
+          sessionStorage.setItem("wasScrolled", "false");
+          if (window.location.pathname !== "/services") {
+            window.history.replaceState(null, "", "/services");
+            window.dispatchEvent(new CustomEvent("section-changed", { detail: "services" }));
+          }
+        } else if (lenis.scroll >= section3Start) {
           sessionStorage.setItem("wasWorkScrolled", "true");
           sessionStorage.setItem("workScrollPosition", String(lenis.scroll));
+          sessionStorage.setItem("wasServicesScrolled", "false");
           sessionStorage.setItem("wasScrolled", "false");
           if (window.location.pathname !== "/work") {
             window.history.replaceState(null, "", "/work");
+            window.dispatchEvent(new CustomEvent("section-changed", { detail: "work" }));
           }
         } else if (lenis.scroll >= section2Start) {
           sessionStorage.setItem("wasScrolled", "true");
           sessionStorage.setItem("scrollPosition", String(lenis.scroll));
           sessionStorage.setItem("wasWorkScrolled", "false");
+          sessionStorage.setItem("wasServicesScrolled", "false");
           if (window.location.pathname !== "/about") {
             window.history.replaceState(null, "", "/about");
+            window.dispatchEvent(new CustomEvent("section-changed", { detail: "about" }));
           }
         } else {
           sessionStorage.setItem("wasScrolled", "false");
           sessionStorage.setItem("wasWorkScrolled", "false");
+          sessionStorage.setItem("wasServicesScrolled", "false");
           sessionStorage.removeItem("scrollPosition");
           sessionStorage.removeItem("workScrollPosition");
+          sessionStorage.removeItem("servicesScrollPosition");
           if (window.location.pathname !== "/") {
             window.history.replaceState(null, "", "/");
+            window.dispatchEvent(new CustomEvent("section-changed", { detail: "home" }));
           }
         }
       }

@@ -265,18 +265,29 @@ export default function UnderwaterRipple({ video1, video2, activeThreshold = 0.0
 
     // Read scroll progress & calculate values matching ProjectsSection.tsx exactly
     const progress = scroll.section3;
-    const plungeProgress = clamp01(progress / (2.0 / 15.0));
+    const plungeProgress = clamp01(progress / (2.0 / 17.0));
     const yWhipPx = (1.0 - plungeProgress) * size.height;
 
     let scrollZoom = 1.0;
     let shiftFactor = 0.0;
     
-    if (progress > 3.0 / 15.0) {
-      const tZoom = Math.min(Math.max((progress - 3.0 / 15.0) / (12.0 / 15.0), 0.0), 1.0);
+    if (progress > 3.0 / 17.0) {
+      const tZoom = Math.min(Math.max((progress - 3.0 / 17.0) / (12.9 / 17.0), 0.0), 1.0);
       const easedT = tZoom * tZoom * (3 - 2 * tZoom);
       scrollZoom = 1.0 + easedT * 0.25;
       shiftFactor = easedT;
     }
+
+    let exitOpacity = 1.0;
+    let exitZoomFactor = 1.0;
+    if (progress > 15.9 / 17.0) {
+      const tExit = THREE.MathUtils.clamp((progress - 15.9 / 17.0) / (1.1 / 17.0), 0, 1);
+      exitOpacity = 1.0 - tExit * tExit * (3 - 2 * tExit);
+      exitZoomFactor = 1.0 + tExit * 0.28;
+    }
+
+    // Apply exit zoom factor
+    scrollZoom *= exitZoomFactor;
 
     // Interactive mouse parallax shifts in pixels
     const xShift = -pointer.x * 24.0 * shiftFactor;
@@ -310,9 +321,9 @@ export default function UnderwaterRipple({ video1, video2, activeThreshold = 0.0
     meshRef.current.quaternion.copy(cam.quaternion).multiply(localQuat);
 
     // Opacity gating — safe here, no render target changes
-    const active = scroll.section3 > activeThreshold;
+    const active = progress > activeThreshold && progress < 0.995;
     displayMat.uniforms.uOpacity.value = active
-      ? THREE.MathUtils.clamp((scroll.section3 - activeThreshold) * 1.5, 0, 1)
+      ? THREE.MathUtils.clamp((progress - activeThreshold) * 1.5, 0, 1) * exitOpacity
       : 0.0;
   });
 
@@ -320,7 +331,7 @@ export default function UnderwaterRipple({ video1, video2, activeThreshold = 0.0
   // This guarantees the render target is null again before R3F touches the main scene,
   // preventing the GL state race that was blanking all 3D assets.
   useFrame(() => {
-    const active = scroll.section3 > activeThreshold;
+    const active = scroll.section3 > activeThreshold && scroll.section3 < 0.995;
     if (!active) return;
 
     const v1 = video1, v2 = video2;

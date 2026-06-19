@@ -131,18 +131,21 @@ function SpiralCard({
       // Map scroll offset to raw scroll pixels to ensure uniform speed across screen sizes
       const vhPx = typeof window !== "undefined" ? window.innerHeight : 900;
       const section3Start = 5.2 * vhPx;
-      const section3Span = 15.0 * vhPx;
-      const activeStart = section3Start + (10.0 / 15.0) * section3Span;
-      const activeEnd = section3Start + 1.0 * section3Span;
+      const section3Span = 17.0 * vhPx;
       
       const rawScroll = scroll.raw;
-      const activeScrollPixels = Math.min(Math.max(rawScroll - activeStart, 0.0), activeEnd - activeStart);
+      const step5Pos = section3Start + 11.0 * vhPx;
       
-      // Every 130px of scroll shifts the spiral by exactly 1 card spacing (0.14 parameter span)
-      const pixelsPerCard = 130;
+      // Calculate normalized progress through the 7 project snap targets (0 to 7)
+      let tProject = 0;
+      if (rawScroll > step5Pos) {
+        tProject = Math.min((rawScroll - step5Pos) / (0.7 * vhPx), 7.0);
+      }
+      
+      // Every step of snap scroll shifts the spiral by exactly 1 card spacing (0.14 parameter span)
       const span = 1.4;
       const cardSpacing = span / totalCards; // 0.14
-      const targetScrollOffset = (activeScrollPixels / pixelsPerCard) * cardSpacing;
+      const targetScrollOffset = tProject * cardSpacing;
       scrollRotVal.current = damp(scrollRotVal.current, targetScrollOffset, 4.5, d);
 
       // Wrap parameter between -0.2 and 1.2 (span of 1.4)
@@ -173,7 +176,17 @@ function SpiralCard({
 
       // Micro float drift
       const floatDrift = Math.sin(state.clock.getElapsedTime() * 0.5 + index * 0.7) * 0.04;
-      meshRef.current.position.set(x, y + floatDrift, z);
+      
+      // --- WHOOSH EXIT LOGIC ---
+      let exitZoom = 1.0;
+      let zOffset = 0.0;
+      if (scroll.section3 > 15.9 / 17.0) {
+        const tExit = Math.min(Math.max((scroll.section3 - 15.9 / 17.0) / (1.1 / 17.0), 0.0), 1.0);
+        exitZoom = 1.0 + tExit * 1.5; // grows larger
+        zOffset = tExit * 15.0; // flies forward past camera
+      }
+
+      meshRef.current.position.set(x, y + floatDrift, z + zOffset);
       
       // Face camera horizontally
       meshRef.current.lookAt(camera.position.x, y, camera.position.z);
@@ -197,8 +210,8 @@ function SpiralCard({
       const targetBlur = smoothstep(0.05, 0.35, normalizedDist);
       blurVal.current = damp(blurVal.current, targetBlur, 6, d);
 
-      // Apply interactive scale
-      meshRef.current.scale.set(scaleVal.current, scaleVal.current, 1.0);
+      // Apply interactive scale + exit zoom
+      meshRef.current.scale.set(scaleVal.current * exitZoom, scaleVal.current * exitZoom, 1.0);
     }
 
     if (materialRef.current) {
@@ -207,7 +220,12 @@ function SpiralCard({
       materialRef.current.uniforms.uBlur.value = blurVal.current;
       
       // Fade in over 1 scroll: between the 10th and 11th scrolls (fully opaque by the 11th scroll)
-      const opacity = smoothstep(10.0 / 15.0, 11.0 / 15.0, scroll.section3);
+      // Fade out over 1 scroll: exit whoosh between the 12th and 13th scrolls
+      let opacity = smoothstep(10.0 / 17.0, 11.0 / 17.0, scroll.section3);
+      if (scroll.section3 > 15.9 / 17.0) {
+        const tExit = Math.min(Math.max((scroll.section3 - 15.9 / 17.0) / (1.1 / 17.0), 0.0), 1.0);
+        opacity *= (1.0 - smoothstep(0.0, 1.0, tExit));
+      }
       materialRef.current.uniforms.uOpacity.value = opacity;
     }
   });

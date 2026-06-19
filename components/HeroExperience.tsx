@@ -52,7 +52,7 @@ export default function HeroExperience({ video1, video2 }: HeroExperienceProps) 
           </Suspense>
 
           <Suspense fallback={null}>
-            <UnderwaterRipple video1={video1} video2={video2} activeThreshold={3.0 / 15.0} />
+            <UnderwaterRipple video1={video1} video2={video2} activeThreshold={3.0 / 17.0} />
           </Suspense>
 
           <CameraRig />

@@ -92,11 +92,21 @@ export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorPr
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
+      const section3Start = 5.2 * vh;
+      const transitionStart = section3Start + 15.9 * vh;
+      const transitionEnd = section3Start + 17.0 * vh;
 
-      // Active in Section 3 (Underwater Projects) starting past 5.2vh, or immediately on /work route
+      let cursorFade = 1.0;
+      if (rawScroll > transitionStart) {
+        const tFade = Math.min((rawScroll - transitionStart) / (1.1 * vh), 1.0);
+        cursorFade = 1.0 - tFade * tFade * (3 - 2 * tFade); // smooth fade out during transition
+      }
+
+      // Active in Section 3 (Underwater Projects) starting past 5.2vh and below transitionEnd, or immediately on /work route (unless scrolled to services)
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isActive = !isSplashActive && (rawScroll >= 5.2 * vh || isWorkRoute);
-      const opacity = isActive ? 1.0 : 0.0; // Sharp gating for Section 3 boundary
+      const isServices = rawScroll >= transitionEnd || (typeof window !== "undefined" && window.location.pathname === "/services");
+      const isActive = !isSplashActive && !isServices && ((rawScroll >= section3Start && rawScroll < transitionEnd) || (isWorkRoute && !isServices));
+      const opacity = isActive ? cursorFade : 0.0; // Dissolves opacity during transition
 
       // Hide default browser cursor only on transition states
       if (isActive) {
