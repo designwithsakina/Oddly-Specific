@@ -280,40 +280,43 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             display: isServicesRoute ? "block" : "none",
           }}
         />
-        {/* Six liquid glass cards, fading in as the text/blur fade out */}
-        <div
-          ref={cardsContainerRef}
-          className="absolute inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
-          style={{
-            display: "none",
-          }}
-        >
-          {/* Left Column */}
-          <div className="flex flex-col gap-[4vh] items-start pointer-events-auto">
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[-35px]" />
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-          </div>
+      </div>
 
-          {/* Right Column */}
-          <div className="flex flex-col gap-[4vh] items-end pointer-events-auto">
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[35px]" />
-            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-          </div>
+      {/* Six liquid glass cards, fading in as the text/blur fade out (moved outside of 3D transformed container) */}
+      <div
+        ref={cardsContainerRef}
+        className="fixed inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
+        style={{
+          zIndex: 47,
+          display: "none",
+        }}
+      >
+        {/* Left Column */}
+        <div className="flex flex-col gap-[4vh] items-start pointer-events-auto">
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[-35px]" />
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
         </div>
 
-        {/* Fullscreen vignette overlay rendered on top of the cards to shade them near the corners */}
-        <div
-          ref={vignetteRef}
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            display: "none",
-            opacity: 0,
-            background: "radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.75) 90%)",
-          }}
-        />
+        {/* Right Column */}
+        <div className="flex flex-col gap-[4vh] items-end pointer-events-auto">
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[35px]" />
+          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+        </div>
       </div>
+
+      {/* Fullscreen vignette overlay rendered on top of the cards to shade them near the corners */}
+      <div
+        ref={vignetteRef}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 48,
+          display: "none",
+          opacity: 0,
+          background: "radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.75) 90%)",
+        }}
+      />
 
       {/* Services text overlay container */}
       <div
@@ -321,7 +324,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         id="services-section-content"
         className="fixed inset-0 flex flex-col justify-center px-[6vw] pointer-events-none select-none"
         style={{
-          zIndex: 46,
+          zIndex: 49,
           opacity: isServicesRoute ? 1 : 0,
           display: isServicesRoute ? "flex" : "none",
         }}
