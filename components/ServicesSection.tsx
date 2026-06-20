@@ -215,15 +215,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       if (cardsContainerRef.current) {
         cardsContainerRef.current.style.transform = `translate3d(0, ${cardsTranslateY}px, 0)`;
         cardsContainerRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
-
-        const cards = cardsContainerRef.current.querySelectorAll<HTMLDivElement>(".services-glass-card");
-        cards.forEach(card => {
-          card.style.backdropFilter = `blur(${15 * cardsOpacity}px)`;
-          (card.style as any).webkitBackdropFilter = `blur(${15 * cardsOpacity}px)`;
-          card.style.backgroundColor = `rgba(255, 255, 255, ${0.12 * cardsOpacity})`;
-          card.style.borderColor = `rgba(255, 255, 255, ${0.25 * cardsOpacity})`;
-          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.35 * cardsOpacity}), 0 12px 40px rgba(0, 0, 0, ${0.25 * cardsOpacity})`;
-        });
+        cardsContainerRef.current.style.setProperty("--cards-opacity", String(cardsOpacity));
       }
 
       if (vignetteRef.current) {
@@ -309,16 +301,76 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       >
         {/* Left Column - Shifted 2px closer to the center */}
         <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border translate-x-[-35px]" />
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
+          {/* Card 1 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Brand Identity
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas looking for a personality.
+              </p>
+            </div>
+          </div>
+          {/* Card 2 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Websites
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas that deserve a world of their own.
+              </p>
+            </div>
+          </div>
+          {/* Card 3 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Presentations
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas that need believers.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Right Column - Shifted 2px closer to the center */}
         <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border translate-x-[35px]" />
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
+          {/* Card 4 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Art Direction
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas that are easier to show than explain.
+              </p>
+            </div>
+          </div>
+          {/* Card 5 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Packaging
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas people can hold.
+              </p>
+            </div>
+          </div>
+          {/* Card 6 */}
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+            <div className="flex flex-col gap-1.5">
+              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                Creative Systems
+              </span>
+              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                For ideas that need everything around them to make sense.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
