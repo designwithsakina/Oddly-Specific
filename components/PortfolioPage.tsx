@@ -17,6 +17,9 @@ import MantaRayCursor from "@/components/MantaRayCursor";
 const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
   ssr: false,
 });
+const ServicesExperience = dynamic(() => import("@/components/ServicesExperience"), {
+  ssr: false,
+});
 
 export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isServicesRoute = false }: { isAboutRoute?: boolean; isWorkRoute?: boolean; isServicesRoute?: boolean }) {
   const [showSplash, setShowSplash] = useState(!isAboutRoute && !isWorkRoute && !isServicesRoute);
@@ -94,6 +97,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         {/* fixed WebGL stage + typographic overlay */}
         {webglSupported && currentSection !== "services" && <HeroExperience video1={video1} video2={video2} />}
         {webglSupported && currentSection !== "services" && <SmokeyCursor />}
+        {webglSupported && <ServicesExperience />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute || isServicesRoute} />
         <ProjectsSection isWorkRoute={isWorkRoute || isServicesRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
