@@ -14,7 +14,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const vRef2 = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const blurPatchRef = useRef<HTMLDivElement>(null);
-  const vignetteRef = useRef<HTMLDivElement>(null);
+  const vignetteRef = useRef<any>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(1);
 
@@ -220,9 +220,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         cards.forEach(card => {
           card.style.backdropFilter = `blur(${15 * cardsOpacity}px)`;
           (card.style as any).webkitBackdropFilter = `blur(${15 * cardsOpacity}px)`;
-          card.style.backgroundColor = `rgba(255, 255, 255, ${0.07 * cardsOpacity})`;
-          card.style.borderColor = `rgba(255, 255, 255, ${0.15 * cardsOpacity})`;
-          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.22 * cardsOpacity}), 0 8px 32px rgba(0, 0, 0, ${0.15 * cardsOpacity})`;
+          card.style.backgroundColor = `rgba(255, 255, 255, ${0.12 * cardsOpacity})`;
+          card.style.borderColor = `rgba(255, 255, 255, ${0.25 * cardsOpacity})`;
+          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.35 * cardsOpacity}), 0 12px 40px rgba(0, 0, 0, ${0.25 * cardsOpacity})`;
         });
       }
 
@@ -230,9 +230,21 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         vignetteRef.current.style.opacity = String(vignetteOpacity);
         vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
 
-        // Promote to hardware-accelerated layer to stack correctly above translated cards container
+        // Calculate spotlight pixel coordinates from normalized pointer
+        const w = typeof window !== "undefined" ? window.innerWidth : 1920;
+        const h = typeof window !== "undefined" ? window.innerHeight : 1080;
+        const spotX = ((pointer.x + 1) / 2) * w;
+        const spotY = ((1 - pointer.y) / 2) * h;
+
+        // Promote to hardware-accelerated layer to stack correctly
         vignetteRef.current.style.transform = `translate3d(0, 0, 0)`;
-        vignetteRef.current.style.background = `radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.85) 90%)`;
+
+        // Update the SVG circle coordinates in the mask
+        const mouseSpot = vignetteRef.current.querySelector("#mouse-spot");
+        if (mouseSpot) {
+          mouseSpot.setAttribute("cx", String(spotX));
+          mouseSpot.setAttribute("cy", String(spotY));
+        }
       }
 
       raf = requestAnimationFrame(tick);
@@ -295,32 +307,52 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           display: "none",
         }}
       >
-        {/* Left Column */}
-        <div className="flex flex-col gap-[4vh] items-start pointer-events-auto">
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[-35px]" />
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+        {/* Left Column - Shifted 2px closer to the center */}
+        <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border translate-x-[-35px]" />
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
         </div>
 
-        {/* Right Column */}
-        <div className="flex flex-col gap-[4vh] items-end pointer-events-auto">
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[35px]" />
-          <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+        {/* Right Column - Shifted 2px closer to the center */}
+        <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border translate-x-[35px]" />
+          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border" />
         </div>
       </div>
 
       {/* Fullscreen vignette overlay rendered on top of the cards to shade them near the corners */}
-      <div
+      <svg
         ref={vignetteRef}
-        className="fixed inset-0 pointer-events-none"
+        className="fixed inset-0 pointer-events-none w-full h-full"
         style={{
           zIndex: 48,
           display: "none",
           opacity: 0,
-          background: "radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.75) 90%)",
         }}
-      />
+      >
+        <defs>
+          <filter id="spotlight-blur">
+            <feGaussianBlur stdDeviation="55" />
+          </filter>
+          <mask id="spotlight-mask">
+            {/* The white background keeps the overlay visible (opaque black) */}
+            <rect width="100%" height="100%" fill="white" />
+            {/* The static center circle cuts a transparent hole in the center to keep the video bright */}
+            <circle cx="50%" cy="50%" r="240" fill="black" filter="url(#spotlight-blur)" />
+            {/* The dynamic mouse circle cuts a transparent spotlight under the cursor to reveal the cards */}
+            <circle id="mouse-spot" cx="-500" cy="-500" r="120" fill="black" filter="url(#spotlight-blur)" />
+          </mask>
+        </defs>
+        {/* The shaded overlay rect */}
+        <rect
+          width="100%"
+          height="100%"
+          fill="rgba(4, 4, 12, 0.95)"
+          mask="url(#spotlight-mask)"
+        />
+      </svg>
 
       {/* Services text overlay container */}
       <div
