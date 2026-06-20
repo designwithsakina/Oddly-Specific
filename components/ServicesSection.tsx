@@ -40,6 +40,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       let opacity = 0;
       let scale = 1.0;
       let contentOpacity = 0;
+      let blurOpacity = 0;
       let contentTranslateY = 30; // px
       let shiftFactor = 0;
 
@@ -52,11 +53,17 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         opacity = 1.0;
         shiftFactor = 1.0;
 
-        if (rawScroll < step7Pos) {
+        if (isServicesRoute) {
+          contentOpacity = 1.0;
+          blurOpacity = 1.0;
+          contentTranslateY = 0;
+          scale = 1.10;
+        } else if (rawScroll < step7Pos) {
           // Scroll 1: From Step 13 (22.2vh) to Step 14 (23.2vh). Text fades in, video zooms to 1.11.
           const t = Math.min((rawScroll - section4Start) / (1.0 * vh), 1.0);
           const easedT = t * t * (3 - 2 * t);
           contentOpacity = easedT;
+          blurOpacity = 1.0; // Blur overlay is fully present as soon as we land
           contentTranslateY = 30 - easedT * 30;
           scale = 1.10 + easedT * 0.01;
         } else if (rawScroll < step8Pos) {
@@ -64,11 +71,13 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           const t = Math.min((rawScroll - step7Pos) / (1.0 * vh), 1.0);
           const easedT = t * t * (3 - 2 * t);
           contentOpacity = 1.0 - easedT;
+          blurOpacity = 1.0 - easedT; // Blur fades out in sync with the text
           contentTranslateY = -easedT * 30;
           scale = 1.11 + easedT * 0.01;
         } else {
           // Past Step 15 (24.2vh+)
           contentOpacity = 0.0;
+          blurOpacity = 0.0;
           contentTranslateY = -30;
           scale = 1.12;
         }
@@ -78,6 +87,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           const t = (p3 - 15.9 / 17.0) / (1.1 / 17.0);
           const easedT = t * t * (3 - 2 * t);
           opacity = easedT;
+          blurOpacity = easedT; // Blur fades in smoothly during the entry transition
           scale = 1.10; // Baseline scale for services section
           shiftFactor = easedT;
         }
@@ -178,8 +188,8 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       }
 
       if (blurPatchRef.current) {
-        blurPatchRef.current.style.opacity = String(contentOpacity);
-        blurPatchRef.current.style.display = contentOpacity > 0.005 ? "block" : "none";
+        blurPatchRef.current.style.opacity = String(blurOpacity);
+        blurPatchRef.current.style.display = blurOpacity > 0.005 ? "block" : "none";
       }
 
       raf = requestAnimationFrame(tick);
