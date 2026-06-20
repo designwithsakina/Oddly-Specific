@@ -13,6 +13,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const vRef1 = useRef<HTMLVideoElement>(null);
   const vRef2 = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const blurPatchRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(1);
 
   useEffect(() => {
@@ -176,6 +177,11 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         contentRef.current.style.display = contentOpacity > 0.005 ? "flex" : "none";
       }
 
+      if (blurPatchRef.current) {
+        blurPatchRef.current.style.opacity = String(contentOpacity);
+        blurPatchRef.current.style.display = contentOpacity > 0.005 ? "block" : "none";
+      }
+
       raf = requestAnimationFrame(tick);
     };
 
@@ -212,6 +218,19 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0 }}
+        />
+        {/* Soft centered blurry ellipse patch to enhance text legibility, fading out with the text */}
+        <div
+          ref={blurPatchRef}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            maskImage: "radial-gradient(ellipse at center, black 15%, transparent 70%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 15%, transparent 70%)",
+            opacity: isServicesRoute ? 1 : 0,
+            display: isServicesRoute ? "block" : "none",
+          }}
         />
       </div>
 
