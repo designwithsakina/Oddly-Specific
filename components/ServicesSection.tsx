@@ -212,11 +212,6 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         blurPatchRef.current.style.display = blurOpacity > 0.005 ? "block" : "none";
       }
 
-      if (vignetteRef.current) {
-        vignetteRef.current.style.opacity = String(vignetteOpacity);
-        vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
-      }
-
       if (cardsContainerRef.current) {
         cardsContainerRef.current.style.transform = `translate3d(0, ${cardsTranslateY}px, 0)`;
         cardsContainerRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
@@ -225,10 +220,25 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         cards.forEach(card => {
           card.style.backdropFilter = `blur(${15 * cardsOpacity}px)`;
           (card.style as any).webkitBackdropFilter = `blur(${15 * cardsOpacity}px)`;
-          card.style.backgroundColor = `rgba(10, 10, 24, ${0.2 * cardsOpacity})`;
-          card.style.borderColor = `rgba(255, 255, 255, ${0.03 * cardsOpacity})`;
-          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.12 * cardsOpacity}), 0 8px 32px rgba(0, 0, 0, ${0.2 * cardsOpacity})`;
+          card.style.backgroundColor = `rgba(255, 255, 255, ${0.07 * cardsOpacity})`;
+          card.style.borderColor = `rgba(255, 255, 255, ${0.15 * cardsOpacity})`;
+          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.22 * cardsOpacity}), 0 8px 32px rgba(0, 0, 0, ${0.15 * cardsOpacity})`;
         });
+      }
+
+      if (vignetteRef.current) {
+        vignetteRef.current.style.opacity = String(vignetteOpacity);
+        vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
+
+        // Calculate spotlight pixel coordinates from normalized pointer
+        const w = typeof window !== "undefined" ? window.innerWidth : 1920;
+        const h = typeof window !== "undefined" ? window.innerHeight : 1080;
+        const spotX = ((pointer.x + 1) / 2) * w;
+        const spotY = ((1 - pointer.y) / 2) * h;
+
+        // Promote to hardware-accelerated layer to stack correctly above translated cards container
+        vignetteRef.current.style.transform = `translate3d(0, 0, 0)`;
+        vignetteRef.current.style.background = `radial-gradient(circle 250px at ${spotX}px ${spotY}px, transparent 10%, rgba(4, 4, 12, 0.92) 80%)`;
       }
 
       raf = requestAnimationFrame(tick);
