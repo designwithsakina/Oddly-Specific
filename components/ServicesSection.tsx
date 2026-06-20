@@ -230,15 +230,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         vignetteRef.current.style.opacity = String(vignetteOpacity);
         vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
 
-        // Calculate spotlight pixel coordinates from normalized pointer
-        const w = typeof window !== "undefined" ? window.innerWidth : 1920;
-        const h = typeof window !== "undefined" ? window.innerHeight : 1080;
-        const spotX = ((pointer.x + 1) / 2) * w;
-        const spotY = ((1 - pointer.y) / 2) * h;
-
         // Promote to hardware-accelerated layer to stack correctly above translated cards container
         vignetteRef.current.style.transform = `translate3d(0, 0, 0)`;
-        vignetteRef.current.style.background = `radial-gradient(circle 250px at ${spotX}px ${spotY}px, transparent 10%, rgba(4, 4, 12, 0.92) 80%)`;
+        vignetteRef.current.style.background = `radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.85) 90%)`;
       }
 
       raf = requestAnimationFrame(tick);
