@@ -293,84 +293,97 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       {/* Six liquid glass cards, fading in as the text/blur fade out (moved outside of 3D transformed container) */}
       <div
         ref={cardsContainerRef}
-        className="fixed inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
+        className="fixed inset-0 flex flex-col pointer-events-none select-none"
         style={{
           zIndex: 47,
           display: "none",
         }}
       >
-        {/* Left Column - Shifted 2px closer to the center */}
-        <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
-          {/* Card 1 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Brand Identity
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas looking for a personality.
-              </p>
+        {/* Columns Wrapper */}
+        <div className="flex-1 flex items-center justify-between px-[6vw]">
+          {/* Left Column - Shifted 2px closer to the center */}
+          <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
+            {/* Card 1 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Brand Identity
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas looking for a personality.
+                </p>
+              </div>
+            </div>
+            {/* Card 2 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Websites
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas that deserve a world of their own.
+                </p>
+              </div>
+            </div>
+            {/* Card 3 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Presentations
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas that need believers.
+                </p>
+              </div>
             </div>
           </div>
-          {/* Card 2 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Websites
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that deserve a world of their own.
-              </p>
+
+          {/* Right Column - Shifted 2px closer to the center */}
+          <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
+            {/* Card 4 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Art Direction
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas that are easier to show than explain.
+                </p>
+              </div>
             </div>
-          </div>
-          {/* Card 3 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Presentations
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that need believers.
-              </p>
+            {/* Card 5 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Packaging
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas people can hold.
+                </p>
+              </div>
+            </div>
+            {/* Card 6 */}
+            <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
+              <div className="services-glass-card-content flex flex-col gap-1.5">
+                <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
+                  Creative Systems
+                </span>
+                <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
+                  For ideas that need everything around them to make sense.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column - Shifted 2px closer to the center */}
-        <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
-          {/* Card 4 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Art Direction
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that are easier to show than explain.
-              </p>
-            </div>
-          </div>
-          {/* Card 5 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Packaging
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas people can hold.
-              </p>
-            </div>
-          </div>
-          {/* Card 6 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
-                Creative Systems
-              </span>
-              <p className="font-sans text-[0.62rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that need everything around them to make sense.
-              </p>
-            </div>
-          </div>
+        {/* Bottom Shimmer Narrative Text */}
+        <div className="w-full flex flex-col items-center gap-2 pb-[6vh] pointer-events-auto text-center">
+          <span className="font-display font-light text-[clamp(0.85rem,1.2vw,1.1rem)] tracking-[0.18em] uppercase hero-glow-text select-none">
+            The darkness isn&apos;t empty. It&apos;s waiting.
+          </span>
+          <span className="font-display font-semibold text-[clamp(0.7rem,0.9vw,0.82rem)] tracking-[0.22em] uppercase hero-glow-text select-none opacity-80">
+            Hover to discover.
+          </span>
         </div>
       </div>
 
