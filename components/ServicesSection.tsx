@@ -219,15 +219,14 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0 }}
         />
-        {/* Soft centered blurry ellipse patch to enhance text legibility, fading out with the text */}
+        {/* Fullscreen subtle blur overlay to match home page blur style and enhance text legibility, fading out with the text */}
         <div
           ref={blurPatchRef}
           className="absolute inset-0 pointer-events-none"
           style={{
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            maskImage: "radial-gradient(ellipse at center, black 15%, transparent 70%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, black 15%, transparent 70%)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            backgroundColor: "rgba(10, 9, 22, 0.12)",
             opacity: isServicesRoute ? 1 : 0,
             display: isServicesRoute ? "block" : "none",
           }}
