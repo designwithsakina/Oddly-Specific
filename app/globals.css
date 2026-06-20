@@ -785,11 +785,11 @@ html.lenis body {
     #ffffff 80%,
     #051336 100%
   );
-  animation: card-border-spin 4s linear infinite;
+  animation: card-border-spin 12s linear infinite;
 }
 
 .services-glass-card:hover .services-glass-card-border-light {
-  animation-duration: 2.2s; /* Speed up on hover */
+  animation-duration: 8s; /* Speed up slightly on hover, but still very slow and premium */
   background: conic-gradient(
     from 0deg,
     #9fd0ff 0%,
@@ -821,7 +821,7 @@ html.lenis body {
   -webkit-text-fill-color: transparent;
   color: transparent;
   
-  animation: cardHeaderShimmer 5s ease-in-out infinite;
+  animation: cardHeaderShimmer 10s ease-in-out infinite;
   
   filter: drop-shadow(0 0 4px rgba(113, 180, 255, 0.3));
   transition: text-shadow 0.4s ease;

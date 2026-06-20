@@ -401,7 +401,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       {/* Bottom Shimmer Narrative Text */}
       <div
         ref={bottomTextRef}
-        className="fixed bottom-[11vh] left-0 right-0 flex flex-col items-center gap-2 pointer-events-none text-center select-none"
+        className="fixed bottom-[11vh] left-0 right-0 flex flex-col items-center gap-[7px] pointer-events-none text-center select-none"
         style={{
           zIndex: 49,
           display: "none",
@@ -413,7 +413,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         <span className="font-display font-light text-[clamp(1.0rem,1.4vw,1.25rem)] tracking-[0.18em] uppercase hero-glow-text select-none">
           It&apos;s waiting.
         </span>
-        <span className="font-display font-medium text-[clamp(0.85rem,1.2vw,1.05rem)] tracking-[0.2em] uppercase hero-glow-text select-none mt-1">
+        <span className="font-display font-medium text-[clamp(0.6rem,0.8vw,0.75rem)] tracking-[0.2em] uppercase hero-glow-text select-none mt-1">
           HOVER TO DISCOVER.
         </span>
       </div>
