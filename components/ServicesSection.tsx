@@ -218,9 +218,17 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       }
 
       if (cardsContainerRef.current) {
-        cardsContainerRef.current.style.opacity = String(cardsOpacity);
         cardsContainerRef.current.style.transform = `translate3d(0, ${cardsTranslateY}px, 0)`;
         cardsContainerRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
+
+        const cards = cardsContainerRef.current.querySelectorAll<HTMLDivElement>(".services-glass-card");
+        cards.forEach(card => {
+          card.style.backdropFilter = `blur(${15 * cardsOpacity}px)`;
+          (card.style as any).webkitBackdropFilter = `blur(${15 * cardsOpacity}px)`;
+          card.style.backgroundColor = `rgba(10, 10, 24, ${0.2 * cardsOpacity})`;
+          card.style.borderColor = `rgba(255, 255, 255, ${0.03 * cardsOpacity})`;
+          card.style.boxShadow = `inset 0 1px 1px rgba(255, 255, 255, ${0.12 * cardsOpacity}), 0 8px 32px rgba(0, 0, 0, ${0.2 * cardsOpacity})`;
+        });
       }
 
       raf = requestAnimationFrame(tick);
@@ -272,7 +280,30 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             display: isServicesRoute ? "block" : "none",
           }}
         />
-        {/* Fullscreen vignette overlay, fading in as the text/blur fade out */}
+        {/* Six liquid glass cards, fading in as the text/blur fade out */}
+        <div
+          ref={cardsContainerRef}
+          className="absolute inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
+          style={{
+            display: "none",
+          }}
+        >
+          {/* Left Column */}
+          <div className="flex flex-col gap-[4vh] items-start pointer-events-auto">
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[-35px]" />
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-[4vh] items-end pointer-events-auto">
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border translate-x-[35px]" />
+            <div className="services-glass-card w-[190px] h-[125px] rounded-2xl border" />
+          </div>
+        </div>
+
+        {/* Fullscreen vignette overlay rendered on top of the cards to shade them near the corners */}
         <div
           ref={vignetteRef}
           className="absolute inset-0 pointer-events-none"
@@ -282,29 +313,6 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             background: "radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.75) 90%)",
           }}
         />
-        {/* Six liquid glass cards, fading in as the text/blur fade out */}
-        <div
-          ref={cardsContainerRef}
-          className="absolute inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
-          style={{
-            display: "none",
-            opacity: 0,
-          }}
-        >
-          {/* Left Column */}
-          <div className="flex flex-col gap-[3.5vh] items-start pointer-events-auto">
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] translate-x-[-35px] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-          </div>
-
-          {/* Right Column */}
-          <div className="flex flex-col gap-[3.5vh] items-end pointer-events-auto">
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] translate-x-[35px] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
-          </div>
-        </div>
       </div>
 
       {/* Services text overlay container */}
