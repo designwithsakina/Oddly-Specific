@@ -10,8 +10,10 @@ interface ServicesSectionProps {
 
 export default function ServicesSection({ isServicesRoute = false }: ServicesSectionProps) {
   const bgRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const vRef1 = useRef<HTMLVideoElement>(null);
+  const vRef2 = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(1);
 
   useEffect(() => {
     let raf = 0;
@@ -85,14 +87,71 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         bgRef.current.style.display = opacity > 0.005 ? "block" : "none";
       }
 
-      if (videoRef.current) {
-        // Shift background video in opposite direction of mouse for parallax pan/tilt
+      const v1 = vRef1.current;
+      const v2 = vRef2.current;
+      const active = isServicesRoute || rawScroll >= section4Start;
+
+      if (v1 && v2) {
+        if (!active) {
+          if (!v1.paused) v1.pause();
+          if (!v2.paused) v2.pause();
+        } else if (v1.duration && v2.duration) {
+          const crossfadeTime = 1.5;
+          const dur1 = v1.duration;
+          const dur2 = v2.duration;
+
+          if (activeRef.current === 1) {
+            if (v1.paused) v1.play().catch(() => {});
+            const t1 = v1.currentTime;
+            if (t1 >= dur1 - crossfadeTime) {
+              if (v2.paused) {
+                v2.currentTime = 0;
+                v2.play().catch(() => {});
+              }
+              const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
+              v1.style.opacity = String(1.0 - ratio);
+              v2.style.opacity = String(ratio);
+            } else {
+              v1.style.opacity = "1";
+              v2.style.opacity = "0";
+              if (!v2.paused) v2.pause();
+            }
+
+            if (t1 >= dur1 - 0.1) {
+              activeRef.current = 2;
+            }
+          } else {
+            if (v2.paused) v2.play().catch(() => {});
+            const t2 = v2.currentTime;
+            if (t2 >= dur2 - crossfadeTime) {
+              if (v1.paused) {
+                v1.currentTime = 0;
+                v1.play().catch(() => {});
+              }
+              const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
+              v1.style.opacity = String(ratio);
+              v2.style.opacity = String(1.0 - ratio);
+            } else {
+              v1.style.opacity = "0";
+              v2.style.opacity = "1";
+              if (!v1.paused) v1.pause();
+            }
+
+            if (t2 >= dur2 - 0.1) {
+              activeRef.current = 1;
+            }
+          }
+        }
+
+        // Shift background videos in opposite direction of mouse for parallax pan/tilt
         const xShift = -pointer.x * 24.0 * shiftFactor;
         const yShift = -pointer.y * 24.0 * shiftFactor;
         const xRot = -pointer.y * 2.5 * shiftFactor;
         const yRot = pointer.x * 2.5 * shiftFactor;
+        const transformStr = `translate3d(${xShift}px, ${yShift}px, 0) rotateX(${xRot}deg) rotateY(${yRot}deg) scale(${scale})`;
         
-        videoRef.current.style.transform = `translate3d(${xShift}px, ${yShift}px, 0) rotateX(${xRot}deg) rotateY(${yRot}deg) scale(${scale})`;
+        v1.style.transform = transformStr;
+        v2.style.transform = transformStr;
       }
 
       if (contentRef.current) {
@@ -123,20 +182,20 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         }}
       >
         <video
-          ref={videoRef}
+          ref={vRef1}
           src="/services-bg.mp4"
-          autoPlay
           muted
-          loop
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 1 }}
         />
-        {/* Soft dark overlay over the video to ensure high text legibility */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(to bottom, rgba(5, 11, 36, 0.45), rgba(3, 6, 22, 0.75))",
-          }}
+        <video
+          ref={vRef2}
+          src="/services-bg.mp4"
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 0 }}
         />
       </div>
 
