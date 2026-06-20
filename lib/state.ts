@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
   if (isServices) {
     initialHero = 1.0;
     initialSection2 = 1.0;
-    initialRaw = window.innerHeight * 22.2;
+    initialRaw = window.innerHeight * 23.2;
   } else if (isWork) {
     initialHero = 1.0;
     initialSection2 = 1.0;

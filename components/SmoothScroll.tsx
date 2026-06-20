@@ -46,7 +46,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     if (wasServicesScrolled) {
       const savedPos = parseFloat(sessionStorage.getItem("servicesScrollPosition") || "0");
       const vh = window.innerHeight;
-      const targetPos = savedPos > 0 ? savedPos : vh * 22.2;
+      const targetPos = savedPos > 0 ? savedPos : vh * 23.2;
       lenis.scrollTo(targetPos, { immediate: true });
     } else if (wasWorkScrolled) {
       const savedPos = parseFloat(sessionStorage.getItem("workScrollPosition") || "0");

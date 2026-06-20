@@ -55,19 +55,11 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         document.body.classList.remove("hide-cursor");
       }
 
-      if (isServicesRoute || rawScroll >= section4Start) {
+      if (rawScroll >= section4Start) {
         opacity = 1.0;
         shiftFactor = 1.0;
 
-        if (isServicesRoute) {
-          contentOpacity = 1.0;
-          blurOpacity = 1.0;
-          vignetteOpacity = 0.0;
-          cardsOpacity = 0.0;
-          cardsTranslateY = 20;
-          contentTranslateY = 0;
-          scale = 1.10;
-        } else if (rawScroll < step7Pos) {
+        if (rawScroll < step7Pos) {
           // Scroll 1: From Step 13 (22.2vh) to Step 14 (23.2vh). Text fades in, video zooms to 1.11.
           const t = Math.min((rawScroll - section4Start) / (1.0 * vh), 1.0);
           const easedT = t * t * (3 - 2 * t);
