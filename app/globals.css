@@ -735,12 +735,16 @@ html.lenis body {
 
 .services-glass-card-content {
   opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity;
+  filter: blur(6px);
+  transition: 
+    opacity 0.8s ease-in-out, 
+    filter 0.8s ease-in-out;
+  will-change: opacity, filter;
 }
 
 .services-glass-card:hover .services-glass-card-content {
   opacity: 1;
+  filter: blur(0px);
 }
 
 
