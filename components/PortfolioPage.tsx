@@ -25,14 +25,6 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
   const [video2, setVideo2] = useState<HTMLVideoElement | null>(null);
 
   const [currentSection, setCurrentSection] = useState(() => {
-    if (typeof window !== "undefined") {
-      const isServices = window.location.pathname === "/services" || sessionStorage.getItem("wasServicesScrolled") === "true";
-      const isWork = window.location.pathname === "/work" || sessionStorage.getItem("wasWorkScrolled") === "true";
-      const isAbout = window.location.pathname === "/about" || sessionStorage.getItem("wasScrolled") === "true";
-      if (isServices) return "services";
-      if (isWork) return "work";
-      if (isAbout) return "about";
-    }
     return isServicesRoute ? "services" : isWorkRoute ? "work" : isAboutRoute ? "about" : "home";
   });
 
@@ -44,6 +36,18 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
     if (wasScrolled || wasWorkScrolled || wasServicesScrolled) {
       setShowSplash(false);
       document.documentElement.classList.remove("splash-active");
+    }
+
+    // Set correct initial section on client after hydration
+    const isServices = window.location.pathname === "/services" || sessionStorage.getItem("wasServicesScrolled") === "true";
+    const isWork = window.location.pathname === "/work" || sessionStorage.getItem("wasWorkScrolled") === "true";
+    const isAbout = window.location.pathname === "/about" || sessionStorage.getItem("wasScrolled") === "true";
+    if (isServices) {
+      setCurrentSection("services");
+    } else if (isWork) {
+      setCurrentSection("work");
+    } else if (isAbout) {
+      setCurrentSection("about");
     }
 
     const hasWebGL = () => {
