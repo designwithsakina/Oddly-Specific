@@ -303,7 +303,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
           {/* Card 1 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Brand Identity
               </span>
@@ -314,7 +314,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           </div>
           {/* Card 2 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Websites
               </span>
@@ -325,7 +325,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           </div>
           {/* Card 3 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Presentations
               </span>
@@ -340,7 +340,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
           {/* Card 4 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Art Direction
               </span>
@@ -351,7 +351,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           </div>
           {/* Card 5 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Packaging
               </span>
@@ -362,7 +362,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           </div>
           {/* Card 6 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="flex flex-col gap-1.5">
+            <div className="services-glass-card-content flex flex-col gap-1.5">
               <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] text-white uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]">
                 Creative Systems
               </span>

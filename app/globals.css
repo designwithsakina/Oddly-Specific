@@ -710,8 +710,8 @@ html.lenis body {
 /* ---- Services Section Liquid Glass Cards ---- */
 .services-glass-card {
   position: relative;
-  backdrop-filter: blur(calc(15px * var(--cards-opacity, 0)));
-  -webkit-backdrop-filter: blur(calc(15px * var(--cards-opacity, 0)));
+  backdrop-filter: blur(calc(1.5px * var(--cards-opacity, 0)));
+  -webkit-backdrop-filter: blur(calc(1.5px * var(--cards-opacity, 0)));
   background-color: rgba(255, 255, 255, calc(0.12 * var(--cards-opacity, 0)));
   border-color: rgba(255, 255, 255, calc(0.25 * var(--cards-opacity, 0)));
   box-shadow: 
@@ -731,6 +731,16 @@ html.lenis body {
     inset 0 2px 2px rgba(255, 255, 255, calc(0.45 * var(--cards-opacity, 0))), /* Enhanced top highlight bevel */
     0 16px 48px rgba(0, 0, 0, calc(0.35 * var(--cards-opacity, 0))),
     0 0 18px rgba(113, 180, 255, calc(0.2 * var(--cards-opacity, 0))); /* Subtly blooms icy blue */
+}
+
+.services-glass-card-content {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+.services-glass-card:hover .services-glass-card-content {
+  opacity: 1;
 }
 
 
