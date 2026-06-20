@@ -14,6 +14,8 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const vRef2 = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const blurPatchRef = useRef<HTMLDivElement>(null);
+  const vignetteRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(1);
 
   useEffect(() => {
@@ -41,6 +43,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       let scale = 1.0;
       let contentOpacity = 0;
       let blurOpacity = 0;
+      let vignetteOpacity = 0;
+      let cardsOpacity = 0;
+      let cardsTranslateY = 20; // px
       let contentTranslateY = 30; // px
       let shiftFactor = 0;
 
@@ -56,6 +61,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         if (isServicesRoute) {
           contentOpacity = 1.0;
           blurOpacity = 1.0;
+          vignetteOpacity = 0.0;
+          cardsOpacity = 0.0;
+          cardsTranslateY = 20;
           contentTranslateY = 0;
           scale = 1.10;
         } else if (rawScroll < step7Pos) {
@@ -64,6 +72,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           const easedT = t * t * (3 - 2 * t);
           contentOpacity = easedT;
           blurOpacity = 1.0; // Blur overlay is fully present as soon as we land
+          vignetteOpacity = 0.0;
+          cardsOpacity = 0.0;
+          cardsTranslateY = 20;
           contentTranslateY = 30 - easedT * 30;
           scale = 1.10 + easedT * 0.01;
         } else if (rawScroll < step8Pos) {
@@ -72,12 +83,18 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           const easedT = t * t * (3 - 2 * t);
           contentOpacity = 1.0 - easedT;
           blurOpacity = 1.0 - easedT; // Blur fades out in sync with the text
+          vignetteOpacity = easedT;   // Vignette fades in as text/blur fade out
+          cardsOpacity = easedT;      // Liquid glass cards fade in as text/blur fade out
+          cardsTranslateY = 20 - easedT * 20;
           contentTranslateY = -easedT * 30;
           scale = 1.11 + easedT * 0.01;
         } else {
           // Past Step 15 (24.2vh+)
           contentOpacity = 0.0;
           blurOpacity = 0.0;
+          vignetteOpacity = 1.0;
+          cardsOpacity = 1.0;
+          cardsTranslateY = 0;
           contentTranslateY = -30;
           scale = 1.12;
         }
@@ -88,6 +105,9 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           const easedT = t * t * (3 - 2 * t);
           opacity = easedT;
           blurOpacity = easedT; // Blur fades in smoothly during the entry transition
+          vignetteOpacity = 0.0;
+          cardsOpacity = 0.0;
+          cardsTranslateY = 20;
           scale = 1.10; // Baseline scale for services section
           shiftFactor = easedT;
         }
@@ -192,6 +212,17 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         blurPatchRef.current.style.display = blurOpacity > 0.005 ? "block" : "none";
       }
 
+      if (vignetteRef.current) {
+        vignetteRef.current.style.opacity = String(vignetteOpacity);
+        vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
+      }
+
+      if (cardsContainerRef.current) {
+        cardsContainerRef.current.style.opacity = String(cardsOpacity);
+        cardsContainerRef.current.style.transform = `translate3d(0, ${cardsTranslateY}px, 0)`;
+        cardsContainerRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
+      }
+
       raf = requestAnimationFrame(tick);
     };
 
@@ -241,6 +272,39 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             display: isServicesRoute ? "block" : "none",
           }}
         />
+        {/* Fullscreen vignette overlay, fading in as the text/blur fade out */}
+        <div
+          ref={vignetteRef}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            display: "none",
+            opacity: 0,
+            background: "radial-gradient(circle at center, transparent 20%, rgba(4, 4, 12, 0.75) 90%)",
+          }}
+        />
+        {/* Six liquid glass cards, fading in as the text/blur fade out */}
+        <div
+          ref={cardsContainerRef}
+          className="absolute inset-0 flex items-center justify-between px-[6vw] pointer-events-none select-none"
+          style={{
+            display: "none",
+            opacity: 0,
+          }}
+        >
+          {/* Left Column */}
+          <div className="flex flex-col gap-[3.5vh] items-start pointer-events-auto">
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] translate-x-[-35px] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-[3.5vh] items-end pointer-events-auto">
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] translate-x-[35px] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+            <div className="w-[260px] h-[160px] rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-[16px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:scale-[1.02] hover:border-white/10" />
+          </div>
+        </div>
       </div>
 
       {/* Services text overlay container */}
