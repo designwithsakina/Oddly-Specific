@@ -226,7 +226,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           display: isServicesRoute ? "flex" : "none",
         }}
       >
-        <div className="w-full max-w-[800px] mx-auto flex flex-col items-center text-center pointer-events-auto">
+        <div className="w-full max-w-[1200px] mx-auto flex flex-col items-center text-center pointer-events-auto">
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-2">
             <span className="h-[1px] w-5 bg-white/35" />
@@ -237,7 +237,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           </div>
 
           {/* Title Container styled to match MorphSection */}
-          <div className="mb-2 w-full overflow-visible pb-4 pt-1 flex items-center justify-center">
+          <div className="mb-2 w-full overflow-visible pb-2 pt-1 flex items-center justify-center">
             <h2 className="font-display font-light text-[clamp(1.8rem,3.2vw,3.0rem)] leading-tight text-white hero-glow-text animate-glow-pulse"
                 style={{
                   filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))"
@@ -251,15 +251,15 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           <div className="flex flex-col items-center justify-center w-full transition-all duration-75">
             <InteractiveTypography
               text="Some projects arrive as half-formed ideas. Others arrive with spreadsheets, deadlines, and a mild identity crisis."
-              className="mt-6 w-[66ch] max-w-[90vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
+              className="mt-4 w-[88ch] max-w-[92vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
             />
             <InteractiveTypography
               text="Somewhere along the way, they become brands, websites, presentations, campaigns, treatments, packaging, and experiences that feel a little more intentional, a little more memorable, and a lot harder to ignore."
-              className="mt-6 w-[66ch] max-w-[90vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
+              className="mt-6 w-[88ch] max-w-[92vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
             />
             <InteractiveTypography
               text="No two projects follow the same path, but they usually begin the same way: with curiosity, conversation, and a willingness to look a little closer."
-              className="mt-6 w-[66ch] max-w-[90vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
+              className="mt-6 w-[88ch] max-w-[92vw] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-white/80 hover:text-white transition-colors duration-300 text-center"
             />
           </div>
         </div>
