@@ -779,11 +779,10 @@ html.lenis body {
   background: conic-gradient(
     from 0deg,
     #71b4ff 0%,
-    #ffffff 20%,
-    #051336 40%,
-    #71b4ff 60%,
-    #ffffff 80%,
-    #051336 100%
+    #ffffff 25%,
+    #71b4ff 50%,
+    #ffffff 75%,
+    #71b4ff 100%
   );
   animation: card-border-spin 12s linear infinite;
 }
@@ -793,11 +792,10 @@ html.lenis body {
   background: conic-gradient(
     from 0deg,
     #9fd0ff 0%,
-    #ffffff 20%,
-    #0a1d4a 40%,
-    #9fd0ff 60%,
-    #ffffff 80%,
-    #0a1d4a 100%
+    #ffffff 25%,
+    #9fd0ff 50%,
+    #ffffff 75%,
+    #9fd0ff 100%
   );
 }
 
@@ -810,8 +808,8 @@ html.lenis body {
 .services-card-header-glow {
   display: inline-block;
   background-image: 
-    radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(113, 180, 255, 0.85) 30%, rgba(113, 180, 255, 0.2) 70%),
-    linear-gradient(to right, #71b4ff, #71b4ff);
+    radial-gradient(circle at center, rgba(113, 180, 255, 1) 0%, rgba(113, 180, 255, 0.85) 35%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(to right, #ffffff, #ffffff);
     
   background-size: 80px 80px, 100% 100%;
   background-repeat: no-repeat;
@@ -823,7 +821,7 @@ html.lenis body {
   
   animation: cardHeaderShimmer 10s ease-in-out infinite;
   
-  filter: drop-shadow(0 0 4px rgba(113, 180, 255, 0.3));
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
   transition: text-shadow 0.4s ease;
 }
 

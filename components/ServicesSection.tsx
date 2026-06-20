@@ -310,10 +310,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 1 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Brand Identity
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas looking for a personality.
               </p>
             </div>
@@ -324,10 +324,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 2 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Websites
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas that deserve a world of their own.
               </p>
             </div>
@@ -338,10 +338,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 3 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Presentations
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas that need believers.
               </p>
             </div>
@@ -356,10 +356,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 4 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Art Direction
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas that are easier to show than explain.
               </p>
             </div>
@@ -370,10 +370,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 5 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Packaging
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas people can hold.
               </p>
             </div>
@@ -384,10 +384,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           {/* Card 6 */}
           <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
             <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.76rem] tracking-[0.08em] services-card-header-glow uppercase">
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
                 Creative Systems
               </span>
-              <p className="font-sans text-[0.68rem] leading-normal text-[#c8ddf0]/85">
+              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
                 For ideas that need everything around them to make sense.
               </p>
             </div>
