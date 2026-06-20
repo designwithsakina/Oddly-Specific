@@ -89,56 +89,72 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
 
       const v1 = vRef1.current;
       const v2 = vRef2.current;
-      const active = isServicesRoute || rawScroll >= section4Start;
+      // Play video during the zoom-in transition from Section 3 or when section 4 is active
+      const active = isServicesRoute || rawScroll >= (section4Start - 100) || p3 > 15.9 / 17.0;
 
       if (v1 && v2) {
         if (!active) {
           if (!v1.paused) v1.pause();
           if (!v2.paused) v2.pause();
-        } else if (v1.duration && v2.duration) {
-          const crossfadeTime = 1.5;
-          const dur1 = v1.duration;
-          const dur2 = v2.duration;
-
+        } else {
+          // Play the active video immediately without waiting for durations to load
           if (activeRef.current === 1) {
             if (v1.paused) v1.play().catch(() => {});
-            const t1 = v1.currentTime;
-            if (t1 >= dur1 - crossfadeTime) {
-              if (v2.paused) {
-                v2.currentTime = 0;
-                v2.play().catch(() => {});
+            
+            if (v1.duration && v2.duration) {
+              const crossfadeTime = 1.5;
+              const dur1 = v1.duration;
+              const t1 = v1.currentTime;
+              if (t1 >= dur1 - crossfadeTime) {
+                if (v2.paused) {
+                  v2.currentTime = 0;
+                  v2.play().catch(() => {});
+                }
+                const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
+                v1.style.opacity = String(1.0 - ratio);
+                v2.style.opacity = String(ratio);
+              } else {
+                v1.style.opacity = "1";
+                v2.style.opacity = "0";
+                if (!v2.paused) v2.pause();
               }
-              const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
-              v1.style.opacity = String(1.0 - ratio);
-              v2.style.opacity = String(ratio);
+
+              if (t1 >= dur1 - 0.1) {
+                activeRef.current = 2;
+              }
             } else {
+              // Fallback opacity if durations are not loaded yet
               v1.style.opacity = "1";
               v2.style.opacity = "0";
-              if (!v2.paused) v2.pause();
-            }
-
-            if (t1 >= dur1 - 0.1) {
-              activeRef.current = 2;
             }
           } else {
             if (v2.paused) v2.play().catch(() => {});
-            const t2 = v2.currentTime;
-            if (t2 >= dur2 - crossfadeTime) {
-              if (v1.paused) {
-                v1.currentTime = 0;
-                v1.play().catch(() => {});
+
+            if (v1.duration && v2.duration) {
+              const crossfadeTime = 1.5;
+              const dur2 = v2.duration;
+              const t2 = v2.currentTime;
+              if (t2 >= dur2 - crossfadeTime) {
+                if (v1.paused) {
+                  v1.currentTime = 0;
+                  v1.play().catch(() => {});
+                }
+                const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
+                v1.style.opacity = String(ratio);
+                v2.style.opacity = String(1.0 - ratio);
+              } else {
+                v1.style.opacity = "0";
+                v2.style.opacity = "1";
+                if (!v1.paused) v1.pause();
               }
-              const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
-              v1.style.opacity = String(ratio);
-              v2.style.opacity = String(1.0 - ratio);
+
+              if (t2 >= dur2 - 0.1) {
+                activeRef.current = 1;
+              }
             } else {
+              // Fallback opacity if durations are not loaded yet
               v1.style.opacity = "0";
               v2.style.opacity = "1";
-              if (!v1.paused) v1.pause();
-            }
-
-            if (t2 >= dur2 - 0.1) {
-              activeRef.current = 1;
             }
           }
         }
