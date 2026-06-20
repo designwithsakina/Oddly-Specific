@@ -395,7 +395,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       {/* Bottom Shimmer Narrative Text */}
       <div
         ref={bottomTextRef}
-        className="fixed bottom-[11vh] left-0 right-0 flex flex-col items-center gap-[7px] pointer-events-none text-center select-none"
+        className="fixed bottom-[7vh] left-0 right-0 flex flex-col items-center gap-[7px] pointer-events-none text-center select-none"
         style={{
           zIndex: 49,
           display: "none",
