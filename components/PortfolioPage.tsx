@@ -99,7 +99,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         {webglSupported && currentSection !== "services" && <SmokeyCursor />}
         {webglSupported && <ServicesExperience />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute || isServicesRoute} />
-        <ProjectsSection isWorkRoute={isWorkRoute || isServicesRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
+        <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
         {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
         {!showSplash && <SoundToggle />}

@@ -261,6 +261,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         <video
           ref={vRef1}
           src="/services-bg.mp4"
+          preload="metadata"
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
@@ -269,6 +270,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         <video
           ref={vRef2}
           src="/services-bg.mp4"
+          preload="metadata"
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"

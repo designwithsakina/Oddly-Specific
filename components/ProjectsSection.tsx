@@ -652,6 +652,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         <video
           ref={vRef1}
           src="/underwater.mp4"
+          preload="metadata"
           autoPlay
           muted
           playsInline
@@ -661,6 +662,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         <video
           ref={vRef2}
           src="/underwater.mp4"
+          preload="metadata"
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
