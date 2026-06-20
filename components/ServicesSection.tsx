@@ -377,11 +377,14 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         </div>
 
         {/* Bottom Shimmer Narrative Text */}
-        <div className="w-full flex flex-col items-center gap-2 pb-[6vh] pointer-events-auto text-center">
-          <span className="font-display font-light text-[clamp(0.85rem,1.2vw,1.1rem)] tracking-[0.18em] uppercase hero-glow-text select-none">
-            The darkness isn&apos;t empty. It&apos;s waiting.
+        <div className="w-full flex flex-col items-center gap-2 pb-[11vh] pointer-events-auto text-center">
+          <span className="font-display font-light text-[clamp(1.0rem,1.4vw,1.25rem)] tracking-[0.18em] uppercase hero-glow-text select-none">
+            The darkness isn&apos;t empty.
           </span>
-          <span className="font-display font-semibold text-[clamp(0.7rem,0.9vw,0.82rem)] tracking-[0.22em] uppercase hero-glow-text select-none opacity-80">
+          <span className="font-display font-light text-[clamp(1.0rem,1.4vw,1.25rem)] tracking-[0.18em] uppercase hero-glow-text select-none">
+            It&apos;s waiting.
+          </span>
+          <span className="font-display font-medium italic text-[clamp(0.78rem,1.0vw,0.9rem)] tracking-[0.2em] hero-glow-text select-none opacity-90 mt-1">
             Hover to discover.
           </span>
         </div>
