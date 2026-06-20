@@ -333,7 +333,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         }}
       >
         <defs>
-          <filter id="spotlight-blur">
+          <filter id="spotlight-blur" x="-200%" y="-200%" width="500%" height="500%">
             <feGaussianBlur stdDeviation="55" />
           </filter>
           <mask id="spotlight-mask">
