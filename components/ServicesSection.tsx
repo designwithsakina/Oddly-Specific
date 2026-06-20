@@ -388,7 +388,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
                 Creative Systems
               </span>
               <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that need everything around them to make sense.
+                For ideas that need the pieces to connect.
               </p>
             </div>
             <div className="services-glass-card-border-wrap">
