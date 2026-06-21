@@ -764,10 +764,6 @@ html.lenis body {
     0 0 18px rgba(113, 180, 255, calc(0.2 * var(--cards-opacity, 0))); /* Subtly blooms icy blue */
 }
 
-.services-glass-card-content {
-  opacity: 0;
-  will-change: opacity, transform;
-}
 
 /* Custom border wrapper for services cards, masked to match rounded-2xl (1rem) */
 .services-glass-card-border-wrap {

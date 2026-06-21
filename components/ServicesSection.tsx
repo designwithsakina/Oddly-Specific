@@ -17,11 +17,13 @@ interface ServiceCardProps {
 
 function ServiceCard({ header, description, className = "", delayIndex }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [showBackFace, setShowBackFace] = useState(false);
   const [showText, setShowText] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState(header);
   const scrambleInterval = useRef<any>(null);
   const flippingTimeoutRef = useRef<any>(null);
+  const faceTimeoutRef = useRef<any>(null);
   const hoverStartTimeRef = useRef<number>(0);
 
   // Scramble animation
@@ -56,8 +58,12 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     setShowText(false);
     hoverStartTimeRef.current = performance.now();
     
-    if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
+    if (faceTimeoutRef.current) clearTimeout(faceTimeoutRef.current);
+    faceTimeoutRef.current = setTimeout(() => {
+      setShowBackFace(true);
+    }, 300); // Swap face halfway through the 600ms transition
     
+    if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     flippingTimeoutRef.current = setTimeout(() => {
       setShowText(true);
     }, 600); // Matches the 0.6s CSS flip transition duration
@@ -67,6 +73,12 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     setIsHovered(false);
     setShowText(false);
     hoverStartTimeRef.current = 0;
+    
+    if (faceTimeoutRef.current) clearTimeout(faceTimeoutRef.current);
+    faceTimeoutRef.current = setTimeout(() => {
+      setShowBackFace(false);
+    }, 300); // Swap face halfway through the reset transition
+    
     if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     if (scrambleInterval.current) clearInterval(scrambleInterval.current);
     setDisplayText(header);
@@ -110,6 +122,7 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     return () => {
       if (scrambleInterval.current) clearInterval(scrambleInterval.current);
       if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
+      if (faceTimeoutRef.current) clearTimeout(faceTimeoutRef.current);
     };
   }, []);
 
@@ -136,51 +149,43 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
           transformStyle: "preserve-3d"
         }}
       >
-        {/* Front Face (unhovered cover) */}
-        <div 
-          className="absolute inset-0 p-[18px] flex items-center justify-end w-full h-full select-none"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            zIndex: isHovered ? 1 : 2,
-          }}
-        >
-          <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider">
-            0{delayIndex + 1}
-          </span>
-        </div>
-
-        {/* Back Face (hovered content) */}
-        <div 
-          className="absolute inset-0 p-[18px] flex items-center justify-between w-full h-full"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-            zIndex: isHovered ? 2 : 1,
-          }}
-        >
-          {/* Local Left (Visual Right) - Large Number */}
-          <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider select-none">
-            0{delayIndex + 1}
-          </span>
-
-          {/* Local Right (Visual Left) - Text Content Column aligned with the number height */}
-          <div className={`services-glass-card-content flex flex-col justify-between h-full py-0.5 max-w-[70%] text-left z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            showText ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-2"
-          }`}>
-            <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase leading-tight">
-              {displayText}
+        {!showBackFace ? (
+          /* Front Face (unhovered cover) */
+          <div className="absolute inset-0 p-[18px] flex items-center justify-end w-full h-full select-none">
+            <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider">
+              0{delayIndex + 1}
             </span>
-            <p className="font-sans text-[0.74rem] leading-snug text-[#c8ddf0]/85">
-              {description}
-            </p>
           </div>
+        ) : (
+          /* Back Face (hovered content) */
+          <div 
+            className="absolute inset-0 p-[18px] flex items-center justify-start gap-[14px] w-full h-full"
+            style={{
+              transform: "rotateY(180deg)"
+            }}
+          >
+            {/* Local Left (Visual Right) - Large Number */}
+            <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider select-none">
+              0{delayIndex + 1}
+            </span>
 
-          <div className="services-glass-card-border-wrap">
-            <div className="services-glass-card-border-light" />
+            {/* Local Right (Visual Left) - Text Content Column aligned with the number height */}
+            <div className={`services-glass-card-content flex flex-col justify-center gap-1 max-w-[65%] text-left z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              showText ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-2"
+            }`}>
+              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase leading-tight">
+                {displayText}
+              </span>
+              <p className="font-sans text-[0.74rem] leading-snug text-[#c8ddf0]/85">
+                {description}
+              </p>
+            </div>
+
+            <div className="services-glass-card-border-wrap">
+              <div className="services-glass-card-border-light" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
