@@ -59,7 +59,7 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     
     flippingTimeoutRef.current = setTimeout(() => {
       setIsFlipping(false);
-    }, 700); // matches the CSS flip animation duration
+    }, 800); // matches the 0.8s CSS flip animation duration
   };
 
   const handleMouseLeave = () => {
@@ -103,25 +103,30 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
 
   return (
     <div
-      ref={cardRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
-      className={`services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""} ${className}`}
+      className={`services-glass-card-wrapper w-[192px] h-[127px] relative pointer-events-auto ${className}`}
       style={{
-        transitionDelay: `${delayIndex * 80}ms`
+        transitionDelay: `${delayIndex * 80}ms`,
+        perspective: "1000px" // Provide 3D perspective context for the child flip
       }}
     >
-      <div className="services-glass-card-content flex flex-col gap-1.5 w-full relative z-10">
-        <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-          {displayText}
-        </span>
-        <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85 transition-colors duration-300">
-          {description}
-        </p>
-      </div>
-      <div className="services-glass-card-border-wrap">
-        <div className="services-glass-card-border-light" />
+      <div
+        ref={cardRef}
+        className={`services-glass-card w-full h-full rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""}`}
+      >
+        <div className="services-glass-card-content flex flex-col gap-1.5 w-full relative z-10">
+          <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
+            {displayText}
+          </span>
+          <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85 transition-colors duration-300">
+            {description}
+          </p>
+        </div>
+        <div className="services-glass-card-border-wrap">
+          <div className="services-glass-card-border-light" />
+        </div>
       </div>
     </div>
   );
