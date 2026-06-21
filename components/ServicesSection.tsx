@@ -17,9 +17,11 @@ interface ServiceCardProps {
 
 function ServiceCard({ header, description, className = "", delayIndex }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState(header);
   const scrambleInterval = useRef<any>(null);
+  const flippingTimeoutRef = useRef<any>(null);
 
   // Scramble animation
   const scramble = () => {
@@ -50,11 +52,20 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+    setIsFlipping(true);
     scramble();
+    
+    if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
+    
+    flippingTimeoutRef.current = setTimeout(() => {
+      setIsFlipping(false);
+    }, 700); // matches the CSS flip animation duration
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+    setIsFlipping(false);
+    if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     if (scrambleInterval.current) clearInterval(scrambleInterval.current);
     setDisplayText(header);
     if (cardRef.current) {
@@ -72,6 +83,8 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     card.style.setProperty("--mouse-x", `${(x / rect.width) * 100}%`);
     card.style.setProperty("--mouse-y", `${(y / rect.height) * 100}%`);
     
+    if (isFlipping) return; // Prevent tilt overrides during 360-degree Y flip animation
+    
     // Tilt calculations
     const xc = rect.width / 2;
     const yc = rect.height / 2;
@@ -84,6 +97,7 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
   useEffect(() => {
     return () => {
       if (scrambleInterval.current) clearInterval(scrambleInterval.current);
+      if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     };
   }, []);
 
@@ -93,18 +107,11 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
-      className={`services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${className}`}
+      className={`services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""} ${className}`}
       style={{
         transitionDelay: `${delayIndex * 80}ms`
       }}
     >
-      {/* Delicate plus indicator in top-right */}
-      <span className={`absolute top-[14px] right-[14px] font-mono text-[0.65rem] text-[#c8ddf0]/30 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 ${
-        isHovered ? "rotate-90 scale-125 text-white/80" : ""
-      }`}>
-        +
-      </span>
-
       <div className="services-glass-card-content flex flex-col gap-1.5 w-full relative z-10">
         <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
           {displayText}

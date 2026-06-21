@@ -755,6 +755,22 @@ html.lenis body {
   opacity: 1;
 }
 
+.services-glass-card.flipping {
+  animation: cardFlip360 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes cardFlip360 {
+  0% {
+    transform: perspective(800px) rotateY(0deg) scale(1.0);
+  }
+  50% {
+    transform: perspective(800px) rotateY(180deg) scale(1.12);
+  }
+  100% {
+    transform: perspective(800px) rotateY(360deg) scale(1.06) translateY(-4px);
+  }
+}
+
 .services-glass-card:hover {
   border-color: transparent !important; /* Hide default border to reveal custom gradient border */
   box-shadow: 
