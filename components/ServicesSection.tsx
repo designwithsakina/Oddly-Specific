@@ -18,6 +18,7 @@ interface ServiceCardProps {
 function ServiceCard({ header, description, className = "", delayIndex }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [showText, setShowText] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState(header);
   const scrambleInterval = useRef<any>(null);
@@ -53,18 +54,20 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
   const handleMouseEnter = () => {
     setIsHovered(true);
     setIsFlipping(true);
-    scramble();
+    setShowText(false);
     
     if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     
     flippingTimeoutRef.current = setTimeout(() => {
       setIsFlipping(false);
-    }, 800); // matches the 0.8s CSS flip animation duration
+      setShowText(true);
+    }, 800); // Matches the 0.8s CSS flip animation duration
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     setIsFlipping(false);
+    setShowText(false);
     if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     if (scrambleInterval.current) clearInterval(scrambleInterval.current);
     setDisplayText(header);
@@ -89,10 +92,18 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     const xc = rect.width / 2;
     const yc = rect.height / 2;
     const angleX = (yc - y) / 5; // max 12deg tilt
-    const angleY = (x - xc) / 5;
+    const angleY = -(x - xc) / 5; // Inverted since the card is rotated by rotateY(180deg)
     
-    card.style.transform = `perspective(800px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.06) translateY(-4px)`;
+    card.style.transform = `perspective(800px) rotateY(180deg) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.06) translateY(-4px)`;
   };
+
+  useEffect(() => {
+    if (showText) {
+      scramble();
+    } else {
+      setDisplayText(header);
+    }
+  }, [showText]);
 
   useEffect(() => {
     return () => {
@@ -100,6 +111,11 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
       if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     };
   }, []);
+
+  const getCategoryName = (idx: number) => {
+    const names = ["IDENTITY", "DIGITAL", "PITCH", "CREATIVE", "PHYSICAL", "SYSTEMS"];
+    return names[idx] || "";
+  };
 
   return (
     <div
@@ -114,18 +130,56 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     >
       <div
         ref={cardRef}
-        className={`services-glass-card w-full h-full rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""}`}
+        className={`services-glass-card w-full h-full rounded-2xl border flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""} ${isHovered && !isFlipping ? "flipped" : ""}`}
+        style={{
+          transformStyle: "preserve-3d"
+        }}
       >
-        <div className="services-glass-card-content flex flex-col gap-1.5 w-full relative z-10">
-          <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-            {displayText}
+        {/* Front Face (unhovered cover) */}
+        <div 
+          className="absolute inset-0 p-[18px] flex flex-col justify-between items-start w-full h-full select-none"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            zIndex: isHovered ? 1 : 2,
+          }}
+        >
+          <span className="font-sans text-[0.52rem] font-bold tracking-[0.25em] text-[#71b4ff]/60 uppercase">
+            SERVICE 0{delayIndex + 1}
           </span>
-          <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85 transition-colors duration-300">
-            {description}
-          </p>
+          <div className="w-full flex justify-between items-end mt-auto">
+            <span className="font-display font-thin text-[2.8rem] leading-none text-white/40 tracking-wider">
+              0{delayIndex + 1}
+            </span>
+            <span className="font-sans text-[0.55rem] font-medium tracking-[0.2em] text-[#c8ddf0]/60 uppercase pb-1">
+              {getCategoryName(delayIndex)}
+            </span>
+          </div>
         </div>
-        <div className="services-glass-card-border-wrap">
-          <div className="services-glass-card-border-light" />
+
+        {/* Back Face (hovered content) */}
+        <div 
+          className="absolute inset-0 p-[18px] flex flex-col justify-center items-start w-full h-full"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            zIndex: isHovered ? 2 : 1,
+          }}
+        >
+          <div className={`services-glass-card-content flex flex-col gap-1.5 w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            showText ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-2"
+          }`}>
+            <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
+              {displayText}
+            </span>
+            <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
+              {description}
+            </p>
+          </div>
+          <div className="services-glass-card-border-wrap">
+            <div className="services-glass-card-border-light" />
+          </div>
         </div>
       </div>
     </div>
