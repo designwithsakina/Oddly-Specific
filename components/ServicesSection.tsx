@@ -1,11 +1,123 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { scroll, pointer, damp } from "@/lib/state";
 import InteractiveTypography from "./InteractiveTypography";
 
 interface ServicesSectionProps {
   isServicesRoute?: boolean;
+}
+
+interface ServiceCardProps {
+  header: string;
+  description: string;
+  className?: string;
+  delayIndex: number;
+}
+
+function ServiceCard({ header, description, className = "", delayIndex }: ServiceCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [displayText, setDisplayText] = useState(header);
+  const scrambleInterval = useRef<any>(null);
+
+  // Scramble animation
+  const scramble = () => {
+    const chars = "!<>-_\\/[]{}=+*^?#";
+    let iterations = 0;
+    
+    if (scrambleInterval.current) clearInterval(scrambleInterval.current);
+    
+    scrambleInterval.current = setInterval(() => {
+      setDisplayText(
+        header
+          .split("")
+          .map((char, index) => {
+            if (char === " ") return " ";
+            if (index < iterations) return header[index];
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("")
+      );
+      
+      iterations += 0.5; // Scramble speed factor
+      if (iterations >= header.length + 1) {
+        clearInterval(scrambleInterval.current);
+        setDisplayText(header);
+      }
+    }, 30);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    scramble();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (scrambleInterval.current) clearInterval(scrambleInterval.current);
+    setDisplayText(header);
+    if (cardRef.current) {
+      cardRef.current.style.transform = "";
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    card.style.setProperty("--mouse-x", `${(x / rect.width) * 100}%`);
+    card.style.setProperty("--mouse-y", `${(y / rect.height) * 100}%`);
+    
+    // Tilt calculations
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    const angleX = (yc - y) / 5; // max 12deg tilt
+    const angleY = (x - xc) / 5;
+    
+    card.style.transform = `perspective(800px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.06) translateY(-4px)`;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scrambleInterval.current) clearInterval(scrambleInterval.current);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      className={`services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all ${className}`}
+      style={{
+        transitionDelay: `${delayIndex * 80}ms`
+      }}
+    >
+      {/* Delicate plus indicator in top-right */}
+      <span className={`absolute top-[14px] right-[14px] font-mono text-[0.65rem] text-[#c8ddf0]/30 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 ${
+        isHovered ? "rotate-90 scale-125 text-white/80" : ""
+      }`}>
+        +
+      </span>
+
+      <div className="services-glass-card-content flex flex-col gap-1.5 w-full relative z-10">
+        <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
+          {displayText}
+        </span>
+        <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85 transition-colors duration-300">
+          {description}
+        </p>
+      </div>
+      <div className="services-glass-card-border-wrap">
+        <div className="services-glass-card-border-light" />
+      </div>
+    </div>
+  );
 }
 
 export default function ServicesSection({ isServicesRoute = false }: ServicesSectionProps) {
@@ -301,94 +413,42 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       >
         {/* Left Column - Shifted 2px closer to the center */}
         <div className="flex flex-col gap-[4vh] items-start pointer-events-auto translate-x-[2px]">
-          {/* Card 1 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Brand Identity
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas looking for a personality.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
-          {/* Card 2 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[-35px]">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Websites
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that deserve a world of their own.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
-          {/* Card 3 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Presentations
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that need believers.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
+          <ServiceCard
+            header="Brand Identity"
+            description="For ideas looking for a personality."
+            delayIndex={0}
+          />
+          <ServiceCard
+            header="Websites"
+            description="For ideas that deserve a world of their own."
+            className="translate-x-[-35px]"
+            delayIndex={1}
+          />
+          <ServiceCard
+            header="Interactive Pitch Decks"
+            description="For ideas that need believers."
+            delayIndex={2}
+          />
         </div>
 
         {/* Right Column - Shifted 2px closer to the center */}
         <div className="flex flex-col gap-[4vh] items-end pointer-events-auto -translate-x-[2px]">
-          {/* Card 4 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Art Direction
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that are easier to show than explain.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
-          {/* Card 5 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all translate-x-[35px]">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Packaging
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas people can hold.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
-          {/* Card 6 */}
-          <div className="services-glass-card w-[192px] h-[127px] rounded-2xl border p-[18px] flex flex-col justify-center items-start cursor-pointer transition-all">
-            <div className="services-glass-card-content flex flex-col gap-1.5">
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
-                Creative Systems
-              </span>
-              <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
-                For ideas that need the pieces to connect.
-              </p>
-            </div>
-            <div className="services-glass-card-border-wrap">
-              <div className="services-glass-card-border-light" />
-            </div>
-          </div>
+          <ServiceCard
+            header="Art Direction"
+            description="For ideas that are easier to show than explain."
+            delayIndex={3}
+          />
+          <ServiceCard
+            header="Packaging"
+            description="For ideas people can hold."
+            className="translate-x-[35px]"
+            delayIndex={4}
+          />
+          <ServiceCard
+            header="Creative Systems"
+            description="For ideas that need the pieces to connect."
+            delayIndex={5}
+          />
         </div>
       </div>
 

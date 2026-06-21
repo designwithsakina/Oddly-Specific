@@ -708,12 +708,21 @@ html.lenis body {
 }
 
 /* ---- Services Section Liquid Glass Cards ---- */
+/* ---- Services Section Liquid Glass Cards ---- */
 .services-glass-card {
   position: relative;
-  backdrop-filter: blur(calc(1.5px * var(--cards-opacity, 0)));
-  -webkit-backdrop-filter: blur(calc(1.5px * var(--cards-opacity, 0)));
-  background-color: rgba(255, 255, 255, calc(0.12 * var(--cards-opacity, 0)));
-  border-color: rgba(255, 255, 255, calc(0.25 * var(--cards-opacity, 0)));
+  backdrop-filter: blur(calc(12px * var(--cards-opacity, 0)));
+  -webkit-backdrop-filter: blur(calc(12px * var(--cards-opacity, 0)));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, calc(0.06 * var(--cards-opacity, 0))) 0%,
+    rgba(143, 203, 255, calc(0.12 * var(--cards-opacity, 0))) 35%,
+    rgba(240, 248, 255, calc(0.08 * var(--cards-opacity, 0))) 70%,
+    rgba(255, 255, 255, calc(0.06 * var(--cards-opacity, 0))) 100%
+  );
+  background-size: 200% 200%;
+  animation: cardGradShift 10s ease infinite;
+  border: 1px solid rgba(255, 255, 255, calc(0.25 * var(--cards-opacity, 0)));
   box-shadow: 
     inset 0 1px 1px rgba(255, 255, 255, calc(0.35 * var(--cards-opacity, 0))), 
     0 12px 40px rgba(0, 0, 0, calc(0.25 * var(--cards-opacity, 0)));
@@ -722,10 +731,31 @@ html.lenis body {
     border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, border-color, box-shadow;
+  overflow: hidden;
+}
+
+/* Cursor spotlight glow inside each card */
+.services-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 90px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(113, 180, 255, calc(0.18 * var(--cards-opacity, 0))) 0%,
+    rgba(113, 180, 255, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.services-glass-card:hover::before {
+  opacity: 1;
 }
 
 .services-glass-card:hover {
-  transform: scale(1.08) translateY(-2px);
   border-color: transparent !important; /* Hide default border to reveal custom gradient border */
   box-shadow: 
     inset 0 2px 2px rgba(255, 255, 255, calc(0.45 * var(--cards-opacity, 0))), /* Keeps the shiny bevel reflection */
@@ -734,17 +764,16 @@ html.lenis body {
 }
 
 .services-glass-card-content {
-  opacity: 0;
-  filter: blur(6px);
+  opacity: calc(0.7 * var(--cards-opacity, 0));
   transition: 
-    opacity 0.8s ease-in-out, 
-    filter 0.8s ease-in-out;
-  will-change: opacity, filter;
+    opacity 0.4s ease, 
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .services-glass-card:hover .services-glass-card-content {
-  opacity: 1;
-  filter: blur(0px);
+  opacity: calc(1.0 * var(--cards-opacity, 0));
+  transform: scale(1.01);
 }
 
 /* Custom border wrapper for services cards, masked to match rounded-2xl (1rem) */
@@ -835,6 +864,12 @@ html.lenis body {
   100% {
     background-position: -80px center, 0 0;
   }
+}
+
+@keyframes cardGradShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 
