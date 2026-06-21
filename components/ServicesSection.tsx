@@ -173,7 +173,7 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
             <div className={`services-glass-card-content flex flex-col justify-center gap-1 max-w-[65%] text-left z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               showText ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-2"
             }`}>
-              <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase leading-tight">
+              <span className="font-display font-semibold text-[0.74rem] tracking-[0.05em] services-card-header-glow uppercase leading-tight">
                 {displayText}
               </span>
               <p className="font-sans text-[0.74rem] leading-snug text-[#c8ddf0]/85">
@@ -496,7 +496,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             delayIndex={1}
           />
           <ServiceCard
-            header="Interactive Pitch Decks"
+            header={"Interactive\u00a0Pitch\u00a0Decks"}
             description="For ideas that need believers."
             delayIndex={2}
           />
