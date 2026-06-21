@@ -496,7 +496,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             delayIndex={1}
           />
           <ServiceCard
-            header={"Interactive\u00a0Pitch\u00a0Decks"}
+            header={"Interactive Pitch\u00a0Decks"}
             description="For ideas that need believers."
             delayIndex={2}
           />
