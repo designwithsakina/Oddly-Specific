@@ -17,12 +17,12 @@ interface ServiceCardProps {
 
 function ServiceCard({ header, description, className = "", delayIndex }: ServiceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isFlipping, setIsFlipping] = useState(false);
   const [showText, setShowText] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState(header);
   const scrambleInterval = useRef<any>(null);
   const flippingTimeoutRef = useRef<any>(null);
+  const hoverStartTimeRef = useRef<number>(0);
 
   // Scramble animation
   const scramble = () => {
@@ -53,21 +53,20 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    setIsFlipping(true);
     setShowText(false);
+    hoverStartTimeRef.current = performance.now();
     
     if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     
     flippingTimeoutRef.current = setTimeout(() => {
-      setIsFlipping(false);
       setShowText(true);
-    }, 800); // Matches the 0.8s CSS flip animation duration
+    }, 600); // Matches the 0.6s CSS flip transition duration
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setIsFlipping(false);
     setShowText(false);
+    hoverStartTimeRef.current = 0;
     if (flippingTimeoutRef.current) clearTimeout(flippingTimeoutRef.current);
     if (scrambleInterval.current) clearInterval(scrambleInterval.current);
     setDisplayText(header);
@@ -86,7 +85,9 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     card.style.setProperty("--mouse-x", `${(x / rect.width) * 100}%`);
     card.style.setProperty("--mouse-y", `${(y / rect.height) * 100}%`);
     
-    if (isFlipping) return; // Prevent tilt overrides during 360-degree Y flip animation
+    // Check if the 3D flip transition is still running
+    const elapsed = performance.now() - hoverStartTimeRef.current;
+    if (elapsed < 600) return; // Prevent tilt overrides during native CSS flip transition
     
     // Tilt calculations
     const xc = rect.width / 2;
@@ -130,36 +131,28 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
     >
       <div
         ref={cardRef}
-        className={`services-glass-card w-full h-full rounded-2xl border flex flex-col justify-center items-start cursor-pointer transition-all ${isFlipping ? "flipping" : ""} ${isHovered && !isFlipping ? "flipped" : ""}`}
+        className="services-glass-card w-full h-full rounded-2xl border flex flex-col justify-center items-start cursor-pointer transition-all"
         style={{
           transformStyle: "preserve-3d"
         }}
       >
         {/* Front Face (unhovered cover) */}
         <div 
-          className="absolute inset-0 p-[18px] flex flex-col justify-between items-start w-full h-full select-none"
+          className="absolute inset-0 p-[18px] flex items-center justify-end w-full h-full select-none"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             zIndex: isHovered ? 1 : 2,
           }}
         >
-          <span className="font-sans text-[0.52rem] font-bold tracking-[0.25em] text-[#71b4ff]/60 uppercase">
-            SERVICE 0{delayIndex + 1}
+          <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider">
+            0{delayIndex + 1}
           </span>
-          <div className="w-full flex justify-between items-end mt-auto">
-            <span className="font-display font-thin text-[2.8rem] leading-none text-white/40 tracking-wider">
-              0{delayIndex + 1}
-            </span>
-            <span className="font-sans text-[0.55rem] font-medium tracking-[0.2em] text-[#c8ddf0]/60 uppercase pb-1">
-              {getCategoryName(delayIndex)}
-            </span>
-          </div>
         </div>
 
         {/* Back Face (hovered content) */}
         <div 
-          className="absolute inset-0 p-[18px] flex flex-col justify-center items-start w-full h-full"
+          className="absolute inset-0 p-[18px] flex items-center justify-between w-full h-full"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
@@ -167,16 +160,23 @@ function ServiceCard({ header, description, className = "", delayIndex }: Servic
             zIndex: isHovered ? 2 : 1,
           }}
         >
-          <div className={`services-glass-card-content flex flex-col gap-1.5 w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          {/* Local Left (Visual Right) - Large Number */}
+          <span className="font-display font-thin text-[3.0rem] leading-none text-white/40 tracking-wider select-none">
+            0{delayIndex + 1}
+          </span>
+
+          {/* Local Right (Visual Left) - Text Content Column aligned with the number height */}
+          <div className={`services-glass-card-content flex flex-col justify-between h-full py-0.5 max-w-[70%] text-left z-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             showText ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-2"
           }`}>
-            <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase">
+            <span className="font-display font-semibold text-[0.82rem] tracking-[0.08em] services-card-header-glow uppercase leading-tight">
               {displayText}
             </span>
-            <p className="font-sans text-[0.74rem] leading-normal text-[#c8ddf0]/85">
+            <p className="font-sans text-[0.74rem] leading-snug text-[#c8ddf0]/85">
               {description}
             </p>
           </div>
+
           <div className="services-glass-card-border-wrap">
             <div className="services-glass-card-border-light" />
           </div>

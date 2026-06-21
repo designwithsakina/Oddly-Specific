@@ -727,9 +727,9 @@ html.lenis body {
     inset 0 1px 1px rgba(255, 255, 255, calc(0.35 * var(--cards-opacity, 0))), 
     0 12px 40px rgba(0, 0, 0, calc(0.25 * var(--cards-opacity, 0)));
   transition: 
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-    border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    border-color 0.4s ease, 
+    box-shadow 0.4s ease;
   will-change: transform, border-color, box-shadow;
   transform-style: preserve-3d; /* Enable 3D rendering context */
 }
@@ -755,27 +755,8 @@ html.lenis body {
   opacity: 1;
 }
 
-.services-glass-card.flipping {
-  animation: cardFlip180 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-.services-glass-card.flipped {
-  transform: perspective(800px) rotateY(180deg) scale(1.06) translateY(-4px);
-}
-
-@keyframes cardFlip180 {
-  0% {
-    transform: perspective(800px) rotateY(0deg) scale(1.0);
-  }
-  50% {
-    transform: perspective(800px) rotateY(90deg) scale(1.1);
-  }
-  100% {
-    transform: perspective(800px) rotateY(180deg) scale(1.06) translateY(-4px);
-  }
-}
-
 .services-glass-card-wrapper:hover .services-glass-card {
+  transform: perspective(800px) rotateY(180deg) scale(1.06) translateY(-4px);
   border-color: transparent !important; /* Hide default border to reveal custom gradient border */
   box-shadow: 
     inset 0 2px 2px rgba(255, 255, 255, calc(0.45 * var(--cards-opacity, 0))), /* Keeps the shiny bevel reflection */
@@ -784,16 +765,8 @@ html.lenis body {
 }
 
 .services-glass-card-content {
-  opacity: calc(0.7 * var(--cards-opacity, 0));
-  transition: 
-    opacity 0.4s ease, 
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
   will-change: opacity, transform;
-}
-
-.services-glass-card-wrapper:hover .services-glass-card-content {
-  opacity: calc(1.0 * var(--cards-opacity, 0));
-  transform: scale(1.01);
 }
 
 /* Custom border wrapper for services cards, masked to match rounded-2xl (1rem) */
