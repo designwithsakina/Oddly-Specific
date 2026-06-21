@@ -272,7 +272,7 @@ export default function ServicesExperience() {
     <canvas
       ref={trailCanvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none"
-      style={{ zIndex: 50 }}
+      style={{ zIndex: 46 }}
     />
   );
 }
