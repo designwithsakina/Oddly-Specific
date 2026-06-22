@@ -237,8 +237,8 @@ export default function WaterfallBackdrop() {
     const finalWidth = 16 * scaleMultiplier * 1.05; 
     const finalHeight = 9 * scaleMultiplier * 1.05;
 
-    // Dolly zoom factor: starts at 1.15x zoomed in, scales down to 1.0x (current settings) as we scroll
-    const zoomFactor = 1.0 + (1.0 - scroll.section2) * 0.15;
+    // Dolly zoom factor: starts at 1.0x (full sized), scales up to 1.15x as we scroll
+    const zoomFactor = 1.0 + scroll.section2 * 0.15;
 
     // Align the bottom of the video to the bottom of the camera view
     // At scroll.section2 = 0, the video is centered. As we scroll, it aligns to the bottom
