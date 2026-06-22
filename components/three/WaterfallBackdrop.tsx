@@ -13,8 +13,8 @@ export default function WaterfallBackdrop() {
 
   // Calculate scale so the width exactly matches the viewport width
   const { width, height } = viewport.getCurrentViewport(camera, new THREE.Vector3(0, 0, -35));
-  // We make it slightly wider than the screen (e.g. 1.05x) so when we pan, we don't see black edges.
-  const scaleMultiplier = (width * 1.05) / 16;
+  // We make it slightly wider than the screen (e.g. 1.15x) so when we pan, we don't see black edges.
+  const scaleMultiplier = (width * 1.15) / 16;
   const finalWidth = 16 * scaleMultiplier;
   const finalHeight = 9 * scaleMultiplier;
 
@@ -233,9 +233,9 @@ export default function WaterfallBackdrop() {
     
     // We use Math.max to ensure it covers the screen (no side gaps)
     const scaleMultiplier = Math.max(viewWidth / 16, viewHeight / 9);
-    // Add 5% padding to the width to hide edges during pan/tilt
-    const finalWidth = 16 * scaleMultiplier * 1.05; 
-    const finalHeight = 9 * scaleMultiplier * 1.05;
+    // Add 15% padding to the width to hide edges during pan/tilt
+    const finalWidth = 16 * scaleMultiplier * 1.15; 
+    const finalHeight = 9 * scaleMultiplier * 1.15;
 
     // Dolly zoom factor: starts at 1.15x zoomed in, scales down to 1.0x (current settings) as we scroll
     const zoomFactor = 1.0 + (1.0 - scroll.section2) * 0.15;

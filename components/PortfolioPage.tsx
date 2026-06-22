@@ -7,7 +7,6 @@ import HeroOverlay from "@/components/HeroOverlay";
 import SmokeyCursor from "@/components/SmokeyCursor";
 import LogoReveal from "@/components/LogoReveal";
 import MorphSection from "@/components/MorphSection";
-import MorphFlash from "@/components/MorphFlash";
 import ProjectsSection from "@/components/ProjectsSection";
 import ServicesSection from "@/components/ServicesSection";
 import SoundToggle from "@/components/SoundToggle";
@@ -108,7 +107,6 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         <main className="relative z-40">
           {/* logo holds centre after the headline fades; section below covers it */}
           <LogoReveal />
-          <MorphFlash />
 
           {/* hero descent scroll region — exactly 2.2vh (220vh) so it hits 1.0 at the end */}
           <section style={{ height: "220vh" }} aria-label="Hero" />

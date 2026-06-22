@@ -252,7 +252,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           cardsOpacity = 0.0;
           cardsTranslateY = 20;
           contentTranslateY = 30 - easedT * 30;
-          scale = 1.02 + easedT * 0.01;
+          scale = 1.05 + easedT * 0.01;
         } else if (rawScroll < step8Pos) {
           // Scroll 2: From Step 14 (23.2vh) to Step 15 (24.2vh). Text fades out, video zooms to 1.04.
           const t = Math.min((rawScroll - step7Pos) / (1.0 * vh), 1.0);
@@ -263,7 +263,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           cardsOpacity = easedT;      // Liquid glass cards fade in as text/blur fade out
           cardsTranslateY = 20 - easedT * 20;
           contentTranslateY = -easedT * 30;
-          scale = 1.03 + easedT * 0.01;
+          scale = 1.06 + easedT * 0.01;
         } else {
           // Past Step 15 (24.2vh+)
           contentOpacity = 0.0;
@@ -272,7 +272,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           cardsOpacity = 1.0;
           cardsTranslateY = 0;
           contentTranslateY = -30;
-          scale = 1.04;
+          scale = 1.07;
         }
       } else {
         // Transition from Section 3 (Works) into Section 4 (Services)
@@ -284,7 +284,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           vignetteOpacity = 0.0;
           cardsOpacity = 0.0;
           cardsTranslateY = 20;
-          scale = 1.02; // Baseline scale for services section
+          scale = 1.05; // Baseline scale for services section
           shiftFactor = easedT;
         }
       }
