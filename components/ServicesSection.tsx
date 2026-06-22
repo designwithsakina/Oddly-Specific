@@ -366,12 +366,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
           }
         }
 
-        // Shift background videos in opposite direction of mouse for parallax pan/tilt
+        // Shift background videos in opposite direction of mouse for parallax pan
         const xShift = -pointer.x * 24.0 * shiftFactor;
         const yShift = -pointer.y * 24.0 * shiftFactor;
-        const xRot = -pointer.y * 2.5 * shiftFactor;
-        const yRot = pointer.x * 2.5 * shiftFactor;
-        const transformStr = `translate3d(${xShift}px, ${yShift}px, 0) rotateX(${xRot}deg) rotateY(${yRot}deg) scale(${scale})`;
+        const transformStr = `translate3d(${xShift}px, ${yShift}px, 0) scale(${scale})`;
         
         v1.style.transform = transformStr;
         v2.style.transform = transformStr;
