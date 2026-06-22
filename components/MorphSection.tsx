@@ -72,27 +72,41 @@ export default function MorphSection({ children, className, isAboutRoute = false
         
         {/* Dolly Zoom typography wrapper */}
         <div ref={textContainerRef} className="flex flex-col items-center justify-center w-full origin-center">
-          <div className="mb-2 w-full overflow-visible py-4 flex items-center justify-center">
-            <h2 
-              className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight cursor-default pointer-events-auto"
-              style={{
-                filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))"
-              }}
-            >
-              For Those Who Look Closer
-            </h2>
-          </div>
-          
-          {/* Wrapper for the body paragraphs to control blur and opacity */}
-          <div ref={bodyTextRef} className="flex flex-col items-center justify-center w-full transition-all duration-75">
-            <InteractiveTypography 
-              className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-justify"
-              text="Oddly Specific was born from a simple observation: the things that stay with us are rarely the loudest. They're the details we almost missed, the stories tucked between the lines, the ideas that reveal themselves when we choose to look a little closer."
-            />
-            <InteractiveTypography 
-              className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-justify"
-              text="We create brands, websites, presentations, treatments and experiences, but more than that, we follow curiosity wherever it leads. Every project begins with a question, a challenge, or a spark of possibility, and unfolds into something uniquely its own. Because the most memorable ideas aren't always the most obvious ones. They're often hiding in plain sight, waiting to be discovered."
-            />
+          {/* Glassmorphic card container with bevel icy blue highlight border and hover scale zoom */}
+          <div 
+            className="flex flex-col items-center justify-center max-w-[65ch] px-8 py-10 md:px-12 md:py-14 rounded-[32px] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05] bg-[#0a0916]/30 backdrop-blur-xl border border-sky-300/12 hover:border-sky-300/25 hover:bg-[#0a0916]/40"
+            style={{
+              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1.5px 0 rgba(224, 242, 254, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = "0 30px 60px rgba(0, 0, 0, 0.45), inset 0 1.5px 0 rgba(224, 242, 254, 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1.5px 0 rgba(224, 242, 254, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.2)";
+            }}
+          >
+            <div className="mb-2 w-full overflow-visible py-4 flex items-center justify-center">
+              <h2 
+                className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight cursor-default pointer-events-auto"
+                style={{
+                  filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))"
+                }}
+              >
+                For Those Who Look Closer
+              </h2>
+            </div>
+            
+            {/* Wrapper for the body paragraphs to control blur and opacity */}
+            <div ref={bodyTextRef} className="flex flex-col items-center justify-center w-full transition-all duration-75">
+              <InteractiveTypography 
+                className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-justify"
+                text="Oddly Specific was born from a simple observation: the things that stay with us are rarely the loudest. They're the details we almost missed, the stories tucked between the lines, the ideas that reveal themselves when we choose to look a little closer."
+              />
+              <InteractiveTypography 
+                className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-justify"
+                text="We create brands, websites, presentations, treatments and experiences, but more than that, we follow curiosity wherever it leads. Every project begins with a question, a challenge, or a spark of possibility, and unfolds into something uniquely its own. Because the most memorable ideas aren't always the most obvious ones. They're often hiding in plain sight, waiting to be discovered."
+              />
+            </div>
           </div>
         </div>
       </section>
