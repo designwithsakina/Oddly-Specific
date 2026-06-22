@@ -240,11 +240,15 @@ export default function WaterfallBackdrop() {
     // Dolly zoom factor: starts at 1.15x zoomed in, scales down to 1.0x (current settings) as we scroll
     const zoomFactor = 1.0 + (1.0 - scroll.section2) * 0.15;
 
-    // Align the bottom of the video to the bottom of the camera view
-    // At scroll.section2 = 0, the video is centered. As we scroll, it aligns to the bottom
-    // to reveal the water at the bottom, matching current layout settings when scrolling stops.
-    const alignmentFactor = scroll.section2;
-    const baseYPos = state.camera.position.y + ((finalHeight * zoomFactor - viewHeight) / 2) * alignmentFactor;
+    // Y-alignment positioning to show top leaves at the start and water at the end
+    const meshHeight = finalHeight * zoomFactor;
+    const safetyPadding = viewHeight * 0.05; // Matches the max targetY tilt offset (5%)
+    
+    // - At scroll.section2 = 0.0, top is aligned to top of screen with safety padding for mouse tilt (shows top leaves)
+    // - At scroll.section2 = 1.0, bottom is aligned to bottom of screen with safety padding (shows bottom water)
+    const topYOffset = (viewHeight - meshHeight) / 2 + safetyPadding;
+    const bottomYOffset = (meshHeight - viewHeight) / 2 - safetyPadding;
+    const yAlign = topYOffset + (bottomYOffset - topYOffset) * scroll.section2;
 
     // Pan / Tilt effect based on mouse movement
     const targetX = pointer.x * (viewWidth * 0.05); // Move horizontally by 5% of screen width
@@ -254,7 +258,7 @@ export default function WaterfallBackdrop() {
       meshRef.current.scale.set(finalWidth * zoomFactor, finalHeight * zoomFactor, 1);
       // Match camera Y and X directly, but slide Y upwards as the plunge transition progresses
       const p = smoothstep(0.0, 2.0 / 15.0, scroll.section3);
-      meshRef.current.position.y = state.camera.position.y + p * 32.0 + targetY;
+      meshRef.current.position.y = state.camera.position.y + yAlign + p * 32.0 + targetY;
       meshRef.current.position.x = state.camera.position.x + targetX;
     }
   });
