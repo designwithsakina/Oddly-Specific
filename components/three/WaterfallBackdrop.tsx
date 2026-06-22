@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { scroll, smoothstep } from "@/lib/state";
+import { scroll, smoothstep, pointer } from "@/lib/state";
 
 export default function WaterfallBackdrop() {
   const gl = useThree((s) => s.gl);
@@ -237,8 +237,8 @@ export default function WaterfallBackdrop() {
     const finalWidth = 16 * scaleMultiplier * 1.05; 
     const finalHeight = 9 * scaleMultiplier * 1.05;
 
-    // Dolly zoom factor: starts at 1.0x (full sized), scales up to 1.15x as we scroll
-    const zoomFactor = 1.0 + scroll.section2 * 0.15;
+    // Dolly zoom factor: starts at 1.15x zoomed in, scales down to 1.0x (current settings) as we scroll
+    const zoomFactor = 1.0 + (1.0 - scroll.section2) * 0.15;
 
     // Align the bottom of the video to the bottom of the camera view
     // At scroll.section2 = 0, the video is centered. As we scroll, it aligns to the bottom
@@ -247,8 +247,8 @@ export default function WaterfallBackdrop() {
     const baseYPos = state.camera.position.y + ((finalHeight * zoomFactor - viewHeight) / 2) * alignmentFactor;
 
     // Pan / Tilt effect based on mouse movement
-    const targetX = state.pointer.x * (viewWidth * 0.05); // Move horizontally by 5% of screen width
-    const targetY = state.pointer.y * (viewHeight * 0.05); // Move vertically by 5% of screen height
+    const targetX = pointer.x * (viewWidth * 0.05); // Move horizontally by 5% of screen width
+    const targetY = pointer.y * (viewHeight * 0.05); // Move vertically by 5% of screen height
 
     if (meshRef.current) {
       meshRef.current.scale.set(finalWidth * zoomFactor, finalHeight * zoomFactor, 1);
