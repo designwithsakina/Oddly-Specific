@@ -19,9 +19,9 @@ export default function MorphSection({ children, className, isAboutRoute = false
         const vh = window.innerHeight;
         const threshold = 2.2 * vh;
         
-        // We use scroll.section2 to trigger smooth opacity transition from 0.0 to 0.15 AFTER the morph
+        // We use scroll.section2 to trigger smooth opacity transition from 0.08 to 0.22 AFTER the morph and blur clear
         // We also apply fadeOut as scroll.section3 starts to transition to Section 3
-        const fadeIn = smoothstep(0.0, 0.15, scroll.section2);
+        const fadeIn = smoothstep(0.08, 0.22, scroll.section2);
         const fadeOut = 1.0 - smoothstep(0.0, 0.07, scroll.section3);
         const opacity = fadeIn * fadeOut;
 
@@ -34,22 +34,22 @@ export default function MorphSection({ children, className, isAboutRoute = false
         }
 
         // Dolly Zoom: text starts at 0.85x scale, zooms to 1.0x (current settings) as we scroll
-        const textScale = lerp(0.85, 1.0, smoothstep(0.0, 0.3333, scroll.section2));
+        const textScale = lerp(0.85, 1.0, smoothstep(0.08, 0.35, scroll.section2));
         if (textContainerRef.current) {
           textContainerRef.current.style.transform = `scale(${textScale})`;
         }
 
         // Body text unblur & fade:
-        // - First scroll (0.0 to 0.15): fade in quickly to 1.0 opacity while keeping maximum blur (16px)
-        // - Second scroll onwards (0.15 to 0.3333): keep opacity at 1.0, and progressively unblur to 0px at the lock position (0.3333)
+        // - First scroll (0.12 to 0.22): fade in quickly to 1.0 opacity while keeping maximum blur (16px)
+        // - Second scroll onwards (0.22 to 0.38): keep opacity at 1.0, and progressively unblur to 0px at the lock position (0.38)
         let bodyOpacity = 0;
         let blurAmount = 16;
 
-        if (scroll.section2 > 0.05) {
-          bodyOpacity = smoothstep(0.05, 0.15, scroll.section2);
+        if (scroll.section2 > 0.12) {
+          bodyOpacity = smoothstep(0.12, 0.22, scroll.section2);
           
-          if (scroll.section2 >= 0.15) {
-            const blurProgress = smoothstep(0.15, 0.3333, scroll.section2);
+          if (scroll.section2 >= 0.22) {
+            const blurProgress = smoothstep(0.22, 0.38, scroll.section2);
             blurAmount = lerp(16, 0, blurProgress);
           }
         }

@@ -7,6 +7,7 @@ import HeroOverlay from "@/components/HeroOverlay";
 import SmokeyCursor from "@/components/SmokeyCursor";
 import LogoReveal from "@/components/LogoReveal";
 import MorphSection from "@/components/MorphSection";
+import AboutBlurOverlay from "@/components/AboutBlurOverlay";
 import ProjectsSection from "@/components/ProjectsSection";
 import ServicesSection from "@/components/ServicesSection";
 import SoundToggle from "@/components/SoundToggle";
@@ -99,6 +100,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         {webglSupported && currentSection !== "services" && <SmokeyCursor />}
         {webglSupported && <ServicesExperience />}
         <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute || isServicesRoute} />
+        <AboutBlurOverlay />
         <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
         {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
