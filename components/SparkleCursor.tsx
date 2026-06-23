@@ -13,7 +13,8 @@ interface Particle {
   color: string;
   rotation: number;
   rotationSpeed: number;
-  isSparkle: boolean; // true = diamond sparkle shape, false = glowing stardust dot
+  isSparkle: boolean;
+  phase: number; // random starting phase for twinkling/shimmering
 }
 
 interface SparkleCursorProps {
@@ -77,7 +78,8 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       size: number,
       color: string,
       opacity: number,
-      angle: number
+      angle: number,
+      shimmer: number = 1.0
     ) => {
       c.save();
       c.translate(x, y);
@@ -86,7 +88,8 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       c.globalCompositeOperation = "screen";
 
       // 1. Core glow (white center, blending to icy blue/cyan)
-      const grad = c.createRadialGradient(0, 0, 0, 0, 0, size * 0.45);
+      const coreSize = size * 0.45 * (0.8 + (shimmer - 1.0) * 0.3);
+      const grad = c.createRadialGradient(0, 0, 0, 0, 0, coreSize);
       grad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
       grad.addColorStop(0.2, "rgba(224, 242, 254, 0.95)"); // light icy blue
       grad.addColorStop(0.55, color);                     // cyan/sky blue
@@ -94,7 +97,7 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       c.fillStyle = grad;
 
       c.beginPath();
-      c.arc(0, 0, size * 0.45, 0, Math.PI * 2);
+      c.arc(0, 0, coreSize, 0, Math.PI * 2);
       c.fill();
 
       // 2. Draw flare rays (diamond shape)
@@ -108,7 +111,8 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       };
 
       // Ray gradient
-      const rayGrad = c.createRadialGradient(0, 0, 0, 0, 0, size);
+      const maxRayLength = size * Math.max(shimmer, 2.0 - shimmer);
+      const rayGrad = c.createRadialGradient(0, 0, 0, 0, 0, maxRayLength);
       rayGrad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
       rayGrad.addColorStop(0.15, "rgba(224, 242, 254, 0.85)");
       rayGrad.addColorStop(0.5, color);
@@ -116,18 +120,19 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       c.fillStyle = rayGrad;
 
       // Vertical & Horizontal cross
+      drawFlareRay(size * 0.35, size * shimmer); // Vertical
       c.save();
-      drawFlareRay(size * 0.35, size); // Vertical
       c.rotate(Math.PI / 2);
-      drawFlareRay(size * 0.35, size); // Horizontal
+      drawFlareRay(size * 0.35, size * (2.0 - shimmer)); // Horizontal
       c.restore();
 
-      // Diagonal smaller cross
+      // Diagonal smaller cross with out-of-phase shimmer
+      const diagShimmer = 1.0 + Math.sin(timeRef.current * 18.0 + Math.PI / 2) * 0.25;
       c.save();
       c.rotate(Math.PI / 4);
-      drawFlareRay(size * 0.22, size * 0.58);
+      drawFlareRay(size * 0.22, size * 0.58 * diagShimmer);
       c.rotate(Math.PI / 2);
-      drawFlareRay(size * 0.22, size * 0.58);
+      drawFlareRay(size * 0.22, size * 0.58 * (2.0 - diagShimmer));
       c.restore();
 
       c.restore();
@@ -194,7 +199,6 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
         // Spawn chance scales with speed
         const spawnChance = 0.15 + speedFactor * 0.65;
         if (Math.random() < spawnChance) {
-          const isSparkle = Math.random() > 0.40; // 60% diamond sparkles, 40% circular glow stars
           const angle = Math.random() * Math.PI * 2;
           const pSpeed = 0.5 + Math.random() * 1.5 + speedFactor * 2.0;
 
@@ -202,7 +206,7 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
             x: m.x + (Math.random() - 0.5) * 8,
             y: m.y + (Math.random() - 0.5) * 8,
             alpha: Math.random() * 0.45 + 0.55,
-            size: isSparkle ? Math.random() * 8.0 + 8.0 : Math.random() * 1.5 + 1.2,
+            size: Math.random() * 8.0 + 8.0, // Only diamond sparkles
             vx: Math.cos(angle) * pSpeed * 0.25 - (dx * 0.05), // fly outward, lagging slightly behind mouse velocity
             vy: Math.sin(angle) * pSpeed * 0.25 - (dy * 0.05),
             color: Math.random() > 0.65
@@ -210,7 +214,8 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
               : "rgba(56, 189, 248, 0.85)",  // sky-400 (Vibrant Cyan)
             rotation: Math.random() * Math.PI * 2,
             rotationSpeed: (Math.random() - 0.5) * 1.5,
-            isSparkle
+            isSparkle: true,
+            phase: Math.random() * Math.PI * 2
           });
         }
       }
@@ -231,26 +236,23 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
         const finalOpacity = p.alpha * opacity;
 
         if (finalOpacity > 0.01) {
-          if (p.isSparkle) {
+          // Dynamic shimmer and opacity flicker for trail sparkles
+          const pShimmer = 1.0 + Math.sin(timeRef.current * 18.0 + p.phase) * 0.35;
+          const flicker = 0.7 + Math.sin(timeRef.current * 25.0 + p.phase) * 0.3;
+          const renderOpacity = finalOpacity * flicker;
+
+          if (renderOpacity > 0.01) {
             // Draw diamond sparkle particle
-            drawSparkleShape(ctx, p.x, p.y, p.size, p.color, finalOpacity, p.rotation);
-          } else {
-            // Draw small glowing stardust circle
-            ctx.save();
-            ctx.globalAlpha = finalOpacity;
-            ctx.globalCompositeOperation = "screen";
-
-            const dotGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3.5);
-            dotGrad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-            dotGrad.addColorStop(0.3, "rgba(224, 242, 254, 0.9)");
-            dotGrad.addColorStop(0.65, p.color);
-            dotGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
-            ctx.fillStyle = dotGrad;
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size * 3.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            drawSparkleShape(
+              ctx,
+              p.x,
+              p.y,
+              p.size,
+              p.color,
+              renderOpacity,
+              p.rotation,
+              pShimmer
+            );
           }
 
           // Slow decay
@@ -264,9 +266,10 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
 
       // 4. Draw the main diamond sparkle cursor at pointer location
       if (opacity > 0.01 && isHoveringRef.current) {
-        // Pulse size slightly based on time and velocity
-        const pulse = 1.0 + Math.sin(timeRef.current * 4.5) * 0.08 + speedFactor * 0.15;
+        // Pulse size based on time and velocity
+        const pulse = 1.0 + Math.sin(timeRef.current * 18.0) * 0.08 + speedFactor * 0.15;
         const cursorSize = 28 * pulse;
+        const mainShimmer = 1.0 + Math.sin(timeRef.current * 18.0) * 0.35;
 
         drawSparkleShape(
           ctx,
@@ -275,7 +278,8 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
           cursorSize,
           mainColor,
           opacity,
-          mainRotationRef.current
+          mainRotationRef.current,
+          mainShimmer
         );
       }
 
