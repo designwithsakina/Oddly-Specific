@@ -105,7 +105,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
         {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
-        <SparkleCursor isServicesRoute={isServicesRoute} />
+        <SparkleCursor isServicesRoute={isServicesRoute} isWorkRoute={isWorkRoute} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">

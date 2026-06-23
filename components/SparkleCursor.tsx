@@ -3,32 +3,18 @@
 import { useEffect, useRef } from "react";
 import { scroll } from "@/lib/state";
 
-interface Particle {
-  x: number;
-  y: number;
-  alpha: number;
-  size: number;
-  vx: number;
-  vy: number;
-  color: string;
-  rotation: number;
-  rotationSpeed: number;
-  isSparkle: boolean;
-  phase: number; // random starting phase for twinkling/shimmering
-}
-
 interface SparkleCursorProps {
   isServicesRoute?: boolean;
+  isWorkRoute?: boolean;
 }
 
-export default function SparkleCursor({ isServicesRoute = false }: SparkleCursorProps) {
+export default function SparkleCursor({ isServicesRoute = false, isWorkRoute = false }: SparkleCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Physics / position tracking
   const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
   const timeRef = useRef(0);
   const lastTimeRef = useRef(0);
-  const particlesRef = useRef<Particle[]>([]);
   const isHoveringRef = useRef(false);
   const wasActiveRef = useRef(false);
   const opacityRef = useRef(0); // smooth entry/exit fade
@@ -153,11 +139,11 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
-      const section4Start = 22.2 * vh;
+      const section3Start = 5.2 * vh;
 
-      // Active in Section 4 (Services)
+      // Active in Section 3 (Projects) and Section 4 (Services)
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isActive = !isSplashActive && (rawScroll >= section4Start - 100 || isServicesRoute);
+      const isActive = !isSplashActive && (rawScroll >= section3Start - 100 || isServicesRoute || isWorkRoute);
 
       // Damp opacity for smooth fade entry/exit
       const targetOpacity = isActive ? 1.0 : 0.0;
@@ -194,75 +180,7 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       // Main cursor color - icy blue / light cyan
       const mainColor = "rgba(14, 165, 233, 0.85)"; // #0ea5e9
 
-      // 2. Spawn star trail particles
-      if (opacity > 0.05 && isHoveringRef.current) {
-        // Spawn chance scales with speed
-        const spawnChance = 0.15 + speedFactor * 0.65;
-        if (Math.random() < spawnChance) {
-          const angle = Math.random() * Math.PI * 2;
-          const pSpeed = 0.5 + Math.random() * 1.5 + speedFactor * 2.0;
-
-          particlesRef.current.push({
-            x: m.x + (Math.random() - 0.5) * 8,
-            y: m.y + (Math.random() - 0.5) * 8,
-            alpha: Math.random() * 0.45 + 0.55,
-            size: Math.random() * 8.0 + 8.0, // Only diamond sparkles
-            vx: Math.cos(angle) * pSpeed * 0.25 - (dx * 0.05), // fly outward, lagging slightly behind mouse velocity
-            vy: Math.sin(angle) * pSpeed * 0.25 - (dy * 0.05),
-            color: Math.random() > 0.65
-              ? "rgba(186, 230, 253, 0.9)"  // sky-200 (Icy White/Blue)
-              : "rgba(56, 189, 248, 0.85)",  // sky-400 (Vibrant Cyan)
-            rotation: Math.random() * Math.PI * 2,
-            rotationSpeed: (Math.random() - 0.5) * 1.5,
-            isSparkle: true,
-            phase: Math.random() * Math.PI * 2
-          });
-        }
-      }
-
-      // 3. Render and update particles
-      const activeParticles: Particle[] = [];
-      for (let i = 0; i < particlesRef.current.length; i++) {
-        const p = particlesRef.current[i];
-
-        // Apply velocity & drift
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rotation += p.rotationSpeed * dt;
-
-        // Apply slight float drift
-        p.vy -= 0.02; 
-
-        const finalOpacity = p.alpha * opacity;
-
-        if (finalOpacity > 0.01) {
-          // Dynamic shimmer and opacity flicker for trail sparkles
-          const pShimmer = 1.0 + Math.sin(timeRef.current * 18.0 + p.phase) * 0.35;
-          const flicker = 0.7 + Math.sin(timeRef.current * 25.0 + p.phase) * 0.3;
-          const renderOpacity = finalOpacity * flicker;
-
-          if (renderOpacity > 0.01) {
-            // Draw diamond sparkle particle
-            drawSparkleShape(
-              ctx,
-              p.x,
-              p.y,
-              p.size,
-              p.color,
-              renderOpacity,
-              p.rotation,
-              pShimmer
-            );
-          }
-
-          // Slow decay
-          p.alpha -= 0.014;
-          if (p.alpha > 0) {
-            activeParticles.push(p);
-          }
-        }
-      }
-      particlesRef.current = activeParticles;
+      // 2. Spawn and render no trail particles (only main cursor pointer star is rendered)
 
       // 4. Draw the main diamond sparkle cursor at pointer location
       if (opacity > 0.01 && isHoveringRef.current) {
@@ -297,7 +215,7 @@ export default function SparkleCursor({ isServicesRoute = false }: SparkleCursor
       document.body.classList.remove("hide-cursor");
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isServicesRoute]);
+  }, [isServicesRoute, isWorkRoute]);
 
   return (
     <canvas
