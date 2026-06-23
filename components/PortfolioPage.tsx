@@ -112,8 +112,8 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         <ServicesSection isServicesRoute={isServicesRoute} />
         <TestimonialsSection isTestimonialsRoute={isTestimonialsRoute} />
         <TestimonialsBlurOverlay />
-        {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
-        <SparkleCursor isServicesRoute={isServicesRoute || isTestimonialsRoute} isWorkRoute={isWorkRoute} />
+        <MantaRayCursor isServicesRoute={isServicesRoute} />
+        <SparkleCursor isServicesRoute={isServicesRoute} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">

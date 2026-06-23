@@ -15,10 +15,10 @@ interface Particle {
 }
 
 interface MantaRayCursorProps {
-  isWorkRoute?: boolean;
+  isServicesRoute?: boolean;
 }
 
-export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorProps) {
+export default function MantaRayCursor({ isServicesRoute = false }: MantaRayCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mantaImage, setMantaImage] = useState<HTMLImageElement | null>(null);
 
@@ -92,9 +92,10 @@ export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorPr
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
-      const section3Start = 5.2 * vh;
-      const transitionStart = section3Start + 15.9 * vh;
-      const transitionEnd = section3Start + 17.0 * vh;
+      const section4Start = 22.2 * vh;
+      const section5Start = 27.2 * vh;
+      const transitionStart = section4Start + 3.9 * vh; // 26.1 * vh
+      const transitionEnd = section5Start;             // 27.2 * vh
 
       let cursorFade = 1.0;
       if (rawScroll > transitionStart) {
@@ -102,10 +103,12 @@ export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorPr
         cursorFade = 1.0 - tFade * tFade * (3 - 2 * tFade); // smooth fade out during transition
       }
 
-      // Active in Section 3 (Underwater Projects) starting past 5.2vh and below transitionEnd, or immediately on /work route (unless scrolled to services)
+      // Active only in Section 4 (Services) and `/services` route, disabled on all other pages
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isServices = rawScroll >= transitionEnd || (typeof window !== "undefined" && window.location.pathname === "/services");
-      const isActive = !isSplashActive && !isServices && ((rawScroll >= section3Start && rawScroll < transitionEnd) || (isWorkRoute && !isServices));
+      const isPastServices = rawScroll >= transitionEnd || (typeof window !== "undefined" && window.location.pathname === "/testimonials");
+      const isBeforeServices = rawScroll < (section4Start - 100) && (typeof window !== "undefined" && window.location.pathname !== "/services");
+      
+      const isActive = !isSplashActive && !isPastServices && !isBeforeServices && ((rawScroll >= section4Start - 100 && rawScroll < transitionEnd) || isServicesRoute);
       const opacity = isActive ? cursorFade : 0.0; // Dissolves opacity during transition
 
       // Hide default browser cursor only on transition states
@@ -350,7 +353,7 @@ export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorPr
       document.body.classList.remove("hide-cursor");
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mantaImage, isWorkRoute]);
+  }, [mantaImage, isServicesRoute]);
 
   return (
     <canvas

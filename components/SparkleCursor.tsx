@@ -5,10 +5,9 @@ import { scroll } from "@/lib/state";
 
 interface SparkleCursorProps {
   isServicesRoute?: boolean;
-  isWorkRoute?: boolean;
 }
 
-export default function SparkleCursor({ isServicesRoute = false, isWorkRoute = false }: SparkleCursorProps) {
+export default function SparkleCursor({ isServicesRoute = false }: SparkleCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Physics / position tracking
@@ -139,17 +138,29 @@ export default function SparkleCursor({ isServicesRoute = false, isWorkRoute = f
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
-      const section3Start = 5.2 * vh;
+      const section4Start = 22.2 * vh;
+      const section5Start = 27.2 * vh;
 
-      // Active in Section 3 (Projects) and Section 4 (Services)
+      // Active only in Section 4 (Services) and `/services` route, disabled on all other pages
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isActive = !isSplashActive && (rawScroll >= section3Start - 100 || isServicesRoute || isWorkRoute);
+      const isPastServices = rawScroll >= section5Start || (typeof window !== "undefined" && window.location.pathname === "/testimonials");
+      const isBeforeServices = rawScroll < (section4Start - 100) && (typeof window !== "undefined" && window.location.pathname !== "/services");
+
+      const isActive = !isSplashActive && !isPastServices && !isBeforeServices && ((rawScroll >= section4Start - 100 && rawScroll < section5Start) || isServicesRoute);
 
       // Damp opacity for smooth fade entry/exit
       const targetOpacity = isActive ? 1.0 : 0.0;
       opacityRef.current += (targetOpacity - opacityRef.current) * 0.1;
 
-      const opacity = opacityRef.current;
+      // Let's also apply a fade out transition near the end of Section 4 to match the MantaRayCursor
+      let cursorFade = 1.0;
+      const transitionStart = section4Start + 3.9 * vh; // 26.1 * vh
+      if (rawScroll > transitionStart) {
+        const tFade = Math.min((rawScroll - transitionStart) / (1.1 * vh), 1.0);
+        cursorFade = 1.0 - tFade * tFade * (3 - 2 * tFade); // smooth fade out during transition
+      }
+
+      const opacity = opacityRef.current * cursorFade;
 
       // Hide default browser cursor when active
       if (isActive && opacity > 0.1) {
@@ -215,7 +226,7 @@ export default function SparkleCursor({ isServicesRoute = false, isWorkRoute = f
       document.body.classList.remove("hide-cursor");
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isServicesRoute, isWorkRoute]);
+  }, [isServicesRoute]);
 
   return (
     <canvas
