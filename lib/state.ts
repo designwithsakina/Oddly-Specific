@@ -11,8 +11,13 @@ if (typeof window !== "undefined") {
   const isAbout = path === "/about" || sessionStorage.getItem("wasScrolled") === "true";
   const isWork = path === "/work" || sessionStorage.getItem("wasWorkScrolled") === "true";
   const isServices = path === "/services" || sessionStorage.getItem("wasServicesScrolled") === "true";
+  const isTestimonials = path === "/testimonials" || sessionStorage.getItem("wasTestimonialsScrolled") === "true";
 
-  if (isServices) {
+  if (isTestimonials) {
+    initialHero = 1.0;
+    initialSection2 = 1.0;
+    initialRaw = window.innerHeight * 27.2;
+  } else if (isServices) {
     initialHero = 1.0;
     initialSection2 = 1.0;
     initialRaw = window.innerHeight * 23.2;
@@ -35,6 +40,8 @@ export const scroll = {
   section3: 0,
   /** 0..1 progress through the fourth section (services). */
   section4: 0,
+  /** 0..1 progress through the fifth section (testimonials). */
+  section5: 0,
   /** raw pixels scrolled. */
   raw: initialRaw,
   /** global Lenis instance. */

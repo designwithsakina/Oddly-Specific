@@ -17,15 +17,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const isAboutPath = typeof window !== "undefined" && window.location.pathname === "/about";
     const isWorkPath = typeof window !== "undefined" && window.location.pathname === "/work";
     const isServicesPath = typeof window !== "undefined" && window.location.pathname === "/services";
+    const isTestimonialsPath = typeof window !== "undefined" && window.location.pathname === "/testimonials";
 
     const wasScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasScrolled") === "true" || isAboutPath);
     const wasWorkScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasWorkScrolled") === "true" || isWorkPath);
     const wasServicesScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasServicesScrolled") === "true" || isServicesPath);
+    const wasTestimonialsScrolled = typeof window !== "undefined" && (sessionStorage.getItem("wasTestimonialsScrolled") === "true" || isTestimonialsPath);
 
     // Configure manual scroll restoration to prevent browser default scroll jumps
     if (typeof window !== "undefined") {
       window.history.scrollRestoration = "manual";
-      if (!wasScrolled && !wasWorkScrolled && !wasServicesScrolled) {
+      if (!wasScrolled && !wasWorkScrolled && !wasServicesScrolled && !wasTestimonialsScrolled) {
         window.scrollTo(0, 0);
       }
     }
@@ -42,8 +44,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     });
     scroll.lenisInstance = lenis;
 
-    // Manually restore scroll position if we reloaded on the About page, Work page, or Services page
-    if (wasServicesScrolled) {
+    // Manually restore scroll position if we reloaded on the About page, Work page, Services page, or Testimonials page
+    if (wasTestimonialsScrolled) {
+      const savedPos = parseFloat(sessionStorage.getItem("testimonialsScrollPosition") || "0");
+      const vh = window.innerHeight;
+      const targetPos = savedPos > 0 ? savedPos : vh * 27.2;
+      lenis.scrollTo(targetPos, { immediate: true });
+    } else if (wasServicesScrolled) {
       const savedPos = parseFloat(sessionStorage.getItem("servicesScrollPosition") || "0");
       const vh = window.innerHeight;
       const targetPos = savedPos > 0 ? savedPos : vh * 23.2;
@@ -76,17 +83,33 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       const section3Span = 17.0 * vh;
       scroll.section3 = clamp01((lenis.scroll - section3Start) / section3Span);
 
-      // section 4 starts at 20.2vh and lasts for 5.0vh (500vh)
+      // section 4 starts at 22.2vh and lasts for 5.0vh (500vh)
       const section4Start = section3Start + section3Span;
       const section4Span = 5.0 * vh;
       scroll.section4 = clamp01((lenis.scroll - section4Start) / section4Span);
 
+      // section 5 starts at 27.2vh and lasts for 5.0vh (500vh)
+      const section5Start = section4Start + section4Span;
+      const section5Span = 5.0 * vh;
+      scroll.section5 = clamp01((lenis.scroll - section5Start) / section5Span);
+
       // Save scroll state and position in sessionStorage to detect refresh on scrolled sections
       // Also update the browser URL dynamically as the user scrolls between sections.
       if (typeof window !== "undefined") {
-        if (lenis.scroll >= section4Start) {
+        if (lenis.scroll >= section5Start) {
+          sessionStorage.setItem("wasTestimonialsScrolled", "true");
+          sessionStorage.setItem("testimonialsScrollPosition", String(lenis.scroll));
+          sessionStorage.setItem("wasServicesScrolled", "false");
+          sessionStorage.setItem("wasWorkScrolled", "false");
+          sessionStorage.setItem("wasScrolled", "false");
+          if (window.location.pathname !== "/testimonials") {
+            window.history.replaceState(null, "", "/testimonials");
+            window.dispatchEvent(new CustomEvent("section-changed", { detail: "testimonials" }));
+          }
+        } else if (lenis.scroll >= section4Start) {
           sessionStorage.setItem("wasServicesScrolled", "true");
           sessionStorage.setItem("servicesScrollPosition", String(lenis.scroll));
+          sessionStorage.setItem("wasTestimonialsScrolled", "false");
           sessionStorage.setItem("wasWorkScrolled", "false");
           sessionStorage.setItem("wasScrolled", "false");
           if (window.location.pathname !== "/services") {
@@ -96,6 +119,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         } else if (lenis.scroll >= section3Start) {
           sessionStorage.setItem("wasWorkScrolled", "true");
           sessionStorage.setItem("workScrollPosition", String(lenis.scroll));
+          sessionStorage.setItem("wasTestimonialsScrolled", "false");
           sessionStorage.setItem("wasServicesScrolled", "false");
           sessionStorage.setItem("wasScrolled", "false");
           if (window.location.pathname !== "/work") {
@@ -107,6 +131,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
           sessionStorage.setItem("scrollPosition", String(lenis.scroll));
           sessionStorage.setItem("wasWorkScrolled", "false");
           sessionStorage.setItem("wasServicesScrolled", "false");
+          sessionStorage.setItem("wasTestimonialsScrolled", "false");
           if (window.location.pathname !== "/about") {
             window.history.replaceState(null, "", "/about");
             window.dispatchEvent(new CustomEvent("section-changed", { detail: "about" }));
@@ -115,9 +140,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
           sessionStorage.setItem("wasScrolled", "false");
           sessionStorage.setItem("wasWorkScrolled", "false");
           sessionStorage.setItem("wasServicesScrolled", "false");
+          sessionStorage.setItem("wasTestimonialsScrolled", "false");
           sessionStorage.removeItem("scrollPosition");
           sessionStorage.removeItem("workScrollPosition");
           sessionStorage.removeItem("servicesScrollPosition");
+          sessionStorage.removeItem("testimonialsScrollPosition");
           if (window.location.pathname !== "/") {
             window.history.replaceState(null, "", "/");
             window.dispatchEvent(new CustomEvent("section-changed", { detail: "home" }));

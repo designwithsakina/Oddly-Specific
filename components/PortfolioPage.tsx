@@ -14,6 +14,8 @@ import SoundToggle from "@/components/SoundToggle";
 import SplashScreen from "@/components/SplashScreen";
 import MantaRayCursor from "@/components/MantaRayCursor";
 import SparkleCursor from "@/components/SparkleCursor";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import TestimonialsBlurOverlay from "@/components/TestimonialsBlurOverlay";
 
 // WebGL can't server-render — load the stage on the client only.
 const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
@@ -23,14 +25,14 @@ const ServicesExperience = dynamic(() => import("@/components/ServicesExperience
   ssr: false,
 });
 
-export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isServicesRoute = false }: { isAboutRoute?: boolean; isWorkRoute?: boolean; isServicesRoute?: boolean }) {
-  const [showSplash, setShowSplash] = useState(!isAboutRoute && !isWorkRoute && !isServicesRoute);
+export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isServicesRoute = false, isTestimonialsRoute = false }: { isAboutRoute?: boolean; isWorkRoute?: boolean; isServicesRoute?: boolean; isTestimonialsRoute?: boolean }) {
+  const [showSplash, setShowSplash] = useState(!isAboutRoute && !isWorkRoute && !isServicesRoute && !isTestimonialsRoute);
   const [webglSupported, setWebglSupported] = useState(true);
   const [video1, setVideo1] = useState<HTMLVideoElement | null>(null);
   const [video2, setVideo2] = useState<HTMLVideoElement | null>(null);
 
   const [currentSection, setCurrentSection] = useState(() => {
-    return isServicesRoute ? "services" : isWorkRoute ? "work" : isAboutRoute ? "about" : "home";
+    return isTestimonialsRoute ? "testimonials" : isServicesRoute ? "services" : isWorkRoute ? "work" : isAboutRoute ? "about" : "home";
   });
 
   useEffect(() => {
@@ -38,16 +40,20 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
     const wasScrolled = sessionStorage.getItem("wasScrolled") === "true" || isAboutRoute;
     const wasWorkScrolled = sessionStorage.getItem("wasWorkScrolled") === "true" || isWorkRoute;
     const wasServicesScrolled = sessionStorage.getItem("wasServicesScrolled") === "true" || isServicesRoute;
-    if (wasScrolled || wasWorkScrolled || wasServicesScrolled) {
+    const wasTestimonialsScrolled = sessionStorage.getItem("wasTestimonialsScrolled") === "true" || isTestimonialsRoute;
+    if (wasScrolled || wasWorkScrolled || wasServicesScrolled || wasTestimonialsScrolled) {
       setShowSplash(false);
       document.documentElement.classList.remove("splash-active");
     }
 
     // Set correct initial section on client after hydration
+    const isTestimonials = window.location.pathname === "/testimonials" || sessionStorage.getItem("wasTestimonialsScrolled") === "true";
     const isServices = window.location.pathname === "/services" || sessionStorage.getItem("wasServicesScrolled") === "true";
     const isWork = window.location.pathname === "/work" || sessionStorage.getItem("wasWorkScrolled") === "true";
     const isAbout = window.location.pathname === "/about" || sessionStorage.getItem("wasScrolled") === "true";
-    if (isServices) {
+    if (isTestimonials) {
+      setCurrentSection("testimonials");
+    } else if (isServices) {
       setCurrentSection("services");
     } else if (isWork) {
       setCurrentSection("work");
@@ -100,12 +106,14 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         {webglSupported && currentSection !== "services" && <HeroExperience video1={video1} video2={video2} />}
         {webglSupported && currentSection !== "services" && <SmokeyCursor />}
         {webglSupported && <ServicesExperience />}
-        <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute || isServicesRoute} />
+        <HeroOverlay isAboutRoute={isAboutRoute || isWorkRoute || isServicesRoute || isTestimonialsRoute} />
         <AboutBlurOverlay />
         <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
+        <TestimonialsSection isTestimonialsRoute={isTestimonialsRoute} />
+        <TestimonialsBlurOverlay />
         {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
-        <SparkleCursor isServicesRoute={isServicesRoute} isWorkRoute={isWorkRoute} />
+        <SparkleCursor isServicesRoute={isServicesRoute || isTestimonialsRoute} isWorkRoute={isWorkRoute} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">
@@ -117,7 +125,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
 
           {/* MorphSection remains opacity-0 until scroll.hero hits the flash threshold,
               then it jumps to opacity-1 seamlessly while the flash is solid. */}
-          <MorphSection className="relative z-50 min-h-[2800vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
+          <MorphSection className="relative z-50 min-h-[3300vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
         </main>
       </SmoothScroll>
     </>

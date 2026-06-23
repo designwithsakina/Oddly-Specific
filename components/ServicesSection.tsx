@@ -238,6 +238,14 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         document.body.classList.remove("hide-cursor");
       }
 
+      let exitOpacity = 1.0;
+      let exitZoomFactor = 1.0;
+      if (scroll.section4 > 3.9 / 5.0) {
+        const tExit = Math.min(Math.max((scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0), 0.0), 1.0);
+        exitOpacity = 1.0 - tExit * tExit * (3 - 2 * tExit);
+        exitZoomFactor = 1.0 + tExit * 0.28;
+      }
+
       if (rawScroll >= section4Start) {
         opacity = 1.0;
         shiftFactor = 1.0;
@@ -289,9 +297,12 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         }
       }
 
+      scale = scale * exitZoomFactor;
+
       if (bgRef.current) {
-        bgRef.current.style.opacity = String(opacity);
-        bgRef.current.style.display = opacity > 0.005 ? "block" : "none";
+        const finalBgOpacity = opacity * exitOpacity;
+        bgRef.current.style.opacity = String(finalBgOpacity);
+        bgRef.current.style.display = finalBgOpacity > 0.005 ? "block" : "none";
       }
 
       const v1 = vRef1.current;
@@ -318,10 +329,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
                   v2.play().catch(() => {});
                 }
                 const ratio = Math.min((t1 - (dur1 - crossfadeTime)) / crossfadeTime, 1.0);
-                v1.style.opacity = String(1.0 - ratio);
-                v2.style.opacity = String(ratio);
+                v1.style.opacity = String((1.0 - ratio) * exitOpacity);
+                v2.style.opacity = String(ratio * exitOpacity);
               } else {
-                v1.style.opacity = "1";
+                v1.style.opacity = String(exitOpacity);
                 v2.style.opacity = "0";
                 if (!v2.paused) v2.pause();
               }
@@ -331,7 +342,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
               }
             } else {
               // Fallback opacity if durations are not loaded yet
-              v1.style.opacity = "1";
+              v1.style.opacity = String(exitOpacity);
               v2.style.opacity = "0";
             }
           } else {
@@ -347,11 +358,11 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
                   v1.play().catch(() => {});
                 }
                 const ratio = Math.min((t2 - (dur2 - crossfadeTime)) / crossfadeTime, 1.0);
-                v1.style.opacity = String(ratio);
-                v2.style.opacity = String(1.0 - ratio);
+                v1.style.opacity = String(ratio * exitOpacity);
+                v2.style.opacity = String((1.0 - ratio) * exitOpacity);
               } else {
                 v1.style.opacity = "0";
-                v2.style.opacity = "1";
+                v2.style.opacity = String(exitOpacity);
                 if (!v1.paused) v1.pause();
               }
 
@@ -361,7 +372,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             } else {
               // Fallback opacity if durations are not loaded yet
               v1.style.opacity = "0";
-              v2.style.opacity = "1";
+              v2.style.opacity = String(exitOpacity);
             }
           }
         }
@@ -376,30 +387,33 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       }
 
       if (contentRef.current) {
-        contentRef.current.style.opacity = String(contentOpacity);
+        contentRef.current.style.opacity = String(contentOpacity * exitOpacity);
         contentRef.current.style.transform = `translate3d(0, ${contentTranslateY}px, 0)`;
-        contentRef.current.style.display = contentOpacity > 0.005 ? "flex" : "none";
+        contentRef.current.style.display = (contentOpacity * exitOpacity) > 0.005 ? "flex" : "none";
       }
 
       if (blurPatchRef.current) {
-        blurPatchRef.current.style.opacity = String(blurOpacity);
-        blurPatchRef.current.style.display = blurOpacity > 0.005 ? "block" : "none";
+        blurPatchRef.current.style.opacity = String(blurOpacity * exitOpacity);
+        blurPatchRef.current.style.display = (blurOpacity * exitOpacity) > 0.005 ? "block" : "none";
       }
 
       if (cardsContainerRef.current) {
+        const finalCardsOpacity = cardsOpacity * exitOpacity;
         cardsContainerRef.current.style.transform = `translate3d(0, ${cardsTranslateY}px, 0)`;
-        cardsContainerRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
-        cardsContainerRef.current.style.setProperty("--cards-opacity", String(cardsOpacity));
+        cardsContainerRef.current.style.display = finalCardsOpacity > 0.005 ? "flex" : "none";
+        cardsContainerRef.current.style.setProperty("--cards-opacity", String(finalCardsOpacity));
       }
 
       if (bottomTextRef.current) {
-        bottomTextRef.current.style.opacity = String(cardsOpacity);
-        bottomTextRef.current.style.display = cardsOpacity > 0.005 ? "flex" : "none";
+        const finalBottomOpacity = cardsOpacity * exitOpacity;
+        bottomTextRef.current.style.opacity = String(finalBottomOpacity);
+        bottomTextRef.current.style.display = finalBottomOpacity > 0.005 ? "flex" : "none";
       }
 
       if (vignetteRef.current) {
-        vignetteRef.current.style.opacity = String(vignetteOpacity);
-        vignetteRef.current.style.display = vignetteOpacity > 0.005 ? "block" : "none";
+        const finalVignetteOpacity = vignetteOpacity * exitOpacity;
+        vignetteRef.current.style.opacity = String(finalVignetteOpacity);
+        vignetteRef.current.style.display = finalVignetteOpacity > 0.005 ? "block" : "none";
 
         // Calculate spotlight pixel coordinates from normalized pointer
         const w = typeof window !== "undefined" ? window.innerWidth : 1920;
