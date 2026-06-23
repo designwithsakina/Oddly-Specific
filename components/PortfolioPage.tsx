@@ -112,7 +112,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         <ServicesSection isServicesRoute={isServicesRoute} />
         <TestimonialsSection isTestimonialsRoute={isTestimonialsRoute} />
         <TestimonialsBlurOverlay />
-        <MantaRayCursor isServicesRoute={isServicesRoute} />
+        <MantaRayCursor isWorkRoute={isWorkRoute} />
         <SparkleCursor isServicesRoute={isServicesRoute} />
         {!showSplash && <SoundToggle />}
 

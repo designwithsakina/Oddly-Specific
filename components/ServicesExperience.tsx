@@ -157,8 +157,37 @@ export default function ServicesExperience() {
       const mx = ((pointer.x + 1) / 2) * cw;
       const my = ((1 - pointer.y) / 2) * ch;
 
-      // ── Opacity gate (section4 > 0 means services is active) ─────────────
-      const targetOp = scroll.section4 > 0 ? 1 : 0;
+      // ── Opacity gate (fades in from Section 3, stays active in Section 4, fades out before Section 5) ──
+      const p3 = scroll.section3;
+      const p4 = scroll.section4;
+      const rawScroll = scroll.raw;
+      const vh = typeof window !== "undefined" ? window.innerHeight : 900;
+      const section4Start = 22.2 * vh;
+
+      let targetOp = 0;
+
+      if (typeof window !== "undefined" && window.location.pathname === "/services") {
+        targetOp = 1.0;
+      } else if (typeof window !== "undefined" && window.location.pathname === "/testimonials") {
+        targetOp = 0.0;
+      } else if (rawScroll >= section4Start) {
+        targetOp = 1.0;
+        // Exit transition fade out towards Testimonials (Section 5)
+        if (p4 > 3.9 / 5.0) {
+          const tExit = Math.min(Math.max((p4 - 3.9 / 5.0) / (1.1 / 5.0), 0.0), 1.0);
+          targetOp = 1.0 - tExit * tExit * (3 - 2 * tExit);
+        }
+        // Completely hidden in Section 5 (Testimonials)
+        if (rawScroll >= section4Start + 5.0 * vh) {
+          targetOp = 0.0;
+        }
+      } else {
+        // Entry transition fade in from Projects (Section 3)
+        if (p3 > 15.9 / 17.0) {
+          const tEntry = (p3 - 15.9 / 17.0) / (1.1 / 17.0);
+          targetOp = tEntry * tEntry * (3 - 2 * tEntry);
+        }
+      }
 
       tCtx.clearRect(0, 0, cw, ch);
 

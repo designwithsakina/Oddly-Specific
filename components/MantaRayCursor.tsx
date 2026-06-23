@@ -15,10 +15,10 @@ interface Particle {
 }
 
 interface MantaRayCursorProps {
-  isServicesRoute?: boolean;
+  isWorkRoute?: boolean;
 }
 
-export default function MantaRayCursor({ isServicesRoute = false }: MantaRayCursorProps) {
+export default function MantaRayCursor({ isWorkRoute = false }: MantaRayCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mantaImage, setMantaImage] = useState<HTMLImageElement | null>(null);
 
@@ -92,10 +92,9 @@ export default function MantaRayCursor({ isServicesRoute = false }: MantaRayCurs
 
       const vh = window.innerHeight;
       const rawScroll = scroll.raw;
-      const section4Start = 22.2 * vh;
-      const section5Start = 27.2 * vh;
-      const transitionStart = section4Start + 3.9 * vh; // 26.1 * vh
-      const transitionEnd = section5Start;             // 27.2 * vh
+      const section3Start = 5.2 * vh;
+      const transitionStart = section3Start + 15.9 * vh; // 21.1 * vh
+      const transitionEnd = section3Start + 17.0 * vh;   // 22.2 * vh
 
       let cursorFade = 1.0;
       if (rawScroll > transitionStart) {
@@ -103,12 +102,12 @@ export default function MantaRayCursor({ isServicesRoute = false }: MantaRayCurs
         cursorFade = 1.0 - tFade * tFade * (3 - 2 * tFade); // smooth fade out during transition
       }
 
-      // Active only in Section 4 (Services) and `/services` route, disabled on all other pages
+      // Active in Section 3 (Underwater Projects) and `/work` route, deactivated elsewhere
       const isSplashActive = document.documentElement.classList.contains("splash-active");
-      const isPastServices = rawScroll >= transitionEnd || (typeof window !== "undefined" && window.location.pathname === "/testimonials");
-      const isBeforeServices = rawScroll < (section4Start - 100) && (typeof window !== "undefined" && window.location.pathname !== "/services");
+      const isPastWork = rawScroll >= transitionEnd || (typeof window !== "undefined" && (window.location.pathname === "/services" || window.location.pathname === "/testimonials"));
+      const isBeforeWork = rawScroll < section3Start && (typeof window !== "undefined" && window.location.pathname !== "/work");
       
-      const isActive = !isSplashActive && !isPastServices && !isBeforeServices && ((rawScroll >= section4Start - 100 && rawScroll < transitionEnd) || isServicesRoute);
+      const isActive = !isSplashActive && !isPastWork && !isBeforeWork && ((rawScroll >= section3Start && rawScroll < transitionEnd) || isWorkRoute);
       const opacity = isActive ? cursorFade : 0.0; // Dissolves opacity during transition
 
       // Hide default browser cursor only on transition states
@@ -353,7 +352,7 @@ export default function MantaRayCursor({ isServicesRoute = false }: MantaRayCurs
       document.body.classList.remove("hide-cursor");
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mantaImage, isServicesRoute]);
+  }, [mantaImage, isWorkRoute]);
 
   return (
     <canvas
