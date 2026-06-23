@@ -13,6 +13,7 @@ import ServicesSection from "@/components/ServicesSection";
 import SoundToggle from "@/components/SoundToggle";
 import SplashScreen from "@/components/SplashScreen";
 import MantaRayCursor from "@/components/MantaRayCursor";
+import SparkleCursor from "@/components/SparkleCursor";
 
 // WebGL can't server-render — load the stage on the client only.
 const HeroExperience = dynamic(() => import("@/components/HeroExperience"), {
@@ -104,6 +105,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
         <ProjectsSection isWorkRoute={isWorkRoute} setVideo1={setVideo1} setVideo2={setVideo2} />
         <ServicesSection isServicesRoute={isServicesRoute} />
         {currentSection === "work" && <MantaRayCursor isWorkRoute={isWorkRoute || isServicesRoute} />}
+        <SparkleCursor isServicesRoute={isServicesRoute} />
         {!showSplash && <SoundToggle />}
 
         <main className="relative z-40">
