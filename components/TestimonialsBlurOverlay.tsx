@@ -124,7 +124,7 @@ export default function TestimonialsBlurOverlay() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[47] flex flex-col items-center justify-center px-[6vw] text-center select-none"
+      className="fixed inset-0 z-[47] flex flex-col items-center justify-end px-[6vw] pb-[16vh] md:pb-[20vh] text-center select-none"
       style={{
         display: "none",
         backgroundColor: "rgba(10, 9, 22, 0.1)",
@@ -133,20 +133,15 @@ export default function TestimonialsBlurOverlay() {
     >
       <div
         ref={cardRef}
-        className="flex flex-col items-center justify-center max-w-[65ch] px-8 py-10 md:px-12 md:py-14 rounded-[32px] pointer-events-auto bg-[#0a0916]/10 border border-sky-300/15 transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05]"
-        style={{
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          boxShadow:
-            "0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(224, 242, 254, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
-        }}
+        className="flex flex-col items-center justify-center w-full max-w-[65ch] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
+        style={{}}
       >
         <div
           ref={headerRef}
-          className="w-full overflow-visible py-1 flex items-center justify-center"
+          className="w-full overflow-visible py-2 flex items-center justify-center"
         >
           <h2
-            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.2rem,2.0vw,1.8rem)] font-light leading-tight cursor-default"
+            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3.0rem)] font-light leading-tight cursor-default"
             style={{
               filter:
                 "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))",
@@ -161,7 +156,7 @@ export default function TestimonialsBlurOverlay() {
           className="flex flex-col items-center justify-center w-full transition-all duration-75"
         >
           <InteractiveTypography
-            className="mt-2 max-w-[55ch] font-sans text-[clamp(1.0625rem,1.15vw,1.2125rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
+            className="mt-4 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
             text="Fortunately, other people decided to speak too."
           />
         </div>
