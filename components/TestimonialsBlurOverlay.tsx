@@ -133,7 +133,7 @@ export default function TestimonialsBlurOverlay() {
     >
       <div
         ref={cardRef}
-        className="flex flex-col items-center justify-center w-full max-w-[65ch] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
+        className="flex flex-col items-center justify-center w-full max-w-[90vw] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
         style={{}}
       >
         <div
@@ -141,7 +141,7 @@ export default function TestimonialsBlurOverlay() {
           className="w-full overflow-visible py-2 flex items-center justify-center"
         >
           <h2
-            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3.0rem)] font-light leading-tight cursor-default"
+            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.5rem,2.8vw,2.5rem)] font-light leading-tight cursor-default"
             style={{
               filter:
                 "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))",
@@ -156,7 +156,7 @@ export default function TestimonialsBlurOverlay() {
           className="flex flex-col items-center justify-center w-full transition-all duration-75"
         >
           <InteractiveTypography
-            className="mt-4 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
+            className="mt-4 max-w-[55ch] font-sans text-[clamp(0.95rem,1.05vw,1.1rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
             text="Fortunately, other people decided to speak too."
           />
         </div>
