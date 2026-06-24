@@ -269,13 +269,15 @@ export default function UnderwaterRipple({ video1, video2, activeThreshold = 0.0
     const yWhipPx = (1.0 - plungeProgress) * size.height;
 
     let scrollZoom = 1.0;
-    let shiftFactor = 0.0;
-    
     if (progress > 3.0 / 17.0) {
       const tZoom = Math.min(Math.max((progress - 3.0 / 17.0) / (12.9 / 17.0), 0.0), 1.0);
       const easedT = tZoom * tZoom * (3 - 2 * tZoom);
       scrollZoom = 1.0 + easedT * 0.25;
-      shiftFactor = easedT;
+    }
+
+    let shiftFactor = 0.0;
+    if (progress >= 2.0 / 17.0) {
+      shiftFactor = Math.min((progress - 2.0 / 17.0) / (1.0 / 17.0), 1.0);
     }
 
     let exitOpacity = 1.0;
@@ -301,8 +303,9 @@ export default function UnderwaterRipple({ video1, video2, activeThreshold = 0.0
     const xShiftWorld = xShift * pixelToWorld;
     const yShiftWorld = -(yShift + yWhipPx) * pixelToWorld;
 
-    // Scale billboard matching the zoom plus a tiny overdraw margin to prevent rotation edge leaks
-    const overdraw = 1.02;
+    // Scale billboard matching the zoom plus generous overdraw to prevent
+    // rotation + parallax edge leaks at extreme mouse positions
+    const overdraw = 1.08;
     meshRef.current.scale.set(width * scrollZoom * overdraw, height * scrollZoom * overdraw, 1);
     
     // Position/align the mesh in front of the camera, shifted in camera coordinates

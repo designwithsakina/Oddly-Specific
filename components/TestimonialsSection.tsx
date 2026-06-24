@@ -169,11 +169,13 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
         playsInline
         className="absolute object-cover"
         style={{
-          width: "calc(100% + 60px)",
-          height: "calc(100% + 60px)",
-          top: "-30px",
-          left: "-30px",
-          opacity: 1
+          width: "calc(100% + 80px)",
+          height: "calc(100% + 80px)",
+          top: "-40px",
+          left: "-40px",
+          opacity: 1,
+          maxWidth: "none",
+          maxHeight: "none"
         }}
       />
       <video
@@ -184,11 +186,13 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
         playsInline
         className="absolute object-cover"
         style={{
-          width: "calc(100% + 60px)",
-          height: "calc(100% + 60px)",
-          top: "-30px",
-          left: "-30px",
-          opacity: 0
+          width: "calc(100% + 80px)",
+          height: "calc(100% + 80px)",
+          top: "-40px",
+          left: "-40px",
+          opacity: 0,
+          maxWidth: "none",
+          maxHeight: "none"
         }}
       />
     </div>

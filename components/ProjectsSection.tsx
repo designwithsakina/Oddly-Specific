@@ -521,13 +521,15 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
 
         // Calculate scroll zoom: starts after unblur (progress > 3.0 / 17.0), up to 1.25 at progress = 15.9/17.0
         let scrollZoom = 1.0;
-        let shiftFactor = 0.0;
-        
         if (progress > 3.0 / 17.0) {
           const tZoom = Math.min(Math.max((progress - 3.0 / 17.0) / (12.9 / 17.0), 0.0), 1.0);
           const easedT = tZoom * tZoom * (3 - 2 * tZoom);
           scrollZoom = 1.0 + easedT * 0.25;
-          shiftFactor = easedT;
+        }
+
+        let shiftFactor = 0.0;
+        if (progress >= 2.0 / 17.0) {
+          shiftFactor = Math.min((progress - 2.0 / 17.0) / (1.0 / 17.0), 1.0);
         }
 
         // Apply exit zoom factor
@@ -658,11 +660,13 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
           playsInline
           className="absolute object-cover"
           style={{
-            width: "calc(100% + 60px)",
-            height: "calc(100% + 60px)",
-            top: "-30px",
-            left: "-30px",
-            opacity: 1
+            width: "calc(100% + 80px)",
+            height: "calc(100% + 80px)",
+            top: "-40px",
+            left: "-40px",
+            opacity: 1,
+            maxWidth: "none",
+            maxHeight: "none"
           }}
         />
         <video
@@ -673,11 +677,13 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
           playsInline
           className="absolute object-cover"
           style={{
-            width: "calc(100% + 60px)",
-            height: "calc(100% + 60px)",
-            top: "-30px",
-            left: "-30px",
-            opacity: 0
+            width: "calc(100% + 80px)",
+            height: "calc(100% + 80px)",
+            top: "-40px",
+            left: "-40px",
+            opacity: 0,
+            maxWidth: "none",
+            maxHeight: "none"
           }}
         />
         {/* Deep blue color overlay to match the waterfall backdrop's tint */}
