@@ -1,43 +1,98 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import { scroll, smoothstep } from "@/lib/state";
+import InteractiveTypography from "@/components/InteractiveTypography";
 
 export default function TestimonialsBlurOverlay() {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let raf = 0;
     const tick = () => {
-      if (overlayRef.current) {
-        // We only want the blur overlay to exist during the transition from Section 4 (Services) into Section 5 (Testimonials).
-        // It starts fully blurred when we land on the Testimonials section (scroll.section4 reaches 1.0, scroll.section5 is 0.0)
-        // And is lifted (fades to 0 blur) as we start scrolling into Section 5 (from scroll.section5 = 0.0 to 0.08).
-        // When we scroll past Section 5, or before the transition begins, it should be hidden.
-        
-        const isTransitionActive = scroll.section4 > 3.9 / 5.0 && scroll.section5 < 0.08;
-        
+      if (
+        overlayRef.current &&
+        cardRef.current &&
+        headerRef.current &&
+        bodyRef.current
+      ) {
+        const rawScroll = scroll.raw;
+        const vh = typeof window !== "undefined" ? window.innerHeight : 900;
+        const section4Start = 22.2 * vh;
+        const section4Span = 5.0 * vh;
+        const section5Start = section4Start + section4Span; // 27.2 * vh
+
+        // Active state checking:
+        // Transition is active when scroll.section4 is past 3.9/5.0, and scroll.section5 is less than 0.8
+        const isTransitionActive =
+          scroll.section4 > 3.9 / 5.0 && scroll.section5 < 0.8;
+
         if (isTransitionActive) {
-          overlayRef.current.style.display = "block";
-          
+          overlayRef.current.style.display = "flex";
+
           let blurAmount = 0;
-          
-          if (scroll.section4 < 1.0) {
-            // Fading in the blur during the final scroll of Section 4
+          let headerOpacity = 0;
+          let bodyOpacity = 0;
+          let containerOpacity = 1.0;
+
+          if (rawScroll < section5Start) {
+            // Transition Phase (entering Section 5 from Section 4)
             const t = (scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0);
             const easedT = smoothstep(0.0, 1.0, t);
             blurAmount = easedT * 20.0;
+            headerOpacity = 0.0;
+            bodyOpacity = 0.0;
+            containerOpacity = 1.0;
           } else {
-            // Lifting the blur during the first scroll of Section 5
-            const t = smoothstep(0.0, 0.08, scroll.section5);
-            blurAmount = (1.0 - t) * 20.0;
+            // Inside Section 5 (from scroll.section5 = 0.0 to 0.8)
+            const p = scroll.section5;
+
+            if (p < 0.2) {
+              // Scroll 1: Plain blur (progress 0.0 to 0.2)
+              blurAmount = 20.0;
+              headerOpacity = 0.0;
+              bodyOpacity = 0.0;
+              containerOpacity = 1.0;
+            } else if (p < 0.4) {
+              // Scroll 2: Text header fades in (progress 0.2 to 0.4)
+              blurAmount = 20.0;
+              const t = (p - 0.2) / 0.2;
+              headerOpacity = smoothstep(0.0, 1.0, t);
+              bodyOpacity = 0.0;
+              containerOpacity = 1.0;
+            } else if (p < 0.6) {
+              // Scroll 3: Body text fades in (progress 0.4 to 0.6)
+              blurAmount = 20.0;
+              headerOpacity = 1.0;
+              const t = (p - 0.4) / 0.2;
+              bodyOpacity = smoothstep(0.0, 1.0, t);
+              containerOpacity = 1.0;
+            } else {
+              // Scroll 4: Text and blur lift together (progress 0.6 to 0.8)
+              const t = (p - 0.6) / 0.2;
+              const easedT = smoothstep(0.0, 1.0, t);
+              blurAmount = (1.0 - easedT) * 20.0;
+              headerOpacity = 1.0;
+              bodyOpacity = 1.0;
+              containerOpacity = 1.0 - easedT;
+            }
           }
-          
+
+          // Apply values
           overlayRef.current.style.backdropFilter = `blur(${blurAmount}px)`;
-          overlayRef.current.style.setProperty("-webkit-backdrop-filter", `blur(${blurAmount}px)`);
-          
-          // Fade out opacity when blur is close to 0 to prevent rendering overhead
-          if (blurAmount < 0.1) {
+          overlayRef.current.style.setProperty(
+            "-webkit-backdrop-filter",
+            `blur(${blurAmount}px)`
+          );
+
+          cardRef.current.style.opacity = String(containerOpacity);
+          headerRef.current.style.opacity = String(headerOpacity);
+          bodyRef.current.style.opacity = String(bodyOpacity);
+
+          // If container opacity is near 0 or blur is near 0, hide it completely to avoid blocking layout/pointer events
+          if (containerOpacity < 0.005) {
             overlayRef.current.style.opacity = "0";
             overlayRef.current.style.pointerEvents = "none";
           } else {
@@ -47,6 +102,7 @@ export default function TestimonialsBlurOverlay() {
         } else {
           overlayRef.current.style.display = "none";
           overlayRef.current.style.opacity = "0";
+          overlayRef.current.style.pointerEvents = "none";
         }
       }
       raf = requestAnimationFrame(tick);
@@ -56,15 +112,48 @@ export default function TestimonialsBlurOverlay() {
   }, []);
 
   return (
-    <div 
+    <div
       ref={overlayRef}
-      className="fixed inset-0 pointer-events-none"
+      className="fixed inset-0 z-[47] flex flex-col items-center justify-center px-[6vw] text-center select-none"
       style={{
-        zIndex: 47, // Blurs the Services/Testimonials video BGs (z-index 45/46) but sits under text/cards
         display: "none",
-        backgroundColor: "rgba(10, 9, 22, 0.1)", // subtle dark tint matching the theme
+        backgroundColor: "rgba(10, 9, 22, 0.1)",
         transition: "opacity 0.15s ease-out",
       }}
-    />
+    >
+      <div
+        ref={cardRef}
+        className="flex flex-col items-center justify-center max-w-[65ch] px-8 py-10 md:px-12 md:py-14 rounded-[32px] pointer-events-auto bg-[#0a0916]/35 border border-sky-300/15 transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05]"
+        style={{
+          boxShadow:
+            "0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(224, 242, 254, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
+        }}
+      >
+        <div
+          ref={headerRef}
+          className="mb-2 w-full overflow-visible py-4 flex items-center justify-center"
+        >
+          <h2
+            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight cursor-default"
+            style={{
+              filter:
+                "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))",
+            }}
+          >
+            The work speaks for itself.
+          </h2>
+        </div>
+
+        <div
+          ref={bodyRef}
+          className="flex flex-col items-center justify-center w-full transition-all duration-75"
+        >
+          <InteractiveTypography
+            className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
+            text="Fortunately, other people decided to speak too."
+          />
+        </div>
+      </div>
+    </div>
   );
 }
