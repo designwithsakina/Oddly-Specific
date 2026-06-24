@@ -25,16 +25,14 @@ export default function TestimonialsBlurOverlay() {
         const section5Start = section4Start + section4Span; // 27.2 * vh
 
         // Active state checking:
-        // Transition is active when scroll.section4 is past 3.9/5.0, and scroll.section5 is less than 0.8
+        // Transition is active when scroll.section4 is past 3.9/5.0, and scroll.section5 is less than 0.20 (one full scroll)
         const isTransitionActive =
-          scroll.section4 > 3.9 / 5.0 && scroll.section5 < 0.8;
+          scroll.section4 > 3.9 / 5.0 && scroll.section5 < 0.20;
 
         if (isTransitionActive) {
           overlayRef.current.style.display = "flex";
 
           let blurAmount = 0;
-          let headerOpacity = 0;
-          let bodyOpacity = 0;
           let containerOpacity = 1.0;
 
           if (rawScroll < section5Start) {
@@ -42,42 +40,12 @@ export default function TestimonialsBlurOverlay() {
             const t = (scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0);
             const easedT = smoothstep(0.0, 1.0, t);
             blurAmount = easedT * 20.0;
-            headerOpacity = 0.0;
-            bodyOpacity = 0.0;
             containerOpacity = 1.0;
           } else {
-            // Inside Section 5 (from scroll.section5 = 0.0 to 0.8)
-            const p = scroll.section5;
-
-            if (p < 0.2) {
-              // Scroll 1: Plain blur (progress 0.0 to 0.2)
-              blurAmount = 20.0;
-              headerOpacity = 0.0;
-              bodyOpacity = 0.0;
-              containerOpacity = 1.0;
-            } else if (p < 0.4) {
-              // Scroll 2: Text header fades in (progress 0.2 to 0.4)
-              blurAmount = 20.0;
-              const t = (p - 0.2) / 0.2;
-              headerOpacity = smoothstep(0.0, 1.0, t);
-              bodyOpacity = 0.0;
-              containerOpacity = 1.0;
-            } else if (p < 0.6) {
-              // Scroll 3: Body text fades in (progress 0.4 to 0.6)
-              blurAmount = 20.0;
-              headerOpacity = 1.0;
-              const t = (p - 0.4) / 0.2;
-              bodyOpacity = smoothstep(0.0, 1.0, t);
-              containerOpacity = 1.0;
-            } else {
-              // Scroll 4: Text and blur lift together (progress 0.6 to 0.8)
-              const t = (p - 0.6) / 0.2;
-              const easedT = smoothstep(0.0, 1.0, t);
-              blurAmount = (1.0 - easedT) * 20.0;
-              headerOpacity = 1.0;
-              bodyOpacity = 1.0;
-              containerOpacity = 1.0 - easedT;
-            }
+            // Inside Section 5: Lifting the blur and container together over the first scroll (progress 0.0 to 0.20)
+            const t = smoothstep(0.0, 0.20, scroll.section5);
+            blurAmount = (1.0 - t) * 20.0;
+            containerOpacity = (1.0 - t);
           }
 
           // Apply values
@@ -88,8 +56,8 @@ export default function TestimonialsBlurOverlay() {
           );
 
           cardRef.current.style.opacity = String(containerOpacity);
-          headerRef.current.style.opacity = String(headerOpacity);
-          bodyRef.current.style.opacity = String(bodyOpacity);
+          headerRef.current.style.opacity = "1";
+          bodyRef.current.style.opacity = "1";
 
           // If container opacity is near 0 or blur is near 0, hide it completely to avoid blocking layout/pointer events
           if (containerOpacity < 0.005) {
