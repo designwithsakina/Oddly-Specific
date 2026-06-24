@@ -36,12 +36,14 @@ export default function TestimonialsBlurOverlay() {
           let containerOpacity = 0.0;
           let headerOpacity = 0.0;
           let bodyOpacity = 0.0;
+          let overlayBgOpacity = 0.1;
 
           if (rawScroll < section5Start) {
             // Transition Phase (entering Section 5 from Section 4)
             const t = (scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0);
             const easedT = smoothstep(0.0, 1.0, t);
             blurAmount = easedT * 20.0;
+            overlayBgOpacity = 0.1 + easedT * 0.3;
             containerOpacity = 0.0;
             headerOpacity = 0.0;
             bodyOpacity = 0.0;
@@ -53,12 +55,14 @@ export default function TestimonialsBlurOverlay() {
               // Scroll 1: Blur lifts (progress 0.0 to 0.2)
               const t = smoothstep(0.0, 0.20, p);
               blurAmount = (1.0 - t) * 20.0;
+              overlayBgOpacity = 0.4;
               containerOpacity = 0.0;
               headerOpacity = 0.0;
               bodyOpacity = 0.0;
             } else if (p < 0.4) {
               // Scroll 2: Container with header fades in (progress 0.2 to 0.4)
               blurAmount = 0.0;
+              overlayBgOpacity = 0.4;
               const t = (p - 0.2) / 0.2;
               containerOpacity = smoothstep(0.0, 1.0, t);
               headerOpacity = 1.0;
@@ -66,6 +70,7 @@ export default function TestimonialsBlurOverlay() {
             } else if (p < 0.6) {
               // Scroll 3: Body text fades in (progress 0.4 to 0.6)
               blurAmount = 0.0;
+              overlayBgOpacity = 0.4;
               containerOpacity = 1.0;
               headerOpacity = 1.0;
               const t = (p - 0.4) / 0.2;
@@ -75,6 +80,7 @@ export default function TestimonialsBlurOverlay() {
               blurAmount = 0.0;
               const t = (p - 0.6) / 0.2;
               const easedT = smoothstep(0.0, 1.0, t);
+              overlayBgOpacity = 0.4 - easedT * 0.4;
               containerOpacity = 1.0 - easedT;
               headerOpacity = 1.0;
               bodyOpacity = 1.0;
@@ -95,6 +101,8 @@ export default function TestimonialsBlurOverlay() {
               "none"
             );
           }
+
+          overlayRef.current.style.backgroundColor = `rgba(6, 12, 36, ${overlayBgOpacity})`;
 
           cardRef.current.style.opacity = String(containerOpacity);
           headerRef.current.style.opacity = String(headerOpacity);
@@ -124,10 +132,10 @@ export default function TestimonialsBlurOverlay() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[47] flex flex-col items-center justify-end px-[6vw] pb-[16vh] md:pb-[20vh] text-center select-none"
+      className="fixed inset-0 z-[47] flex flex-col items-center justify-end px-[6vw] pb-[10vh] md:pb-[14vh] text-center select-none"
       style={{
         display: "none",
-        backgroundColor: "rgba(10, 9, 22, 0.1)",
+        backgroundColor: "rgba(6, 12, 36, 0.1)",
         transition: "opacity 0.15s ease-out",
       }}
     >
@@ -156,7 +164,7 @@ export default function TestimonialsBlurOverlay() {
           className="flex flex-col items-center justify-center w-full transition-all duration-75"
         >
           <InteractiveTypography
-            className="mt-4 max-w-[55ch] font-sans text-[clamp(0.95rem,1.05vw,1.1rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
+            className="mt-2 max-w-[55ch] font-sans text-[clamp(0.95rem,1.05vw,1.1rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
             text="Fortunately, other people decided to speak too."
           />
         </div>
