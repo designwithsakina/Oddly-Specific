@@ -81,12 +81,20 @@ export default function TestimonialsBlurOverlay() {
             }
           }
 
-          // Apply values
-          overlayRef.current.style.backdropFilter = `blur(${blurAmount}px)`;
-          overlayRef.current.style.setProperty(
-            "-webkit-backdrop-filter",
-            `blur(${blurAmount}px)`
-          );
+          // Apply values. Set parent filter to "none" when not active to enable child backdrop-filter sampling
+          if (blurAmount > 0.1) {
+            overlayRef.current.style.backdropFilter = `blur(${blurAmount}px)`;
+            overlayRef.current.style.setProperty(
+              "-webkit-backdrop-filter",
+              `blur(${blurAmount}px)`
+            );
+          } else {
+            overlayRef.current.style.backdropFilter = "none";
+            overlayRef.current.style.setProperty(
+              "-webkit-backdrop-filter",
+              "none"
+            );
+          }
 
           cardRef.current.style.opacity = String(containerOpacity);
           headerRef.current.style.opacity = String(headerOpacity);
