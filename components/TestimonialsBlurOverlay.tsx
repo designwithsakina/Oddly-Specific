@@ -127,13 +127,15 @@ export default function TestimonialsBlurOverlay() {
         ref={cardRef}
         className="flex flex-col items-center justify-center max-w-[65ch] px-8 py-10 md:px-12 md:py-14 rounded-[32px] pointer-events-auto bg-[#0a0916]/35 border border-sky-300/15 transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05]"
         style={{
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           boxShadow:
             "0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(224, 242, 254, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
         }}
       >
         <div
           ref={headerRef}
-          className="mb-2 w-full overflow-visible py-4 flex items-center justify-center"
+          className="w-full overflow-visible py-1 flex items-center justify-center"
         >
           <h2
             className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight cursor-default"
@@ -142,7 +144,7 @@ export default function TestimonialsBlurOverlay() {
                 "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))",
             }}
           >
-            The work speaks for itself.
+            THE WORK SPEAKS FOR ITSELF.
           </h2>
         </div>
 
@@ -151,7 +153,7 @@ export default function TestimonialsBlurOverlay() {
           className="flex flex-col items-center justify-center w-full transition-all duration-75"
         >
           <InteractiveTypography
-            className="mt-6 max-w-[55ch] font-sans text-[clamp(0.8125rem,0.9vw,0.9625rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
+            className="mt-2 max-w-[55ch] font-sans text-[clamp(1.125rem,1.2vw,1.275rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
             text="Fortunately, other people decided to speak too."
           />
         </div>
