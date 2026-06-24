@@ -656,8 +656,14 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
           autoPlay
           muted
           playsInline
-          className="absolute -top-[3%] -left-[3%] w-[106%] h-[106%] object-cover"
-          style={{ opacity: 1 }}
+          className="absolute object-cover"
+          style={{
+            width: "calc(100% + 60px)",
+            height: "calc(100% + 60px)",
+            top: "-30px",
+            left: "-30px",
+            opacity: 1
+          }}
         />
         <video
           ref={vRef2}
@@ -665,8 +671,14 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
           preload="metadata"
           muted
           playsInline
-          className="absolute -top-[3%] -left-[3%] w-[106%] h-[106%] object-cover"
-          style={{ opacity: 0 }}
+          className="absolute object-cover"
+          style={{
+            width: "calc(100% + 60px)",
+            height: "calc(100% + 60px)",
+            top: "-30px",
+            left: "-30px",
+            opacity: 0
+          }}
         />
         {/* Deep blue color overlay to match the waterfall backdrop's tint */}
         <div
