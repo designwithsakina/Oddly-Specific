@@ -135,8 +135,8 @@ export default function TestimonialsBlurOverlay() {
         ref={cardRef}
         className="flex flex-col items-center justify-center max-w-[65ch] px-8 py-10 md:px-12 md:py-14 rounded-[32px] pointer-events-auto bg-[#0a0916]/10 border border-sky-300/15 transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.05]"
         style={{
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
           boxShadow:
             "0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(224, 242, 254, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
         }}
