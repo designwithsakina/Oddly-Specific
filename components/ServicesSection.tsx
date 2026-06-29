@@ -201,49 +201,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const bottomTextRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(1);
-  const hasTriggeredAutoScroll = useRef(false);
-  const lenisListenerRef = useRef<any>(null);
-  const preventScrollRef = useRef<((e: Event) => void) | null>(null);
-  const preventKeyDownRef = useRef<((e: KeyboardEvent) => void) | null>(null);
-
 
   useEffect(() => {
     let raf = 0;
     let lastTime = performance.now();
-
-    const lockScroll = () => {
-      if (preventScrollRef.current) return;
-      
-      const preventDefault = (evt: Event) => {
-        evt.preventDefault();
-      };
-      const preventKeyDown = (evt: KeyboardEvent) => {
-        const keys = ["Space", "ArrowDown", "PageDown", "End", "ArrowUp", "PageUp", "Home"];
-        if (keys.includes(evt.code)) {
-          evt.preventDefault();
-        }
-      };
-      
-      preventScrollRef.current = preventDefault;
-      preventKeyDownRef.current = preventKeyDown;
-      
-      window.addEventListener("wheel", preventDefault, { passive: false });
-      window.addEventListener("touchmove", preventDefault, { passive: false });
-      window.addEventListener("keydown", preventKeyDown, { passive: false });
-    };
-
-    const unlockScroll = () => {
-      if (!preventScrollRef.current) return;
-      
-      window.removeEventListener("wheel", preventScrollRef.current);
-      window.removeEventListener("touchmove", preventScrollRef.current);
-      if (preventKeyDownRef.current) {
-        window.removeEventListener("keydown", preventKeyDownRef.current);
-      }
-      
-      preventScrollRef.current = null;
-      preventKeyDownRef.current = null;
-    };
 
     const tick = () => {
       const p3 = scroll.section3;
@@ -255,49 +216,6 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       const step8Pos = 24.2 * vh;
       const section5Start = 27.2 * vh;
 
-
-      // Register Lenis listener once the instance is available
-      if (scroll.lenisInstance && !lenisListenerRef.current) {
-        const handleLenisScroll = (e: any) => {
-          const currentScroll = e.scroll;
-          const currentVh = window.innerHeight;
-          const minScroll = 24.2 * currentVh;
-          const maxScroll = 26.5 * currentVh;
-          const targetScroll = 27.2 * currentVh;
-
-          // Reset trigger if scrolled back above the cards, or deep past testimonials
-          if (currentScroll < 24.0 * currentVh || currentScroll > 28.5 * currentVh) {
-            hasTriggeredAutoScroll.current = false;
-          }
-
-          // Trigger transition if scrolling down in active zone
-          if (
-            currentScroll >= minScroll &&
-            currentScroll < maxScroll &&
-            e.direction === 1 &&
-            !hasTriggeredAutoScroll.current
-          ) {
-            hasTriggeredAutoScroll.current = true;
-            lockScroll();
-
-            const safetyTimeout = setTimeout(() => {
-              unlockScroll();
-            }, 2200);
-
-            scroll.lenisInstance.scrollTo(targetScroll, {
-              duration: 1.5,
-              easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
-              onComplete: () => {
-                clearTimeout(safetyTimeout);
-                unlockScroll();
-              }
-            });
-          }
-        };
-
-        lenisListenerRef.current = handleLenisScroll;
-        scroll.lenisInstance.on("scroll", handleLenisScroll);
-      }
 
       const now = performance.now();
       const dt = Math.min(0.03, (now - lastTime) / 1000);
@@ -520,16 +438,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
     };
 
     raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      if (lenisListenerRef.current && scroll.lenisInstance) {
-        scroll.lenisInstance.off("scroll", lenisListenerRef.current);
-      }
-      unlockScroll();
-      if (scroll.lenisInstance) {
-        scroll.lenisInstance.start();
-      }
-    };
+    return () => cancelAnimationFrame(raf);
   }, [isServicesRoute]);
 
   return (
