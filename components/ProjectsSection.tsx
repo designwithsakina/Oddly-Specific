@@ -253,8 +253,8 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         section3Start + 30.0 * vh  // Step 19: 35.2 * vh (Testimonials exit)
       ];
 
-      const duration = (targetStep === 1 || targetStep === 16) ? 1.5 : 1.0;
-      const easing = (targetStep === 1 || targetStep === 16)
+      const duration = (targetStep === 1 || targetStep === 16 || targetStep === 17) ? 1.5 : 1.0;
+      const easing = (targetStep === 1 || targetStep === 16 || targetStep === 17)
         ? (t: number) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2
         : (t: number) => t * (2 - t);
 

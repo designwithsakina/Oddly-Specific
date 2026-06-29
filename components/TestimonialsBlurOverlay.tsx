@@ -99,8 +99,8 @@ export default function TestimonialsBlurOverlay() {
 
               const tScroll = (p - 0.6875) / (0.9375 - 0.6875);
               const easedTScroll = smoothstep(0.0, 1.0, tScroll);
-              // Scroll the grid up by 36vh to reveal the bottom rows
-              cardsScrollY = -easedTScroll * 36.0 * vh / 100;
+              // Scroll the grid up by 34vh to reveal the bottom rows
+              cardsScrollY = -easedTScroll * 34.0 * vh / 100;
             } else {
               // Phase 4: Tarot grid and overlay fade out (p = 0.9375 to 1.0)
               blurAmount = 0.0;
@@ -110,7 +110,7 @@ export default function TestimonialsBlurOverlay() {
               const easedTExit = smoothstep(0.0, 1.0, tExit);
               tarotOpacity = 1.0 - easedTExit;
               tarotTranslateY = -easedTExit * 30;
-              cardsScrollY = -36.0 * vh / 100;
+              cardsScrollY = -34.0 * vh / 100;
               overlayBgOpacity = 0.4 - easedTExit * 0.4;
             }
           }
@@ -175,10 +175,17 @@ export default function TestimonialsBlurOverlay() {
         transition: "opacity 0.15s ease-out",
       }}
     >
-      {/* Intro Text Card */}
+      <style>{`
+        @keyframes tarotCardFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-7px) rotate(0.5deg); }
+        }
+      `}</style>
+
+      {/* Intro Text Card (restored to absolute bottom alignment) */}
       <div
         ref={cardRef}
-        className="flex flex-col items-center justify-center w-full max-w-[90vw] pb-[8vh] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02]"
+        className="absolute inset-x-0 bottom-0 pb-[10vh] md:pb-[14vh] flex flex-col items-center justify-end w-full max-w-[90vw] mx-auto pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02]"
         style={{}}
       >
         <div
@@ -207,7 +214,7 @@ export default function TestimonialsBlurOverlay() {
         </div>
       </div>
 
-      {/* Tarot Cards Layout */}
+      {/* Tarot Cards Layout (restored to justify-start with responsive card size and gradient mask) */}
       <div
         ref={tarotContainerRef}
         className="fixed inset-0 z-[47] flex flex-col items-center justify-start pt-[8vh] px-[6vw] pointer-events-none select-none text-center"
@@ -237,24 +244,38 @@ export default function TestimonialsBlurOverlay() {
           </p>
         </div>
 
-        {/* Scrollable Cards Grid Window */}
-        <div className="relative w-full max-w-[1000px] h-[64vh] overflow-hidden pointer-events-auto">
+        {/* Scrollable Cards Grid Window with premium vertical gradient mask */}
+        <div 
+          className="relative w-full max-w-[1000px] h-[56vh] overflow-hidden pointer-events-auto"
+          style={{
+            maskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)"
+          }}
+        >
           <div
             ref={tarotGridRef}
-            className="grid grid-cols-3 gap-x-[3vw] gap-y-[3.5vh] justify-items-center w-full pt-[2vh] pb-[10vh] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="grid grid-cols-3 gap-x-[3vw] gap-y-[3.5vh] justify-items-center w-full pt-[2vh] pb-[6vh] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           >
-            {Array.from({ length: 12 }).map((_, idx) => (
-              <div
-                key={idx}
-                className="w-[clamp(90px,11vw,180px)] aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
-              >
-                <img
-                  src={`/tarot/tarot-back-${idx + 1}.jpg`}
-                  alt={`Tarot Card Back ${idx + 1}`}
-                  className="w-full h-full object-cover pointer-events-none select-none"
-                />
-              </div>
-            ))}
+            {Array.from({ length: 12 }).map((_, idx) => {
+              const delays = ["0s", "0.8s", "1.5s", "0.3s", "1.1s", "1.9s", "0.6s", "1.3s", "2.1s", "0.2s", "1.0s", "1.7s"];
+              const durations = ["6.2s", "6.7s", "5.9s", "6.4s", "6.9s", "6.1s", "6.6s", "6.3s", "6.8s", "6.0s", "6.5s", "7.0s"];
+              return (
+                <div
+                  key={idx}
+                  className="w-[clamp(85px,9.8vw,160px)] aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  style={{
+                    animation: `tarotCardFloat ${durations[idx]} ease-in-out infinite`,
+                    animationDelay: delays[idx],
+                  }}
+                >
+                  <img
+                    src={`/tarot/tarot-back-${idx + 1}.jpg`}
+                    alt={`Tarot Card Back ${idx + 1}`}
+                    className="w-full h-full object-cover pointer-events-none select-none"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
