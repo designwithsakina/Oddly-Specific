@@ -8,6 +8,8 @@ export default function TestimonialsBlurOverlay() {
   const cardRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const tarotContainerRef = useRef<HTMLDivElement>(null);
+  const tarotGridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let raf = 0;
@@ -16,7 +18,9 @@ export default function TestimonialsBlurOverlay() {
         overlayRef.current &&
         cardRef.current &&
         headerRef.current &&
-        bodyRef.current
+        bodyRef.current &&
+        tarotContainerRef.current &&
+        tarotGridRef.current
       ) {
         const rawScroll = scroll.raw;
         const vh = typeof window !== "undefined" ? window.innerHeight : 900;
@@ -25,9 +29,9 @@ export default function TestimonialsBlurOverlay() {
         const section5Start = section4Start + section4Span; // 27.2 * vh
 
         // Active state checking:
-        // Transition is active when scroll.section4 is past 2.0/5.0, and scroll.section5 is less than 0.8
+        // Transition is active when scroll.section4 is past 2.0/5.0, and scroll.section5 is less than 1.0 (since section5 span is 8.0vh)
         const isTransitionActive =
-          scroll.section4 > 2.0 / 5.0 && scroll.section5 < 0.8;
+          scroll.section4 > 2.0 / 5.0 && scroll.section5 < 1.0;
 
         if (isTransitionActive) {
           overlayRef.current.style.display = "flex";
@@ -37,6 +41,10 @@ export default function TestimonialsBlurOverlay() {
           let headerOpacity = 0.0;
           let bodyOpacity = 0.0;
           let overlayBgOpacity = 0.1;
+
+          let tarotOpacity = 0.0;
+          let tarotTranslateY = 40;
+          let cardsScrollY = 0;
 
           if (rawScroll < section5Start) {
             // Transition Phase (entering Section 5 from Section 4)
@@ -48,37 +56,66 @@ export default function TestimonialsBlurOverlay() {
             headerOpacity = 0.0;
             bodyOpacity = 0.0;
           } else {
-            // Inside Section 5 (from scroll.section5 = 0.0 to 0.8)
+            // Inside Section 5 (from scroll.section5 = 0.0 to 1.0)
             const p = scroll.section5;
+            overlayBgOpacity = 0.4;
 
-            if (p < 0.3) {
-              // Scroll 1: Blur lifts & entire text fades in together (progress 0.0 to 0.3)
+            if (p < 0.375) {
+              // Phase 1: Intro text fades in & blur lifts (p = 0.0 to 0.375)
               const t = smoothstep(0.0, 0.30, p);
               blurAmount = (1.0 - t) * 20.0;
-              overlayBgOpacity = 0.4;
               containerOpacity = t;
               headerOpacity = 1.0;
               bodyOpacity = 1.0;
-            } else if (p < 0.6) {
-              // Scroll 2: Text remains fully visible (progress 0.3 to 0.6)
+
+              tarotOpacity = 0.0;
+              tarotTranslateY = 40;
+              cardsScrollY = 0;
+            } else if (p < 0.6875) {
+              // Phase 2: Intro text fades out & Tarot grid fades/floats in (p = 0.375 to 0.6875)
               blurAmount = 0.0;
-              overlayBgOpacity = 0.4;
-              containerOpacity = 1.0;
+              // Intro text fades out fully by progress 0.50
+              containerOpacity = 1.0 - smoothstep(0.375, 0.50, p);
               headerOpacity = 1.0;
               bodyOpacity = 1.0;
+
+              if (p < 0.45) {
+                tarotOpacity = 0.0;
+                tarotTranslateY = 40;
+              } else {
+                const tTarot = (p - 0.45) / (0.6875 - 0.45);
+                const easedTTarot = smoothstep(0.0, 1.0, tTarot);
+                tarotOpacity = easedTTarot;
+                tarotTranslateY = (1.0 - easedTTarot) * 40;
+              }
+              cardsScrollY = 0;
+            } else if (p < 0.9375) {
+              // Phase 3: Tarot grid fully visible, cards scroll up to show rows 3 & 4 (p = 0.6875 to 0.9375)
+              blurAmount = 0.0;
+              containerOpacity = 0.0;
+
+              tarotOpacity = 1.0;
+              tarotTranslateY = 0;
+
+              const tScroll = (p - 0.6875) / (0.9375 - 0.6875);
+              const easedTScroll = smoothstep(0.0, 1.0, tScroll);
+              // Scroll the grid up by 36vh to reveal the bottom rows
+              cardsScrollY = -easedTScroll * 36.0 * vh / 100;
             } else {
-              // Scroll 3: Container and text fades out (progress 0.6 to 0.8)
+              // Phase 4: Tarot grid and overlay fade out (p = 0.9375 to 1.0)
               blurAmount = 0.0;
-              const t = (p - 0.6) / 0.2;
-              const easedT = smoothstep(0.0, 1.0, t);
-              overlayBgOpacity = 0.4 - easedT * 0.4;
-              containerOpacity = 1.0 - easedT;
-              headerOpacity = 1.0;
-              bodyOpacity = 1.0;
+              containerOpacity = 0.0;
+
+              const tExit = (p - 0.9375) / (1.0 - 0.9375);
+              const easedTExit = smoothstep(0.0, 1.0, tExit);
+              tarotOpacity = 1.0 - easedTExit;
+              tarotTranslateY = -easedTExit * 30;
+              cardsScrollY = -36.0 * vh / 100;
+              overlayBgOpacity = 0.4 - easedTExit * 0.4;
             }
           }
 
-          // Apply values. Set parent filter to "none" when not active to enable child backdrop-filter sampling
+          // Apply blur
           if (blurAmount > 0.1) {
             overlayRef.current.style.backdropFilter = `blur(${blurAmount}px)`;
             overlayRef.current.style.setProperty(
@@ -95,12 +132,20 @@ export default function TestimonialsBlurOverlay() {
 
           overlayRef.current.style.backgroundColor = `rgba(6, 12, 36, ${overlayBgOpacity})`;
 
+          // Apply intro text styles
           cardRef.current.style.opacity = String(containerOpacity);
           headerRef.current.style.opacity = String(headerOpacity);
           bodyRef.current.style.opacity = String(bodyOpacity);
+          cardRef.current.style.display = containerOpacity > 0.005 ? "flex" : "none";
+
+          // Apply Tarot styles
+          tarotContainerRef.current.style.opacity = String(tarotOpacity);
+          tarotContainerRef.current.style.transform = `translate3d(0, ${tarotTranslateY}px, 0)`;
+          tarotContainerRef.current.style.display = tarotOpacity > 0.005 ? "flex" : "none";
+          tarotGridRef.current.style.transform = `translate3d(0, ${cardsScrollY}px, 0)`;
 
           // If container opacity is active or blur is active, enable pointer events
-          const showOverlay = containerOpacity > 0.005 || blurAmount > 0.1;
+          const showOverlay = containerOpacity > 0.005 || tarotOpacity > 0.005 || blurAmount > 0.1;
           if (showOverlay) {
             overlayRef.current.style.opacity = "1";
             overlayRef.current.style.pointerEvents = "auto";
@@ -123,16 +168,17 @@ export default function TestimonialsBlurOverlay() {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[47] flex flex-col items-center justify-end px-[6vw] pb-[10vh] md:pb-[14vh] text-center select-none"
+      className="fixed inset-0 z-[47] flex flex-col items-center justify-center px-[6vw] text-center select-none"
       style={{
         display: "none",
         backgroundColor: "rgba(6, 12, 36, 0.1)",
         transition: "opacity 0.15s ease-out",
       }}
     >
+      {/* Intro Text Card */}
       <div
         ref={cardRef}
-        className="flex flex-col items-center justify-center w-full max-w-[90vw] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
+        className="flex flex-col items-center justify-center w-full max-w-[90vw] pb-[8vh] pointer-events-auto transition-all duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02]"
         style={{}}
       >
         <div
@@ -158,6 +204,58 @@ export default function TestimonialsBlurOverlay() {
             className="mt-2 max-w-[55ch] font-sans text-[clamp(0.95rem,1.05vw,1.1rem)] font-light leading-relaxed text-center text-[#c8ddf0]/85 cursor-default"
             text="Fortunately, other people decided to speak too."
           />
+        </div>
+      </div>
+
+      {/* Tarot Cards Layout */}
+      <div
+        ref={tarotContainerRef}
+        className="fixed inset-0 z-[47] flex flex-col items-center justify-start pt-[8vh] px-[6vw] pointer-events-none select-none text-center"
+        style={{ display: "none", opacity: 0 }}
+      >
+        {/* Header & Body */}
+        <div className="flex flex-col items-center mb-[4vh] pointer-events-auto">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-3 mb-2">
+            <span className="h-[1px] w-5 bg-white/20" />
+            <span className="font-sans text-[0.65rem] font-bold uppercase tracking-[0.25em] text-[#71b4ff]/90">
+              TESTIMONIALS
+            </span>
+            <span className="h-[1px] w-5 bg-white/20" />
+          </div>
+
+          <h2
+            className="hero-glow-text font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default"
+            style={{
+              filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4))",
+            }}
+          >
+            WHAT THE CARDS REVEAL
+          </h2>
+          <p className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-light text-[#c8ddf0]/80 cursor-default">
+            Proof that we didn&apos;t make this up.
+          </p>
+        </div>
+
+        {/* Scrollable Cards Grid Window */}
+        <div className="relative w-full max-w-[1000px] h-[64vh] overflow-hidden pointer-events-auto">
+          <div
+            ref={tarotGridRef}
+            className="grid grid-cols-3 gap-x-[3vw] gap-y-[3.5vh] justify-items-center w-full pt-[2vh] pb-[10vh] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+          >
+            {Array.from({ length: 12 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="w-[clamp(90px,11vw,180px)] aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+              >
+                <img
+                  src={`/tarot/tarot-back-${idx + 1}.jpg`}
+                  alt={`Tarot Card Back ${idx + 1}`}
+                  className="w-full h-full object-cover pointer-events-none select-none"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
