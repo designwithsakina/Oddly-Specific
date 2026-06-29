@@ -25,9 +25,9 @@ export default function TestimonialsBlurOverlay() {
         const section5Start = section4Start + section4Span; // 27.2 * vh
 
         // Active state checking:
-        // Transition is active when scroll.section4 is past 3.9/5.0, and scroll.section5 is less than 0.8
+        // Transition is active when scroll.section4 is past 2.0/5.0, and scroll.section5 is less than 0.8
         const isTransitionActive =
-          scroll.section4 > 3.9 / 5.0 && scroll.section5 < 0.8;
+          scroll.section4 > 2.0 / 5.0 && scroll.section5 < 0.8;
 
         if (isTransitionActive) {
           overlayRef.current.style.display = "flex";
@@ -40,7 +40,7 @@ export default function TestimonialsBlurOverlay() {
 
           if (rawScroll < section5Start) {
             // Transition Phase (entering Section 5 from Section 4)
-            const t = (scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0);
+            const t = (scroll.section4 - 2.0 / 5.0) / (3.0 / 5.0);
             const easedT = smoothstep(0.0, 1.0, t);
             blurAmount = easedT * 20.0;
             overlayBgOpacity = 0.1 + easedT * 0.3;

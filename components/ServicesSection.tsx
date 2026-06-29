@@ -203,10 +203,47 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const activeRef = useRef(1);
   const hasTriggeredAutoScroll = useRef(false);
   const lenisListenerRef = useRef<any>(null);
+  const preventScrollRef = useRef<((e: Event) => void) | null>(null);
+  const preventKeyDownRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+
 
   useEffect(() => {
     let raf = 0;
     let lastTime = performance.now();
+
+    const lockScroll = () => {
+      if (preventScrollRef.current) return;
+      
+      const preventDefault = (evt: Event) => {
+        evt.preventDefault();
+      };
+      const preventKeyDown = (evt: KeyboardEvent) => {
+        const keys = ["Space", "ArrowDown", "PageDown", "End", "ArrowUp", "PageUp", "Home"];
+        if (keys.includes(evt.code)) {
+          evt.preventDefault();
+        }
+      };
+      
+      preventScrollRef.current = preventDefault;
+      preventKeyDownRef.current = preventKeyDown;
+      
+      window.addEventListener("wheel", preventDefault, { passive: false });
+      window.addEventListener("touchmove", preventDefault, { passive: false });
+      window.addEventListener("keydown", preventKeyDown, { passive: false });
+    };
+
+    const unlockScroll = () => {
+      if (!preventScrollRef.current) return;
+      
+      window.removeEventListener("wheel", preventScrollRef.current);
+      window.removeEventListener("touchmove", preventScrollRef.current);
+      if (preventKeyDownRef.current) {
+        window.removeEventListener("keydown", preventKeyDownRef.current);
+      }
+      
+      preventScrollRef.current = null;
+      preventKeyDownRef.current = null;
+    };
 
     const tick = () => {
       const p3 = scroll.section3;
@@ -217,6 +254,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       const step7Pos = 23.2 * vh;
       const step8Pos = 24.2 * vh;
       const section5Start = 27.2 * vh;
+
 
       // Register Lenis listener once the instance is available
       if (scroll.lenisInstance && !lenisListenerRef.current) {
@@ -240,10 +278,10 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
             !hasTriggeredAutoScroll.current
           ) {
             hasTriggeredAutoScroll.current = true;
-            scroll.lenisInstance.stop();
+            lockScroll();
 
             const safetyTimeout = setTimeout(() => {
-              if (scroll.lenisInstance) scroll.lenisInstance.start();
+              unlockScroll();
             }, 2200);
 
             scroll.lenisInstance.scrollTo(targetScroll, {
@@ -251,7 +289,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
               easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
               onComplete: () => {
                 clearTimeout(safetyTimeout);
-                if (scroll.lenisInstance) scroll.lenisInstance.start();
+                unlockScroll();
               }
             });
           }
@@ -286,8 +324,8 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
 
       let exitOpacity = 1.0;
       let exitZoomFactor = 1.0;
-      if (scroll.section4 > 3.9 / 5.0) {
-        const tExit = Math.min(Math.max((scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0), 0.0), 1.0);
+      if (scroll.section4 > 2.0 / 5.0) {
+        const tExit = Math.min(Math.max((scroll.section4 - 2.0 / 5.0) / (3.0 / 5.0), 0.0), 1.0);
         exitOpacity = 1.0 - tExit * tExit * (3 - 2 * tExit);
         exitZoomFactor = 1.0 + tExit * 0.28;
       }
@@ -487,6 +525,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       if (lenisListenerRef.current && scroll.lenisInstance) {
         scroll.lenisInstance.off("scroll", lenisListenerRef.current);
       }
+      unlockScroll();
       if (scroll.lenisInstance) {
         scroll.lenisInstance.start();
       }
