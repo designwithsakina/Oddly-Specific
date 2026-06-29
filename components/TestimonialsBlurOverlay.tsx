@@ -9,7 +9,11 @@ export default function TestimonialsBlurOverlay() {
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const tarotContainerRef = useRef<HTMLDivElement>(null);
-  const tarotGridRef = useRef<HTMLDivElement>(null);
+  
+  // Independent column refs for parallax scrolling
+  const col1Ref = useRef<HTMLDivElement>(null);
+  const col2Ref = useRef<HTMLDivElement>(null);
+  const col3Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let raf = 0;
@@ -20,7 +24,9 @@ export default function TestimonialsBlurOverlay() {
         headerRef.current &&
         bodyRef.current &&
         tarotContainerRef.current &&
-        tarotGridRef.current
+        col1Ref.current &&
+        col2Ref.current &&
+        col3Ref.current
       ) {
         const rawScroll = scroll.raw;
         const vh = typeof window !== "undefined" ? window.innerHeight : 900;
@@ -44,7 +50,11 @@ export default function TestimonialsBlurOverlay() {
 
           let tarotOpacity = 0.0;
           let tarotTranslateY = 40;
-          let cardsScrollY = 0;
+          
+          // Column scroll positions
+          let leftY = 12.0 * vh / 100;
+          let centerY = 0;
+          let rightY = 12.0 * vh / 100;
 
           if (rawScroll < section5Start) {
             // Transition Phase (entering Section 5 from Section 4)
@@ -70,7 +80,9 @@ export default function TestimonialsBlurOverlay() {
 
               tarotOpacity = 0.0;
               tarotTranslateY = 40;
-              cardsScrollY = 0;
+              leftY = 12.0 * vh / 100;
+              centerY = 0;
+              rightY = 12.0 * vh / 100;
             } else if (p < 0.6875) {
               // Phase 2: Intro text fades out & Tarot grid fades/floats in (p = 0.375 to 0.6875)
               blurAmount = 0.0;
@@ -88,9 +100,11 @@ export default function TestimonialsBlurOverlay() {
                 tarotOpacity = easedTTarot;
                 tarotTranslateY = (1.0 - easedTTarot) * 40;
               }
-              cardsScrollY = 0;
+              leftY = 12.0 * vh / 100;
+              centerY = 0;
+              rightY = 12.0 * vh / 100;
             } else if (p < 0.9375) {
-              // Phase 3: Tarot grid fully visible, cards scroll up to show rows 3 & 4 (p = 0.6875 to 0.9375)
+              // Phase 3: Tarot grid fully visible, cards scroll up staggered (p = 0.6875 to 0.9375)
               blurAmount = 0.0;
               containerOpacity = 0.0;
 
@@ -99,8 +113,12 @@ export default function TestimonialsBlurOverlay() {
 
               const tScroll = (p - 0.6875) / (0.9375 - 0.6875);
               const easedTScroll = smoothstep(0.0, 1.0, tScroll);
-              // Scroll the grid up by 34vh to reveal the bottom rows
-              cardsScrollY = -easedTScroll * 34.0 * vh / 100;
+
+              // Center column translates by 46vh
+              centerY = -easedTScroll * 46.0 * vh / 100;
+              // Side columns translate by 36vh (creates a parallax staggering lag!)
+              leftY = (12.0 - easedTScroll * 36.0) * vh / 100;
+              rightY = (12.0 - easedTScroll * 36.0) * vh / 100;
             } else {
               // Phase 4: Tarot grid and overlay fade out (p = 0.9375 to 1.0)
               blurAmount = 0.0;
@@ -110,7 +128,10 @@ export default function TestimonialsBlurOverlay() {
               const easedTExit = smoothstep(0.0, 1.0, tExit);
               tarotOpacity = 1.0 - easedTExit;
               tarotTranslateY = -easedTExit * 30;
-              cardsScrollY = -34.0 * vh / 100;
+              
+              leftY = -24.0 * vh / 100;
+              centerY = -46.0 * vh / 100;
+              rightY = -24.0 * vh / 100;
               overlayBgOpacity = 0.4 - easedTExit * 0.4;
             }
           }
@@ -138,11 +159,15 @@ export default function TestimonialsBlurOverlay() {
           bodyRef.current.style.opacity = String(bodyOpacity);
           cardRef.current.style.display = containerOpacity > 0.005 ? "flex" : "none";
 
-          // Apply Tarot styles
+          // Apply Tarot container styles
           tarotContainerRef.current.style.opacity = String(tarotOpacity);
           tarotContainerRef.current.style.transform = `translate3d(0, ${tarotTranslateY}px, 0)`;
           tarotContainerRef.current.style.display = tarotOpacity > 0.005 ? "flex" : "none";
-          tarotGridRef.current.style.transform = `translate3d(0, ${cardsScrollY}px, 0)`;
+          
+          // Apply independent column translations
+          col1Ref.current.style.transform = `translate3d(0, ${leftY}px, 0)`;
+          col2Ref.current.style.transform = `translate3d(0, ${centerY}px, 0)`;
+          col3Ref.current.style.transform = `translate3d(0, ${rightY}px, 0)`;
 
           // If container opacity is active or blur is active, enable pointer events
           const showOverlay = containerOpacity > 0.005 || tarotOpacity > 0.005 || blurAmount > 0.1;
@@ -246,36 +271,81 @@ export default function TestimonialsBlurOverlay() {
 
         {/* Scrollable Cards Grid Window with premium vertical gradient mask */}
         <div 
-          className="relative w-full max-w-[1000px] h-[56vh] overflow-hidden pointer-events-auto"
+          className="relative w-full max-w-[900px] h-[58vh] overflow-hidden pointer-events-auto"
           style={{
             maskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)",
             WebkitMaskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)"
           }}
         >
-          <div
-            ref={tarotGridRef}
-            className="grid grid-cols-3 gap-x-[3vw] gap-y-[3.5vh] justify-items-center w-full pt-[2vh] pb-[6vh] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-          >
-            {Array.from({ length: 12 }).map((_, idx) => {
-              const delays = ["0s", "0.8s", "1.5s", "0.3s", "1.1s", "1.9s", "0.6s", "1.3s", "2.1s", "0.2s", "1.0s", "1.7s"];
-              const durations = ["6.2s", "6.7s", "5.9s", "6.4s", "6.9s", "6.1s", "6.6s", "6.3s", "6.8s", "6.0s", "6.5s", "7.0s"];
-              return (
+          <div className="flex flex-row justify-center gap-x-[3.5vw] w-full pt-[2vh]">
+            {/* Column 1 (Left): Cards 1, 4, 7, 10 */}
+            <div
+              ref={col1Ref}
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            >
+              {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
-                  key={idx}
-                  className="w-[clamp(85px,9.8vw,160px)] aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  key={imgIdx}
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
                   style={{
-                    animation: `tarotCardFloat ${durations[idx]} ease-in-out infinite`,
-                    animationDelay: delays[idx],
+                    animation: `tarotCardFloat ${["6.2s", "6.4s", "6.6s", "6.0s"][idx]} ease-in-out infinite`,
+                    animationDelay: ["0s", "0.3s", "0.6s", "0.2s"][idx],
                   }}
                 >
                   <img
-                    src={`/tarot/tarot-back-${idx + 1}.jpg`}
-                    alt={`Tarot Card Back ${idx + 1}`}
+                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                    alt={`Tarot Card Back ${imgIdx}`}
                     className="w-full h-full object-cover pointer-events-none select-none"
                   />
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* Column 2 (Center): Cards 2, 5, 8, 11 */}
+            <div
+              ref={col2Ref}
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            >
+              {[2, 5, 8, 11].map((imgIdx, idx) => (
+                <div
+                  key={imgIdx}
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  style={{
+                    animation: `tarotCardFloat ${["6.7s", "6.9s", "6.3s", "6.5s"][idx]} ease-in-out infinite`,
+                    animationDelay: ["0.8s", "1.1s", "1.3s", "1.0s"][idx],
+                  }}
+                >
+                  <img
+                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                    alt={`Tarot Card Back ${imgIdx}`}
+                    className="w-full h-full object-cover pointer-events-none select-none"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Column 3 (Right): Cards 3, 6, 9, 12 */}
+            <div
+              ref={col3Ref}
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            >
+              {[3, 6, 9, 12].map((imgIdx, idx) => (
+                <div
+                  key={imgIdx}
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  style={{
+                    animation: `tarotCardFloat ${["5.9s", "6.1s", "6.8s", "7.0s"][idx]} ease-in-out infinite`,
+                    animationDelay: ["1.5s", "1.9s", "1.7s", "1.2s"][idx],
+                  }}
+                >
+                  <img
+                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                    alt={`Tarot Card Back ${imgIdx}`}
+                    className="w-full h-full object-cover pointer-events-none select-none"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
