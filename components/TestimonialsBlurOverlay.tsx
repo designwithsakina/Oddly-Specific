@@ -51,32 +51,23 @@ export default function TestimonialsBlurOverlay() {
             // Inside Section 5 (from scroll.section5 = 0.0 to 0.8)
             const p = scroll.section5;
 
-            if (p < 0.2) {
-              // Scroll 1: Blur lifts (progress 0.0 to 0.2)
-              const t = smoothstep(0.0, 0.20, p);
+            if (p < 0.3) {
+              // Scroll 1: Blur lifts & entire text fades in together (progress 0.0 to 0.3)
+              const t = smoothstep(0.0, 0.30, p);
               blurAmount = (1.0 - t) * 20.0;
               overlayBgOpacity = 0.4;
-              containerOpacity = 0.0;
-              headerOpacity = 0.0;
-              bodyOpacity = 0.0;
-            } else if (p < 0.4) {
-              // Scroll 2: Container with header fades in (progress 0.2 to 0.4)
-              blurAmount = 0.0;
-              overlayBgOpacity = 0.4;
-              const t = (p - 0.2) / 0.2;
-              containerOpacity = smoothstep(0.0, 1.0, t);
+              containerOpacity = t;
               headerOpacity = 1.0;
-              bodyOpacity = 0.0;
+              bodyOpacity = 1.0;
             } else if (p < 0.6) {
-              // Scroll 3: Body text fades in (progress 0.4 to 0.6)
+              // Scroll 2: Text remains fully visible (progress 0.3 to 0.6)
               blurAmount = 0.0;
               overlayBgOpacity = 0.4;
               containerOpacity = 1.0;
               headerOpacity = 1.0;
-              const t = (p - 0.4) / 0.2;
-              bodyOpacity = smoothstep(0.0, 1.0, t);
+              bodyOpacity = 1.0;
             } else {
-              // Scroll 4: Container and text fades out (progress 0.6 to 0.8)
+              // Scroll 3: Container and text fades out (progress 0.6 to 0.8)
               blurAmount = 0.0;
               const t = (p - 0.6) / 0.2;
               const easedT = smoothstep(0.0, 1.0, t);

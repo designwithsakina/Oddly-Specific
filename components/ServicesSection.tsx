@@ -201,6 +201,8 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const bottomTextRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(1);
+  const hasTriggeredAutoScroll = useRef(false);
+  const lenisListenerRef = useRef<any>(null);
 
   useEffect(() => {
     let raf = 0;
@@ -214,6 +216,50 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       const section4Start = 22.2 * vh;
       const step7Pos = 23.2 * vh;
       const step8Pos = 24.2 * vh;
+      const section5Start = 27.2 * vh;
+
+      // Register Lenis listener once the instance is available
+      if (scroll.lenisInstance && !lenisListenerRef.current) {
+        const handleLenisScroll = (e: any) => {
+          const currentScroll = e.scroll;
+          const currentVh = window.innerHeight;
+          const minScroll = 24.2 * currentVh;
+          const maxScroll = 26.5 * currentVh;
+          const targetScroll = 27.2 * currentVh;
+
+          // Reset trigger if scrolled back above the cards, or deep past testimonials
+          if (currentScroll < 24.0 * currentVh || currentScroll > 28.5 * currentVh) {
+            hasTriggeredAutoScroll.current = false;
+          }
+
+          // Trigger transition if scrolling down in active zone
+          if (
+            currentScroll >= minScroll &&
+            currentScroll < maxScroll &&
+            e.direction === 1 &&
+            !hasTriggeredAutoScroll.current
+          ) {
+            hasTriggeredAutoScroll.current = true;
+            scroll.lenisInstance.stop();
+
+            const safetyTimeout = setTimeout(() => {
+              if (scroll.lenisInstance) scroll.lenisInstance.start();
+            }, 2200);
+
+            scroll.lenisInstance.scrollTo(targetScroll, {
+              duration: 1.5,
+              easing: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+              onComplete: () => {
+                clearTimeout(safetyTimeout);
+                if (scroll.lenisInstance) scroll.lenisInstance.start();
+              }
+            });
+          }
+        };
+
+        lenisListenerRef.current = handleLenisScroll;
+        scroll.lenisInstance.on("scroll", handleLenisScroll);
+      }
 
       const now = performance.now();
       const dt = Math.min(0.03, (now - lastTime) / 1000);
@@ -436,7 +482,15 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
     };
 
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      if (lenisListenerRef.current && scroll.lenisInstance) {
+        scroll.lenisInstance.off("scroll", lenisListenerRef.current);
+      }
+      if (scroll.lenisInstance) {
+        scroll.lenisInstance.start();
+      }
+    };
   }, [isServicesRoute]);
 
   return (
