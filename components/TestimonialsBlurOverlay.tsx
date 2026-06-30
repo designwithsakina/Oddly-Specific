@@ -283,7 +283,7 @@ export default function TestimonialsBlurOverlay() {
               filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 4px 12px rgba(6, 12, 36, 0.35))",
             }}
           >
-            WHAT THE CARDS REVEAL
+            What The Cards Reveal
           </h2>
           <p 
             className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-light text-[#c8ddf0]/80 cursor-default"
@@ -291,7 +291,15 @@ export default function TestimonialsBlurOverlay() {
               filter: "drop-shadow(0 2px 6px rgba(6, 12, 36, 0.35))",
             }}
           >
-            Proof that we didn&apos;t make this up.
+            Should the stars align, this could be your story too.
+          </p>
+          <p 
+            className="mt-1 font-sans text-[clamp(0.75rem,0.85vw,0.9rem)] font-light text-[#71b4ff]/80 tracking-[0.1em] cursor-default uppercase"
+            style={{
+              filter: "drop-shadow(0 2px 6px rgba(6, 12, 36, 0.35))",
+            }}
+          >
+            Proof we didn&apos;t make this up.
           </p>
         </div>
 
