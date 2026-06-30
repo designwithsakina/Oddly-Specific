@@ -9,6 +9,7 @@ export default function TestimonialsBlurOverlay() {
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const tarotContainerRef = useRef<HTMLDivElement>(null);
+  const tarotTextRef = useRef<HTMLDivElement>(null);
   
   // Independent column refs for parallax scrolling
   const col1Ref = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function TestimonialsBlurOverlay() {
         headerRef.current &&
         bodyRef.current &&
         tarotContainerRef.current &&
+        tarotTextRef.current &&
         col1Ref.current &&
         col2Ref.current &&
         col3Ref.current
@@ -49,12 +51,13 @@ export default function TestimonialsBlurOverlay() {
           let overlayBgOpacity = 0.1;
 
           let tarotOpacity = 0.0;
-          let tarotTranslateY = 40;
+          let tarotTranslateY = 0;
+          let tarotTextOpacity = 1.0;
           
-          // Column scroll positions
-          let leftY = 12.0 * vh / 100;
+          // Column scroll positions (staggered initial offsets: center is 0, sides are shifted down by 14vh)
+          let leftY = 14.0 * vh / 100;
           let centerY = 0;
-          let rightY = 12.0 * vh / 100;
+          let rightY = 14.0 * vh / 100;
 
           if (rawScroll < section5Start) {
             // Transition Phase (entering Section 5 from Section 4)
@@ -79,10 +82,11 @@ export default function TestimonialsBlurOverlay() {
               bodyOpacity = 1.0;
 
               tarotOpacity = 0.0;
-              tarotTranslateY = 40;
-              leftY = 12.0 * vh / 100;
+              tarotTranslateY = 0;
+              tarotTextOpacity = 1.0;
+              leftY = 14.0 * vh / 100;
               centerY = 0;
-              rightY = 12.0 * vh / 100;
+              rightY = 14.0 * vh / 100;
             } else if (p < 0.6875) {
               // Phase 2: Intro text fades out & Tarot grid fades/floats in (p = 0.375 to 0.6875)
               blurAmount = 0.0;
@@ -93,16 +97,16 @@ export default function TestimonialsBlurOverlay() {
 
               if (p < 0.45) {
                 tarotOpacity = 0.0;
-                tarotTranslateY = 40;
               } else {
                 const tTarot = (p - 0.45) / (0.6875 - 0.45);
                 const easedTTarot = smoothstep(0.0, 1.0, tTarot);
                 tarotOpacity = easedTTarot;
-                tarotTranslateY = (1.0 - easedTTarot) * 40;
               }
-              leftY = 12.0 * vh / 100;
+              tarotTranslateY = 0;
+              tarotTextOpacity = 1.0;
+              leftY = 14.0 * vh / 100;
               centerY = 0;
-              rightY = 12.0 * vh / 100;
+              rightY = 14.0 * vh / 100;
             } else if (p < 0.9375) {
               // Phase 3: Tarot grid fully visible, cards scroll up staggered (p = 0.6875 to 0.9375)
               blurAmount = 0.0;
@@ -114,11 +118,14 @@ export default function TestimonialsBlurOverlay() {
               const tScroll = (p - 0.6875) / (0.9375 - 0.6875);
               const easedTScroll = smoothstep(0.0, 1.0, tScroll);
 
-              // Center column translates by 46vh
-              centerY = -easedTScroll * 46.0 * vh / 100;
-              // Side columns translate by 36vh (creates a parallax staggering lag!)
-              leftY = (12.0 - easedTScroll * 36.0) * vh / 100;
-              rightY = (12.0 - easedTScroll * 36.0) * vh / 100;
+              // Fade out the text when the cards scroll up
+              tarotTextOpacity = 1.0 - smoothstep(0.0, 0.40, tScroll);
+
+              // Center column translates by 55vh
+              centerY = -easedTScroll * 55.0 * vh / 100;
+              // Side columns translate by 45vh (creates a parallax staggering lag!)
+              leftY = (14.0 - easedTScroll * 45.0) * vh / 100;
+              rightY = (14.0 - easedTScroll * 45.0) * vh / 100;
             } else {
               // Phase 4: Tarot grid and overlay fade out (p = 0.9375 to 1.0)
               blurAmount = 0.0;
@@ -128,10 +135,11 @@ export default function TestimonialsBlurOverlay() {
               const easedTExit = smoothstep(0.0, 1.0, tExit);
               tarotOpacity = 1.0 - easedTExit;
               tarotTranslateY = -easedTExit * 30;
+              tarotTextOpacity = 0.0;
               
-              leftY = -24.0 * vh / 100;
-              centerY = -46.0 * vh / 100;
-              rightY = -24.0 * vh / 100;
+              leftY = -31.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+              centerY = -55.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+              rightY = -31.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
               overlayBgOpacity = 0.4 - easedTExit * 0.4;
             }
           }
@@ -163,6 +171,9 @@ export default function TestimonialsBlurOverlay() {
           tarotContainerRef.current.style.opacity = String(tarotOpacity);
           tarotContainerRef.current.style.transform = `translate3d(0, ${tarotTranslateY}px, 0)`;
           tarotContainerRef.current.style.display = tarotOpacity > 0.005 ? "flex" : "none";
+          
+          // Apply text fade out
+          tarotTextRef.current.style.opacity = String(tarotTextOpacity);
           
           // Apply independent column translations
           col1Ref.current.style.transform = `translate3d(0, ${leftY}px, 0)`;
@@ -239,14 +250,17 @@ export default function TestimonialsBlurOverlay() {
         </div>
       </div>
 
-      {/* Tarot Cards Layout (restored to justify-start with responsive card size and gradient mask) */}
+      {/* Tarot Cards Layout (spanning the full height of the viewport with a screen-height gradient mask) */}
       <div
         ref={tarotContainerRef}
-        className="fixed inset-0 z-[47] flex flex-col items-center justify-start pt-[8vh] px-[6vw] pointer-events-none select-none text-center"
+        className="fixed inset-0 z-[47] flex flex-col items-center justify-start select-none text-center pointer-events-none"
         style={{ display: "none", opacity: 0 }}
       >
-        {/* Header & Body */}
-        <div className="flex flex-col items-center mb-[4vh] pointer-events-auto">
+        {/* Header & Body Text overlayed */}
+        <div 
+          ref={tarotTextRef}
+          className="relative z-10 flex flex-col items-center pt-[8vh] px-[6vw] mb-[2vh] pointer-events-auto transition-opacity duration-300"
+        >
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-2">
             <span className="h-[1px] w-5 bg-white/20" />
@@ -269,19 +283,19 @@ export default function TestimonialsBlurOverlay() {
           </p>
         </div>
 
-        {/* Scrollable Cards Grid Window with premium vertical gradient mask */}
+        {/* Full Viewport Height scrollable window. Cards fade out naturally at the very top and bottom edges of the screen */}
         <div 
-          className="relative w-full max-w-[900px] h-[58vh] overflow-hidden pointer-events-auto"
+          className="absolute inset-x-0 top-0 h-[100vh] overflow-hidden pointer-events-auto z-0"
           style={{
-            maskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent, white 12%, white 88%, transparent)"
+            maskImage: "linear-gradient(to bottom, transparent 2%, white 14%, white 86%, transparent 98%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 2%, white 14%, white 86%, transparent 98%)"
           }}
         >
-          <div className="flex flex-row justify-center gap-x-[3.5vw] w-full pt-[2vh]">
+          <div className="flex flex-row justify-center gap-x-[3.5vw] w-full pt-[24vh]">
             {/* Column 1 (Left): Cards 1, 4, 7, 10 */}
             <div
               ref={col1Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
@@ -304,7 +318,7 @@ export default function TestimonialsBlurOverlay() {
             {/* Column 2 (Center): Cards 2, 5, 8, 11 */}
             <div
               ref={col2Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[2, 5, 8, 11].map((imgIdx, idx) => (
                 <div
@@ -327,7 +341,7 @@ export default function TestimonialsBlurOverlay() {
             {/* Column 3 (Right): Cards 3, 6, 9, 12 */}
             <div
               ref={col3Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(85px,9.8vw,160px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[3, 6, 9, 12].map((imgIdx, idx) => (
                 <div
