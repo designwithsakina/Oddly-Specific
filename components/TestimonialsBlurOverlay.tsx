@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { scroll, smoothstep } from "@/lib/state";
+import { scroll, smoothstep, clamp01 } from "@/lib/state";
 import InteractiveTypography from "@/components/InteractiveTypography";
 
 export default function TestimonialsBlurOverlay() {
@@ -61,99 +61,92 @@ export default function TestimonialsBlurOverlay() {
           let centerY = 0;
           let rightY = 14.0 * vh / 100;
 
-          if (rawScroll < section5Start) {
-            // Transition Phase (entering Section 5 from Section 4)
-            const t = (scroll.section4 - 2.0 / 5.0) / (3.0 / 5.0);
-            const easedT = smoothstep(0.0, 1.0, t);
-            blurAmount = easedT * 20.0;
-            overlayBgOpacity = 0.1 + easedT * 0.3;
+          const p = scroll.section5;
+          overlayBgOpacity = 0.4;
+
+          // Normalized step boundaries within Section 5:
+          const p1 = 3.0 / 15.5;  // 0.1935 (Step 16: Testimonials text screen)
+          const p2 = 5.5 / 15.5;  // 0.3548 (Step 17: Tarot Cards zoom entry completes)
+          const p3 = 9.3 / 15.5;  // 0.6000 (Step 20: Tarot Cards Scroll 3 completes)
+          const p4 = 1.0;         // (Step 21: Testimonials exit completes)
+
+          if (p < p1) {
+            // Phase 1: Intro text fades in & blur lifts (entering Section 5 from Section 4, unblurring text)
+            // Blur starts at 20px, lifts to 0px as p goes from 0.0 to p1
+            const t = smoothstep(0.0, p1 - 0.05, p);
+            blurAmount = (1.0 - t) * 20.0;
+            containerOpacity = t;
+            headerOpacity = 1.0;
+            bodyOpacity = 1.0;
+
+            tarotOpacity = 0.0;
+            tarotTranslateY = 0;
+            tarotScale = 0.85;
+            tarotBlur = 15.0;
+            tarotTextOpacity = 1.0;
+            leftY = 14.0 * vh / 100;
+            centerY = 0;
+            rightY = 14.0 * vh / 100;
+          } else if (p < p2) {
+            // Phase 2: Intro text fades out & Tarot grid blur-fade-zooms in over 2s snap transition (p = p1 to p2)
+            blurAmount = 0.0;
+            
+            // Intro text fades out completely in the first half of the step
+            const textFadeT = (p - p1) / ((p2 - p1) * 0.6);
+            containerOpacity = 1.0 - smoothstep(0.0, 1.0, clamp01(textFadeT));
+            headerOpacity = 1.0;
+            bodyOpacity = 1.0;
+
+            // Tarot cards blur-fade-zoom in over the entire step (duration is 2s!)
+            const tTarot = (p - p1) / (p2 - p1);
+            const easedTTarot = smoothstep(0.0, 1.0, clamp01(tTarot));
+            tarotOpacity = easedTTarot;
+            tarotScale = 0.85 + 0.15 * easedTTarot;
+            tarotBlur = (1.0 - easedTTarot) * 15.0;
+
+            tarotTranslateY = 0;
+            tarotTextOpacity = 1.0;
+            leftY = 14.0 * vh / 100;
+            centerY = 0;
+            rightY = 14.0 * vh / 100;
+          } else if (p < p3) {
+            // Phase 3: Tarot grid fully visible, cards scroll up staggered over 3 distinct scroll targets (p = p2 to p3)
+            blurAmount = 0.0;
             containerOpacity = 0.0;
-            headerOpacity = 0.0;
-            bodyOpacity = 0.0;
+            
+            tarotOpacity = 1.0;
+            tarotTranslateY = 0;
+            tarotScale = 1.0;
+            tarotBlur = 0.0;
+
+            const tScroll = (p - p2) / (p3 - p2);
+            const easedTScroll = smoothstep(0.0, 1.0, clamp01(tScroll));
+
+            // Fade out the text when the cards scroll up
+            tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, easedTScroll);
+
+            // Center column translates by 105vh (completely scrolls all 4 cards up and off top)
+            centerY = -easedTScroll * 105.0 * vh / 100;
+            // Side columns translate by 85vh (starting at 14vh offset, ending at -71vh offset)
+            leftY = (14.0 - easedTScroll * 85.0) * vh / 100;
+            rightY = (14.0 - easedTScroll * 85.0) * vh / 100;
           } else {
-            // Inside Section 5 (from scroll.section5 = 0.0 to 1.0)
-            const p = scroll.section5;
-            overlayBgOpacity = 0.4;
+            // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
+            blurAmount = 0.0;
+            containerOpacity = 0.0;
 
-            if (p < 0.25) {
-              // Phase 1: Intro text fades in & blur lifts (p = 0.0 to 0.25)
-              const t = smoothstep(0.0, 0.20, p);
-              blurAmount = (1.0 - t) * 20.0;
-              containerOpacity = t;
-              headerOpacity = 1.0;
-              bodyOpacity = 1.0;
-
-              tarotOpacity = 0.0;
-              tarotTranslateY = 0;
-              tarotScale = 0.85;
-              tarotBlur = 15.0;
-              tarotTextOpacity = 1.0;
-              leftY = 14.0 * vh / 100;
-              centerY = 0;
-              rightY = 14.0 * vh / 100;
-            } else if (p < 0.458) {
-              // Phase 2: Intro text fades out & Tarot grid blur-fade-zooms in (p = 0.25 to 0.458)
-              blurAmount = 0.0;
-              // Intro text fades out fully by progress 0.35
-              containerOpacity = 1.0 - smoothstep(0.25, 0.35, p);
-              headerOpacity = 1.0;
-              bodyOpacity = 1.0;
-
-              if (p < 0.30) {
-                tarotOpacity = 0.0;
-                tarotScale = 0.85;
-                tarotBlur = 15.0;
-              } else {
-                const tTarot = (p - 0.30) / (0.458 - 0.30);
-                const easedTTarot = smoothstep(0.0, 1.0, tTarot);
-                tarotOpacity = easedTTarot;
-                tarotScale = 0.85 + 0.15 * easedTTarot;
-                tarotBlur = (1.0 - easedTTarot) * 15.0;
-              }
-              tarotTranslateY = 0;
-              tarotTextOpacity = 1.0;
-              leftY = 14.0 * vh / 100;
-              centerY = 0;
-              rightY = 14.0 * vh / 100;
-            } else if (p < 0.958) {
-              // Phase 3: Tarot grid fully visible, cards scroll up staggered over 3 scroll targets (p = 0.458 to 0.958)
-              blurAmount = 0.0;
-              containerOpacity = 0.0;
-
-              tarotOpacity = 1.0;
-              tarotTranslateY = 0;
-              tarotScale = 1.0;
-              tarotBlur = 0.0;
-
-              const tScroll = (p - 0.458) / (0.958 - 0.458);
-              const easedTScroll = smoothstep(0.0, 1.0, tScroll);
-
-              // Fade out the text when the cards scroll up
-              tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, tScroll);
-
-              // Center column translates by 105vh (completely scrolls all 4 cards up and off top)
-              centerY = -easedTScroll * 105.0 * vh / 100;
-              // Side columns translate by 85vh (starting at 14vh offset, ending at -71vh offset)
-              leftY = (14.0 - easedTScroll * 85.0) * vh / 100;
-              rightY = (14.0 - easedTScroll * 85.0) * vh / 100;
-            } else {
-              // Phase 4: Tarot grid and overlay fade out (p = 0.958 to 1.0)
-              blurAmount = 0.0;
-              containerOpacity = 0.0;
-
-              const tExit = (p - 0.958) / (1.0 - 0.958);
-              const easedTExit = smoothstep(0.0, 1.0, tExit);
-              tarotOpacity = 1.0 - easedTExit;
-              tarotTranslateY = -easedTExit * 30;
-              tarotScale = 1.0;
-              tarotBlur = 0.0;
-              tarotTextOpacity = 0.0;
-              
-              leftY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
-              centerY = -105.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
-              rightY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
-              overlayBgOpacity = 0.4 - easedTExit * 0.4;
-            }
+            const tExit = (p - p3) / (p4 - p3);
+            const easedTExit = smoothstep(0.0, 1.0, clamp01(tExit));
+            tarotOpacity = 1.0 - easedTExit;
+            tarotTranslateY = -easedTExit * 30;
+            tarotScale = 1.0;
+            tarotBlur = 0.0;
+            tarotTextOpacity = 0.0;
+            
+            leftY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            centerY = -105.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            rightY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            overlayBgOpacity = 0.4 - easedTExit * 0.4;
           }
 
           // Apply blur

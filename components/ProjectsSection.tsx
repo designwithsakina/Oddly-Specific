@@ -247,12 +247,12 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
         section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services text visible)
         section3Start + 19.0 * vh, // Step 15: 24.2 * vh (Services cards visible)
-        section3Start + 20.0 * vh, // Step 16: Testimonials text fully visible
-        section3Start + 22.0 * vh, // Step 17: Tarot Cards Grid - fade/zoom entry completes
-        section3Start + 25.0 * vh, // Step 18: Tarot Cards Grid - Scroll 1
-        section3Start + 28.0 * vh, // Step 19: Tarot Cards Grid - Scroll 2
-        section3Start + 31.0 * vh, // Step 20: Tarot Cards Grid - Scroll 3
-        section3Start + 34.0 * vh  // Step 21: Testimonials exit
+        section3Start + 25.0 * vh, // Step 16: Testimonials text fully visible (30.2 * vh)
+        section3Start + 27.5 * vh, // Step 17: Tarot Cards Grid - fade/zoom entry completes (32.7 * vh)
+        section3Start + 30.5 * vh, // Step 18: Tarot Cards Grid - Scroll 1 (35.7 * vh)
+        section3Start + 33.5 * vh, // Step 19: Tarot Cards Grid - Scroll 2 (38.7 * vh)
+        section3Start + 36.5 * vh, // Step 20: Tarot Cards Grid - Scroll 3 (41.7 * vh)
+        section3Start + 37.5 * vh  // Step 21: Testimonials exit (42.7 * vh)
       ];
 
       const duration = (targetStep === 17) ? 2.0 : (targetStep === 1 || targetStep === 16 || targetStep === 18 || targetStep === 19 || targetStep === 20) ? 1.5 : 1.0;
@@ -286,7 +286,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 34.0 * vh;
+      const maxSnapScroll = section3Start + 37.5 * vh;
 
       const isScrollingDown = e.deltaY > 0;
 
@@ -324,7 +324,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 34.0 * vh;
+      const maxSnapScroll = section3Start + 37.5 * vh;
 
       const touchEnd = e.touches[0].clientY;
       const deltaY = touchStart - touchEnd;
@@ -364,7 +364,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 34.0 * vh;
+      const maxSnapScroll = section3Start + 37.5 * vh;
 
       const isDownKey = e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ";
       const isUpKey = e.key === "ArrowUp" || e.key === "PageUp";
@@ -401,17 +401,17 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       if (!isAnimatingRef.current) {
         const currentScroll = scroll.raw;
         let currentStep = 0;
-        if (currentScroll >= section3Start + 34.0 * vh - 20) {
+        if (currentScroll >= section3Start + 37.5 * vh - 20) {
           currentStep = 21;
-        } else if (currentScroll >= section3Start + 31.0 * vh - 20) {
+        } else if (currentScroll >= section3Start + 36.5 * vh - 20) {
           currentStep = 20;
-        } else if (currentScroll >= section3Start + 28.0 * vh - 20) {
+        } else if (currentScroll >= section3Start + 33.5 * vh - 20) {
           currentStep = 19;
-        } else if (currentScroll >= section3Start + 25.0 * vh - 20) {
+        } else if (currentScroll >= section3Start + 30.5 * vh - 20) {
           currentStep = 18;
-        } else if (currentScroll >= section3Start + 22.0 * vh - 20) {
+        } else if (currentScroll >= section3Start + 27.5 * vh - 20) {
           currentStep = 17;
-        } else if (currentScroll >= section3Start + 20.0 * vh - 20) {
+        } else if (currentScroll >= section3Start + 25.0 * vh - 20) {
           currentStep = 16;
         } else if (currentScroll >= section3Start + 19.0 * vh - 20) {
           currentStep = 15;
