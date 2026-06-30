@@ -67,7 +67,7 @@ export default function TestimonialsBlurOverlay() {
           // Normalized step boundaries within Section 5:
           const p1 = 3.0 / 15.5;  // 0.1935 (Step 16: Testimonials text screen)
           const p2 = 5.5 / 15.5;  // 0.3548 (Step 17: Tarot Cards zoom entry completes)
-          const p3 = 9.3 / 15.5;  // 0.6000 (Step 20: Tarot Cards Scroll 3 completes)
+          const p3 = 14.5 / 15.5; // 0.9355 (Step 20: Tarot Cards Scroll 3 completes)
           const p4 = 1.0;         // (Step 21: Testimonials exit completes)
 
           if (p < p1) {
