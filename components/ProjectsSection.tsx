@@ -178,9 +178,13 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const currentScroll = scroll.raw;
       
       let initialStep = 0;
-      if (currentScroll >= section3Start + 30.0 * vh - 20) {
+      if (currentScroll >= section3Start + 37.5 * vh - 20) {
+        initialStep = 21;
+      } else if (currentScroll >= section3Start + 36.5 * vh - 20) {
+        initialStep = 20;
+      } else if (currentScroll >= section3Start + 33.5 * vh - 20) {
         initialStep = 19;
-      } else if (currentScroll >= section3Start + 29.5 * vh - 20) {
+      } else if (currentScroll >= section3Start + 30.5 * vh - 20) {
         initialStep = 18;
       } else if (currentScroll >= section3Start + 27.5 * vh - 20) {
         initialStep = 17;

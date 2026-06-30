@@ -125,7 +125,7 @@ export function PortfolioPage({ isAboutRoute = false, isWorkRoute = false, isSer
 
           {/* MorphSection remains opacity-0 until scroll.hero hits the flash threshold,
               then it jumps to opacity-1 seamlessly while the flash is solid. */}
-          <MorphSection className="relative z-50 min-h-[3300vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
+          <MorphSection className="relative z-50 min-h-[4500vh] bg-transparent" isAboutRoute={isAboutRoute} isWorkRoute={isWorkRoute} />
         </main>
       </SmoothScroll>
     </>
