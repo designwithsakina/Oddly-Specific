@@ -125,11 +125,11 @@ export default function TestimonialsBlurOverlay() {
             // Fade out the text when the cards scroll up
             tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, easedTScroll);
 
-            // Center column translates by 105vh (completely scrolls all 4 cards up and off top)
-            centerY = -easedTScroll * 105.0 * vh / 100;
-            // Side columns translate by 85vh (starting at 14vh offset, ending at -71vh offset)
-            leftY = (14.0 - easedTScroll * 85.0) * vh / 100;
-            rightY = (14.0 - easedTScroll * 85.0) * vh / 100;
+            // Center column translates by 135vh (completely scrolls all 4 cards up and off top)
+            centerY = -easedTScroll * 135.0 * vh / 100;
+            // Side columns translate by 135vh (starting at 14vh offset, ending at -121vh offset)
+            leftY = (14.0 - easedTScroll * 135.0) * vh / 100;
+            rightY = (14.0 - easedTScroll * 135.0) * vh / 100;
           } else {
             // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
             blurAmount = 0.0;
@@ -143,9 +143,9 @@ export default function TestimonialsBlurOverlay() {
             tarotBlur = 0.0;
             tarotTextOpacity = 0.0;
             
-            leftY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
-            centerY = -105.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
-            rightY = -71.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            leftY = -121.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            centerY = -135.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
+            rightY = -121.0 * vh / 100 - easedTExit * 20.0 * vh / 100;
             overlayBgOpacity = 0.4 - easedTExit * 0.4;
           }
 
