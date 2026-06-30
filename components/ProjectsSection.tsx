@@ -247,14 +247,16 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
         section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services text visible)
         section3Start + 19.0 * vh, // Step 15: 24.2 * vh (Services cards visible)
-        section3Start + 25.0 * vh, // Step 16: 30.2 * vh (Testimonials text fully visible)
-        section3Start + 27.5 * vh, // Step 17: 32.7 * vh (Tarot Cards Grid - first 6 cards)
-        section3Start + 29.5 * vh, // Step 18: 34.7 * vh (Tarot Cards Grid - scrolled up / last 6 cards)
-        section3Start + 30.0 * vh  // Step 19: 35.2 * vh (Testimonials exit)
+        section3Start + 20.0 * vh, // Step 16: Testimonials text fully visible
+        section3Start + 22.0 * vh, // Step 17: Tarot Cards Grid - fade/zoom entry completes
+        section3Start + 25.0 * vh, // Step 18: Tarot Cards Grid - Scroll 1
+        section3Start + 28.0 * vh, // Step 19: Tarot Cards Grid - Scroll 2
+        section3Start + 31.0 * vh, // Step 20: Tarot Cards Grid - Scroll 3
+        section3Start + 34.0 * vh  // Step 21: Testimonials exit
       ];
 
-      const duration = (targetStep === 1 || targetStep === 16 || targetStep === 17) ? 1.5 : 1.0;
-      const easing = (targetStep === 1 || targetStep === 16 || targetStep === 17)
+      const duration = (targetStep === 17) ? 2.0 : (targetStep === 1 || targetStep === 16 || targetStep === 18 || targetStep === 19 || targetStep === 20) ? 1.5 : 1.0;
+      const easing = (targetStep === 1 || targetStep === 16 || targetStep === 17 || targetStep === 18 || targetStep === 19 || targetStep === 20)
         ? (t: number) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2
         : (t: number) => t * (2 - t);
 
@@ -284,19 +286,19 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 30.0 * vh;
+      const maxSnapScroll = section3Start + 34.0 * vh;
 
       const isScrollingDown = e.deltaY > 0;
 
-      // Snapping down: intercept if we are at/near Section 3 start or inside it, and not yet at Step 19
-      if (isScrollingDown && activeStepRef.current < 19) {
+      // Snapping down: intercept if we are at/near Section 3 start or inside it, and not yet at Step 21
+      if (isScrollingDown && activeStepRef.current < 21) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
           triggerStepTransition(activeStepRef.current + 1);
         }
       } 
-      // Snapping up: intercept if we are inside Section 3/4/5 (below Step 19)
+      // Snapping up: intercept if we are inside Section 3/4/5 (below Step 21)
       else if (!isScrollingDown && activeStepRef.current > 0) {
         if (currentScroll <= maxSnapScroll + 20) {
           e.preventDefault();
@@ -322,7 +324,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 30.0 * vh;
+      const maxSnapScroll = section3Start + 34.0 * vh;
 
       const touchEnd = e.touches[0].clientY;
       const deltaY = touchStart - touchEnd;
@@ -330,7 +332,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
 
       if (Math.abs(deltaY) > 10) {
         // Snapping down
-        if (isScrollingDown && activeStepRef.current < 19) {
+        if (isScrollingDown && activeStepRef.current < 21) {
           if (currentScroll >= section3Start - 80) {
             e.preventDefault();
             e.stopPropagation();
@@ -362,12 +364,12 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const vh = window.innerHeight;
       const section3Start = 5.2 * vh;
       const currentScroll = scroll.raw;
-      const maxSnapScroll = section3Start + 30.0 * vh;
+      const maxSnapScroll = section3Start + 34.0 * vh;
 
       const isDownKey = e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ";
       const isUpKey = e.key === "ArrowUp" || e.key === "PageUp";
 
-      if (isDownKey && activeStepRef.current < 19) {
+      if (isDownKey && activeStepRef.current < 21) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
@@ -399,13 +401,17 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       if (!isAnimatingRef.current) {
         const currentScroll = scroll.raw;
         let currentStep = 0;
-        if (currentScroll >= section3Start + 30.0 * vh - 20) {
+        if (currentScroll >= section3Start + 34.0 * vh - 20) {
+          currentStep = 21;
+        } else if (currentScroll >= section3Start + 31.0 * vh - 20) {
+          currentStep = 20;
+        } else if (currentScroll >= section3Start + 28.0 * vh - 20) {
           currentStep = 19;
-        } else if (currentScroll >= section3Start + 29.5 * vh - 20) {
-          currentStep = 18;
-        } else if (currentScroll >= section3Start + 27.5 * vh - 20) {
-          currentStep = 17;
         } else if (currentScroll >= section3Start + 25.0 * vh - 20) {
+          currentStep = 18;
+        } else if (currentScroll >= section3Start + 22.0 * vh - 20) {
+          currentStep = 17;
+        } else if (currentScroll >= section3Start + 20.0 * vh - 20) {
           currentStep = 16;
         } else if (currentScroll >= section3Start + 19.0 * vh - 20) {
           currentStep = 15;
