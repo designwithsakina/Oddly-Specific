@@ -120,16 +120,24 @@ export default function TestimonialsBlurOverlay() {
             tarotBlur = 0.0;
 
             const tScroll = (p - p2) / (p3 - p2);
-            const easedTScroll = smoothstep(0.0, 1.0, clamp01(tScroll));
+            
+            // Stagger the columns progress: Center starts first, Left starts next, Right starts last
+            const tCenter = clamp01(tScroll * 1.3);
+            const tLeft = clamp01(tScroll * 1.3 - 0.15);
+            const tRight = clamp01(tScroll * 1.3 - 0.3);
+
+            const easeCenter = smoothstep(0.0, 1.0, tCenter);
+            const easeLeft = smoothstep(0.0, 1.0, tLeft);
+            const easeRight = smoothstep(0.0, 1.0, tRight);
 
             // Fade out the text when the cards scroll up
-            tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, easedTScroll);
+            tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, easeCenter);
 
             // Center column translates by 135vh (completely scrolls all 4 cards up and off top)
-            centerY = -easedTScroll * 135.0 * vh / 100;
+            centerY = -easeCenter * 135.0 * vh / 100;
             // Side columns translate by 135vh (starting at 14vh offset, ending at -121vh offset)
-            leftY = (14.0 - easedTScroll * 135.0) * vh / 100;
-            rightY = (14.0 - easedTScroll * 135.0) * vh / 100;
+            leftY = (14.0 - easeLeft * 135.0) * vh / 100;
+            rightY = (14.0 - easeRight * 135.0) * vh / 100;
           } else {
             // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
             blurAmount = 0.0;
@@ -220,7 +228,7 @@ export default function TestimonialsBlurOverlay() {
       <style>{`
         @keyframes tarotCardFloat {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-7px) rotate(0.5deg); }
+          50% { transform: translateY(-24px) rotate(2deg); }
         }
       `}</style>
 
