@@ -122,14 +122,15 @@ export default function TestimonialsBlurOverlay() {
             const tScroll = (p - p2) / (p3 - p2);
             const easedTScroll = smoothstep(0.0, 1.0, clamp01(tScroll));
 
-            // Fade out the text when the cards scroll up
-            tarotTextOpacity = 1.0 - smoothstep(0.0, 0.25, easedTScroll);
-
             // Center column translates by 135vh (completely scrolls all 4 cards up and off top)
             centerY = -easedTScroll * 135.0 * vh / 100;
             // Side columns translate by 135vh (starting at 14vh offset, ending at -121vh offset)
             leftY = (14.0 - easedTScroll * 135.0) * vh / 100;
             rightY = (14.0 - easedTScroll * 135.0) * vh / 100;
+
+            // Fade out the text exactly in sync with the first card moving up: fully fade out over the first 15vh of translation
+            const textFadeProgress = clamp01(Math.abs(centerY) / (15.0 * vh / 100));
+            tarotTextOpacity = 1.0 - smoothstep(0.0, 1.0, textFadeProgress);
           } else {
             // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
             blurAmount = 0.0;
@@ -220,7 +221,7 @@ export default function TestimonialsBlurOverlay() {
       <style>{`
         @keyframes tarotCardFloat {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-24px) rotate(2deg); }
+          50% { transform: translateY(-12px) rotate(1deg); }
         }
       `}</style>
 
@@ -302,11 +303,11 @@ export default function TestimonialsBlurOverlay() {
             WebkitMaskImage: "linear-gradient(to bottom, transparent 2%, white 14%, white 86%, transparent 98%)"
           }}
         >
-          <div className="flex flex-row justify-center gap-x-[3.5vw] w-full pt-[46vh]">
+          <div className="flex flex-row justify-center gap-x-[5.2vw] w-full pt-[46vh]">
             {/* Column 1 (Left): Cards 1, 4, 7, 10 */}
             <div
               ref={col1Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[5.2vh] w-[clamp(100px,11.5vw,190px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
@@ -329,7 +330,7 @@ export default function TestimonialsBlurOverlay() {
             {/* Column 2 (Center): Cards 2, 5, 8, 11 */}
             <div
               ref={col2Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[5.2vh] w-[clamp(100px,11.5vw,190px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[2, 5, 8, 11].map((imgIdx, idx) => (
                 <div
@@ -352,7 +353,7 @@ export default function TestimonialsBlurOverlay() {
             {/* Column 3 (Right): Cards 3, 6, 9, 12 */}
             <div
               ref={col3Ref}
-              className="flex flex-col gap-y-[3.5vh] w-[clamp(100px,12.5vw,200px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="flex flex-col gap-y-[5.2vh] w-[clamp(100px,11.5vw,190px)] transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
               {[3, 6, 9, 12].map((imgIdx, idx) => (
                 <div
