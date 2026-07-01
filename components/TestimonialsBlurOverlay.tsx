@@ -291,7 +291,7 @@ export default function TestimonialsBlurOverlay() {
           <h2
             className="hero-glow-text font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default text-white"
             style={{
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.95), 0 4px 30px rgba(6, 12, 36, 0.95)",
+              textShadow: "0 0 10px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(6, 12, 36, 0.45)",
             }}
           >
             What The Cards Reveal
@@ -299,7 +299,7 @@ export default function TestimonialsBlurOverlay() {
           <p 
             className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-light text-[#c8ddf0]/95 cursor-default"
             style={{
-              textShadow: "0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(6, 12, 36, 0.95)",
+              textShadow: "0 1px 3px rgba(6, 12, 36, 0.5)",
             }}
           >
             Should the stars align, this could be your story too.
@@ -307,7 +307,7 @@ export default function TestimonialsBlurOverlay() {
           <p 
             className="mt-1 font-sans text-[clamp(0.75rem,0.85vw,0.9rem)] font-light text-[#71b4ff]/95 tracking-[0.1em] cursor-default uppercase"
             style={{
-              textShadow: "0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(6, 12, 36, 0.95)",
+              textShadow: "0 1px 3px rgba(6, 12, 36, 0.5)",
             }}
           >
             Proof we didn&apos;t make this up.
