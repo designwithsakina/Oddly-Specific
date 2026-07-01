@@ -298,7 +298,7 @@ export default function TestimonialsBlurOverlay() {
             What The Cards Reveal
           </h2>
           <p 
-            className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-bold text-white cursor-default"
+            className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-medium text-white cursor-default"
             style={{
               textShadow: "0 1px 3px rgba(6, 12, 36, 0.5)",
             }}
