@@ -274,13 +274,10 @@ export default function TestimonialsBlurOverlay() {
           }}
         />
 
-        {/* Header & Body Text overlayed with soft dark vignette backdrop */}
+        {/* Header & Body Text overlayed */}
         <div 
           ref={tarotTextRef}
-          className="relative z-10 flex flex-col items-center pt-[8vh] px-[12vw] pb-[6vh] mb-[2vh] pointer-events-auto transition-opacity duration-300 rounded-[50%]"
-          style={{
-            background: "radial-gradient(circle, rgba(6, 12, 36, 0.85) 0%, rgba(6, 12, 36, 0.5) 55%, rgba(6, 12, 36, 0) 100%)",
-          }}
+          className="relative z-10 flex flex-col items-center pt-[8vh] px-[6vw] mb-[2vh] pointer-events-auto transition-opacity duration-300"
         >
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-2">
@@ -292,25 +289,25 @@ export default function TestimonialsBlurOverlay() {
           </div>
 
           <h2
-            className="hero-glow-text font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default"
+            className="hero-glow-text font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default text-white"
             style={{
-              filter: "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 4px 12px rgba(6, 12, 36, 0.35))",
+              textShadow: "0 2px 10px rgba(0, 0, 0, 0.95), 0 4px 30px rgba(6, 12, 36, 0.95)",
             }}
           >
             What The Cards Reveal
           </h2>
           <p 
-            className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-light text-[#c8ddf0]/80 cursor-default"
+            className="mt-2 font-sans text-[clamp(0.9rem,1.1vw,1.15rem)] font-light text-[#c8ddf0]/95 cursor-default"
             style={{
-              filter: "drop-shadow(0 2px 6px rgba(6, 12, 36, 0.35))",
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(6, 12, 36, 0.95)",
             }}
           >
             Should the stars align, this could be your story too.
           </p>
           <p 
-            className="mt-1 font-sans text-[clamp(0.75rem,0.85vw,0.9rem)] font-light text-[#71b4ff]/80 tracking-[0.1em] cursor-default uppercase"
+            className="mt-1 font-sans text-[clamp(0.75rem,0.85vw,0.9rem)] font-light text-[#71b4ff]/95 tracking-[0.1em] cursor-default uppercase"
             style={{
-              filter: "drop-shadow(0 2px 6px rgba(6, 12, 36, 0.35))",
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(6, 12, 36, 0.95)",
             }}
           >
             Proof we didn&apos;t make this up.
@@ -340,11 +337,21 @@ export default function TestimonialsBlurOverlay() {
                     animationDelay: ["0s", "0.3s", "0.6s", "0.2s"][idx],
                   }}
                 >
-                  <img
-                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                    alt={`Tarot Card Back ${imgIdx}`}
-                    className="w-full h-full object-cover pointer-events-none select-none"
-                  />
+                  <div className="relative w-full h-full">
+                    <img
+                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                      alt={`Tarot Card Back ${imgIdx}`}
+                      className="w-full h-full object-cover pointer-events-none select-none"
+                    />
+                    {/* Inner Rim Light / Glow Overlay on top of the image */}
+                    <div 
+                      className="absolute inset-0 pointer-events-none rounded-2xl" 
+                      style={{
+                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                        border: "1px solid rgba(56, 189, 248, 0.25)"
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -363,11 +370,21 @@ export default function TestimonialsBlurOverlay() {
                     animationDelay: ["0.8s", "1.1s", "1.3s", "1.0s"][idx],
                   }}
                 >
-                  <img
-                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                    alt={`Tarot Card Back ${imgIdx}`}
-                    className="w-full h-full object-cover pointer-events-none select-none"
-                  />
+                  <div className="relative w-full h-full">
+                    <img
+                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                      alt={`Tarot Card Back ${imgIdx}`}
+                      className="w-full h-full object-cover pointer-events-none select-none"
+                    />
+                    {/* Inner Rim Light / Glow Overlay on top of the image */}
+                    <div 
+                      className="absolute inset-0 pointer-events-none rounded-2xl" 
+                      style={{
+                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                        border: "1px solid rgba(56, 189, 248, 0.25)"
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -386,11 +403,21 @@ export default function TestimonialsBlurOverlay() {
                     animationDelay: ["1.5s", "1.9s", "1.7s", "1.2s"][idx],
                   }}
                 >
-                  <img
-                    src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                    alt={`Tarot Card Back ${imgIdx}`}
-                    className="w-full h-full object-cover pointer-events-none select-none"
-                  />
+                  <div className="relative w-full h-full">
+                    <img
+                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                      alt={`Tarot Card Back ${imgIdx}`}
+                      className="w-full h-full object-cover pointer-events-none select-none"
+                    />
+                    {/* Inner Rim Light / Glow Overlay on top of the image */}
+                    <div 
+                      className="absolute inset-0 pointer-events-none rounded-2xl" 
+                      style={{
+                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                        border: "1px solid rgba(56, 189, 248, 0.25)"
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
