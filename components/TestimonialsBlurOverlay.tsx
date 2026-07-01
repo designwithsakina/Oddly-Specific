@@ -289,9 +289,10 @@ export default function TestimonialsBlurOverlay() {
           </div>
 
           <h2
-            className="hero-glow-text font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default text-white"
+            className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(1.8rem,3.2vw,3rem)] font-light leading-tight uppercase tracking-wide cursor-default"
             style={{
-              textShadow: "0 0 10px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(6, 12, 36, 0.45)",
+              filter:
+                "drop-shadow(0 0 3px rgba(255,255,255,0.15)) drop-shadow(0 2px 4px rgba(6, 18, 56, 0.4)) drop-shadow(0 6px 12px rgba(6, 18, 56, 0.4)) drop-shadow(0 12px 24px rgba(6, 18, 56, 0.4))",
             }}
           >
             What The Cards Reveal
