@@ -128,8 +128,11 @@ export default function TestimonialsBlurOverlay() {
             leftY = (14.0 - easedTScroll * 135.0) * vh / 100;
             rightY = (14.0 - easedTScroll * 135.0) * vh / 100;
 
-            // Fade out the text exactly in sync with the first card moving up: fully fade out over the first 15vh of translation
-            const textFadeProgress = clamp01(Math.abs(centerY) / (15.0 * vh / 100));
+            // Fade out the text when the cards move up, starting after 10vh of movement and completing by 30vh of movement
+            const moveY = Math.abs(centerY);
+            const fadeStart = 10.0 * vh / 100;
+            const fadeEnd = 30.0 * vh / 100;
+            const textFadeProgress = clamp01((moveY - fadeStart) / (fadeEnd - fadeStart));
             tarotTextOpacity = 1.0 - smoothstep(0.0, 1.0, textFadeProgress);
           } else {
             // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
@@ -263,10 +266,21 @@ export default function TestimonialsBlurOverlay() {
         className="fixed inset-0 z-[47] flex flex-col items-center justify-start select-none text-center pointer-events-none"
         style={{ display: "none", opacity: 0 }}
       >
-        {/* Header & Body Text overlayed */}
+        {/* Volumetric Spotlight from above behind the cards */}
+        <div 
+          className="absolute inset-0 z-0 pointer-events-none opacity-45 mix-blend-screen"
+          style={{
+            background: "radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.22) 0%, rgba(14, 165, 233, 0.05) 45%, transparent 75%)",
+          }}
+        />
+
+        {/* Header & Body Text overlayed with soft dark vignette backdrop */}
         <div 
           ref={tarotTextRef}
-          className="relative z-10 flex flex-col items-center pt-[8vh] px-[6vw] mb-[2vh] pointer-events-auto transition-opacity duration-300"
+          className="relative z-10 flex flex-col items-center pt-[8vh] px-[12vw] pb-[6vh] mb-[2vh] pointer-events-auto transition-opacity duration-300 rounded-[50%]"
+          style={{
+            background: "radial-gradient(circle, rgba(6, 12, 36, 0.85) 0%, rgba(6, 12, 36, 0.5) 55%, rgba(6, 12, 36, 0) 100%)",
+          }}
         >
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-2">
@@ -320,7 +334,7 @@ export default function TestimonialsBlurOverlay() {
               {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["6.2s", "6.4s", "6.6s", "6.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0s", "0.3s", "0.6s", "0.2s"][idx],
@@ -343,7 +357,7 @@ export default function TestimonialsBlurOverlay() {
               {[2, 5, 8, 11].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["6.7s", "6.9s", "6.3s", "6.5s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0.8s", "1.1s", "1.3s", "1.0s"][idx],
@@ -366,7 +380,7 @@ export default function TestimonialsBlurOverlay() {
               {[3, 6, 9, 12].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-300/10 hover:border-sky-300/30 bg-[#060c24]/80 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.05]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["5.9s", "6.1s", "6.8s", "7.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["1.5s", "1.9s", "1.7s", "1.2s"][idx],
