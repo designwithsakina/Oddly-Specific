@@ -128,11 +128,8 @@ export default function TestimonialsBlurOverlay() {
             leftY = (14.0 - easedTScroll * 135.0) * vh / 100;
             rightY = (14.0 - easedTScroll * 135.0) * vh / 100;
 
-            // Fade out the text when the cards move up, starting after 10vh of movement and completing by 30vh of movement
-            const moveY = Math.abs(centerY);
-            const fadeStart = 10.0 * vh / 100;
-            const fadeEnd = 30.0 * vh / 100;
-            const textFadeProgress = clamp01((moveY - fadeStart) / (fadeEnd - fadeStart));
+            // Fade out the text exactly in sync with the first card moving up: starting immediately and completing by 15vh of travel
+            const textFadeProgress = clamp01(Math.abs(centerY) / (15.0 * vh / 100));
             tarotTextOpacity = 1.0 - smoothstep(0.0, 1.0, textFadeProgress);
           } else {
             // Phase 4: Tarot grid and overlay fade out (p = p3 to p4)
