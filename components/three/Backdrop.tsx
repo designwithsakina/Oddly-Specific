@@ -80,6 +80,17 @@ export default function Backdrop() {
         materialRef.current.uniforms.uOpacity.value = 0;
       }
       return;
+    } else {
+      // Resume playback of the active video when it comes back into view
+      if (activeRef.current === "A") {
+        if (vidA.paused) {
+          vidA.play().catch((e) => console.log("Failed to resume videoA:", e));
+        }
+      } else {
+        if (vidB.paused) {
+          vidB.play().catch((e) => console.log("Failed to resume videoB:", e));
+        }
+      }
     }
 
     if (isNaN(vidA.duration) || isNaN(vidB.duration) || vidA.duration === 0) return;
@@ -144,9 +155,9 @@ export default function Backdrop() {
       }
     }
 
-    // Force frame update
-    textures.texA.needsUpdate = true;
-    textures.texB.needsUpdate = true;
+    // Force frame update only when the videos are actually playing/advancing
+    if (!vidA.paused) textures.texA.needsUpdate = true;
+    if (!vidB.paused) textures.texB.needsUpdate = true;
 
     if (materialRef.current) {
       const morphProgress = smoothstep(0.8, 1.0, scroll.hero);

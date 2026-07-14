@@ -686,7 +686,6 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
           src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/underwater.mp4"
           crossOrigin="anonymous"
           preload="metadata"
-          autoPlay
           muted
           playsInline
           className="absolute object-cover"

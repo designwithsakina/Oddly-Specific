@@ -148,8 +148,9 @@ export default function WaterfallBackdrop() {
       }
     }
 
-    textures.texA.needsUpdate = true;
-    textures.texB.needsUpdate = true;
+    // Force frame update only when the videos are actually playing/advancing
+    if (!vidA.paused) textures.texA.needsUpdate = true;
+    if (!vidB.paused) textures.texB.needsUpdate = true;
 
     if (materialRef.current) {
       materialRef.current.uniforms.uMix.value = THREE.MathUtils.clamp(mixVal, 0, 1);
