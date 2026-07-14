@@ -457,7 +457,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
       >
         <video
           ref={vRef1}
-          src="/services-bg.mp4"
+          src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/services-bg.mp4"
           preload="metadata"
           muted
           playsInline
@@ -474,7 +474,7 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
         />
         <video
           ref={vRef2}
-          src="/services-bg.mp4"
+          src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/services-bg.mp4"
           preload="metadata"
           muted
           playsInline

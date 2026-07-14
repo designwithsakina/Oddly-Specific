@@ -683,7 +683,8 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       >
         <video
           ref={vRef1}
-          src="/underwater.mp4"
+          src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/underwater.mp4"
+          crossOrigin="anonymous"
           preload="metadata"
           autoPlay
           muted
@@ -701,7 +702,8 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         />
         <video
           ref={vRef2}
-          src="/underwater.mp4"
+          src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/underwater.mp4"
+          crossOrigin="anonymous"
           preload="metadata"
           muted
           playsInline

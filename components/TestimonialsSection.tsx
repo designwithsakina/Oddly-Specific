@@ -163,7 +163,7 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
     >
       <video
         ref={vRef1}
-        src="/testimonial.mp4"
+        src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/testimonial.mp4"
         preload="metadata"
         muted
         playsInline
@@ -180,7 +180,7 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
       />
       <video
         ref={vRef2}
-        src="/testimonial.mp4"
+        src="https://pub-0c93a368d7e440289749f18d3bc77b75.r2.dev/compressed/testimonial.mp4"
         preload="metadata"
         muted
         playsInline
