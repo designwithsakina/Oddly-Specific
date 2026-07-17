@@ -37,7 +37,12 @@ export default function TestimonialsBlurOverlay() {
         height: rect.height,
       },
     });
-    setIsOpening(true);
+    // Allow React to mount the overlay at startRect, then animate in the next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsOpening(true);
+      });
+    });
     scroll.lenisInstance?.stop();
   };
 
