@@ -75,6 +75,13 @@ export default function TestimonialsBlurOverlay() {
     }
   };
 
+  const getCardBottom = (idx: number) => {
+    if (idx === 10) return "5%"; // Sea Lion
+    if (idx === 9) return "6%";  // Octopus
+    if (idx === 7 || idx === 8 || idx === 11) return "8%"; // Lobster, Whale, Shark
+    return "9%"; // Default
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -398,45 +405,49 @@ export default function TestimonialsBlurOverlay() {
               {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42]"
                   style={{
                     animation: `tarotCardFloat ${["6.2s", "6.4s", "6.6s", "6.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0s", "0.3s", "0.6s", "0.2s"][idx],
                     opacity: activeCard?.idx === imgIdx ? 0 : 1,
                     pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
-                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
+                    transition: "opacity 0.2s ease-in-out",
                   }}
-                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                      alt={`Tarot Card Back ${imgIdx}`}
-                      className="w-full h-full object-cover pointer-events-none select-none"
-                    />
-                    {/* Inner Rim Light / Glow Overlay on top of the image */}
-                    <div 
-                      className="absolute inset-0 pointer-events-none rounded-2xl" 
-                      style={{
-                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
-                        border: "1px solid rgba(56, 189, 248, 0.25)"
-                      }}
-                    />
-                    {/* Card Title overlay on card back */}
-                    <div 
-                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
-                      style={{
-                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
-                      }}
-                    >
-                      <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                  <div
+                    className="w-full h-full rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                    onClick={(e) => handleCardClick(imgIdx, e)}
+                  >
+                    <div className="relative w-full h-full">
+                      <img
+                        src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                        alt={`Tarot Card Back ${imgIdx}`}
+                        className="w-full h-full object-cover pointer-events-none select-none"
+                      />
+                      {/* Inner Rim Light / Glow Overlay on top of the image */}
+                      <div 
+                        className="absolute inset-0 pointer-events-none rounded-2xl" 
                         style={{
-                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                          border: "1px solid rgba(56, 189, 248, 0.25)"
+                        }}
+                      />
+                      {/* Card Title overlay on card back */}
+                      <div 
+                        className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                        style={{
+                          bottom: getCardBottom(imgIdx)
                         }}
                       >
-                        {getCardTitle(imgIdx)}
-                      </span>
+                        <span 
+                          className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                          style={{
+                            filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          }}
+                        >
+                          {getCardTitle(imgIdx)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -451,45 +462,49 @@ export default function TestimonialsBlurOverlay() {
               {[2, 5, 8, 11].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42]"
                   style={{
                     animation: `tarotCardFloat ${["6.7s", "6.9s", "6.3s", "6.5s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0.8s", "1.1s", "1.3s", "1.0s"][idx],
                     opacity: activeCard?.idx === imgIdx ? 0 : 1,
                     pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
-                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
+                    transition: "opacity 0.2s ease-in-out",
                   }}
-                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                      alt={`Tarot Card Back ${imgIdx}`}
-                      className="w-full h-full object-cover pointer-events-none select-none"
-                    />
-                    {/* Inner Rim Light / Glow Overlay on top of the image */}
-                    <div 
-                      className="absolute inset-0 pointer-events-none rounded-2xl" 
-                      style={{
-                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
-                        border: "1px solid rgba(56, 189, 248, 0.25)"
-                      }}
-                    />
-                    {/* Card Title overlay on card back */}
-                    <div 
-                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
-                      style={{
-                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
-                      }}
-                    >
-                      <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                  <div
+                    className="w-full h-full rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                    onClick={(e) => handleCardClick(imgIdx, e)}
+                  >
+                    <div className="relative w-full h-full">
+                      <img
+                        src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                        alt={`Tarot Card Back ${imgIdx}`}
+                        className="w-full h-full object-cover pointer-events-none select-none"
+                      />
+                      {/* Inner Rim Light / Glow Overlay on top of the image */}
+                      <div 
+                        className="absolute inset-0 pointer-events-none rounded-2xl" 
                         style={{
-                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                          border: "1px solid rgba(56, 189, 248, 0.25)"
+                        }}
+                      />
+                      {/* Card Title overlay on card back */}
+                      <div 
+                        className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                        style={{
+                          bottom: getCardBottom(imgIdx)
                         }}
                       >
-                        {getCardTitle(imgIdx)}
-                      </span>
+                        <span 
+                          className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                          style={{
+                            filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          }}
+                        >
+                          {getCardTitle(imgIdx)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -504,45 +519,49 @@ export default function TestimonialsBlurOverlay() {
               {[3, 6, 9, 12].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42]"
                   style={{
                     animation: `tarotCardFloat ${["5.9s", "6.1s", "6.8s", "7.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["1.5s", "1.9s", "1.7s", "1.2s"][idx],
                     opacity: activeCard?.idx === imgIdx ? 0 : 1,
                     pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
-                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
+                    transition: "opacity 0.2s ease-in-out",
                   }}
-                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
-                  <div className="relative w-full h-full">
-                    <img
-                      src={`/tarot/tarot-back-${imgIdx}.jpg`}
-                      alt={`Tarot Card Back ${imgIdx}`}
-                      className="w-full h-full object-cover pointer-events-none select-none"
-                    />
-                    {/* Inner Rim Light / Glow Overlay on top of the image */}
-                    <div 
-                      className="absolute inset-0 pointer-events-none rounded-2xl" 
-                      style={{
-                        boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
-                        border: "1px solid rgba(56, 189, 248, 0.25)"
-                      }}
-                    />
-                    {/* Card Title overlay on card back */}
-                    <div 
-                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
-                      style={{
-                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
-                      }}
-                    >
-                      <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                  <div
+                    className="w-full h-full rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                    onClick={(e) => handleCardClick(imgIdx, e)}
+                  >
+                    <div className="relative w-full h-full">
+                      <img
+                        src={`/tarot/tarot-back-${imgIdx}.jpg`}
+                        alt={`Tarot Card Back ${imgIdx}`}
+                        className="w-full h-full object-cover pointer-events-none select-none"
+                      />
+                      {/* Inner Rim Light / Glow Overlay on top of the image */}
+                      <div 
+                        className="absolute inset-0 pointer-events-none rounded-2xl" 
                         style={{
-                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                          border: "1px solid rgba(56, 189, 248, 0.25)"
+                        }}
+                      />
+                      {/* Card Title overlay on card back */}
+                      <div 
+                        className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                        style={{
+                          bottom: getCardBottom(imgIdx)
                         }}
                       >
-                        {getCardTitle(imgIdx)}
-                      </span>
+                        <span 
+                          className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                          style={{
+                            filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                          }}
+                        >
+                          {getCardTitle(imgIdx)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
