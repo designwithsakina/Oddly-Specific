@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { scroll, smoothstep, clamp01 } from "@/lib/state";
 import InteractiveTypography from "@/components/InteractiveTypography";
 
@@ -15,6 +15,52 @@ export default function TestimonialsBlurOverlay() {
   const col1Ref = useRef<HTMLDivElement>(null);
   const col2Ref = useRef<HTMLDivElement>(null);
   const col3Ref = useRef<HTMLDivElement>(null);
+
+  interface CardCoords {
+    idx: number;
+    startRect: { left: number; top: number; width: number; height: number };
+  }
+
+  const [activeCard, setActiveCard] = useState<CardCoords | null>(null);
+  const [isOpening, setIsOpening] = useState(false);
+  const [isTransitioningBack, setIsTransitioningBack] = useState(false);
+
+  const handleCardClick = (imgIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
+    if (activeCard || isOpening || isTransitioningBack) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    setActiveCard({
+      idx: imgIdx,
+      startRect: {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
+    setIsOpening(true);
+    scroll.lenisInstance?.stop();
+  };
+
+  const handleCloseCard = () => {
+    if (isTransitioningBack) return;
+    setIsOpening(false);
+    setIsTransitioningBack(true);
+    setTimeout(() => {
+      setActiveCard(null);
+      setIsTransitioningBack(false);
+      scroll.lenisInstance?.start();
+    }, 600);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCloseCard();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeCard, isTransitioningBack]);
 
   useEffect(() => {
     let raf = 0;
@@ -329,11 +375,15 @@ export default function TestimonialsBlurOverlay() {
               {[1, 4, 7, 10].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["6.2s", "6.4s", "6.6s", "6.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0s", "0.3s", "0.6s", "0.2s"][idx],
+                    opacity: activeCard?.idx === imgIdx ? 0 : 1,
+                    pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
+                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
                   }}
+                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
                   <div className="relative w-full h-full">
                     <img
@@ -362,11 +412,15 @@ export default function TestimonialsBlurOverlay() {
               {[2, 5, 8, 11].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["6.7s", "6.9s", "6.3s", "6.5s"][idx]} ease-in-out infinite`,
                     animationDelay: ["0.8s", "1.1s", "1.3s", "1.0s"][idx],
+                    opacity: activeCard?.idx === imgIdx ? 0 : 1,
+                    pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
+                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
                   }}
+                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
                   <div className="relative w-full h-full">
                     <img
@@ -395,11 +449,15 @@ export default function TestimonialsBlurOverlay() {
               {[3, 6, 9, 12].map((imgIdx, idx) => (
                 <div
                   key={imgIdx}
-                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                  className="w-full aspect-[1/1.42] rounded-2xl overflow-hidden border border-sky-400/20 hover:border-sky-300/60 bg-[#060c24]/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_35px_65px_rgba(0,0,0,0.95),0_0_45px_rgba(56,189,248,0.35),inset_0_0_20px_rgba(56,189,248,0.4)]"
                   style={{
                     animation: `tarotCardFloat ${["5.9s", "6.1s", "6.8s", "7.0s"][idx]} ease-in-out infinite`,
                     animationDelay: ["1.5s", "1.9s", "1.7s", "1.2s"][idx],
+                    opacity: activeCard?.idx === imgIdx ? 0 : 1,
+                    pointerEvents: activeCard?.idx === imgIdx ? "none" : "auto",
+                    transition: "opacity 0.2s ease-in-out, transform 0.3s ease-out",
                   }}
+                  onClick={(e) => handleCardClick(imgIdx, e)}
                 >
                   <div className="relative w-full h-full">
                     <img
@@ -422,6 +480,108 @@ export default function TestimonialsBlurOverlay() {
           </div>
         </div>
       </div>
+
+      {/* 3D Flip & Fly Testimonial Modal Overlay */}
+      {activeCard && (
+        <div
+          className={`fixed inset-0 z-[60] flex items-center justify-center select-none cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isOpening && !isTransitioningBack ? "bg-black/75 backdrop-blur-md opacity-100" : "bg-black/0 backdrop-blur-none opacity-0"
+          }`}
+          onClick={handleCloseCard}
+        >
+          {/* Close button (X) in top right */}
+          <button
+            className={`fixed top-6 right-6 z-[70] w-12 h-12 flex items-center justify-center text-white/60 hover:text-white bg-[#060c24]/80 border border-sky-400/20 hover:border-sky-400/60 rounded-full transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] backdrop-blur-md cursor-pointer hover:scale-110 shadow-[0_0_15px_rgba(56,189,248,0.15)] ${
+              isOpening && !isTransitioningBack ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCloseCard();
+            }}
+          >
+            <span className="text-xl font-light">✕</span>
+          </button>
+
+          {/* 3D Flying/Flipping Card Container */}
+          <div
+            className="absolute transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              perspective: "1000px",
+              ...(isOpening && !isTransitioningBack
+                ? {
+                    left: "50%",
+                    top: "50%",
+                    width: "clamp(280px, 30vw, 420px)",
+                    height: "clamp(398px, 42.6vw, 596px)",
+                    transform: "translate(-50%, -50%)",
+                  }
+                : {
+                    left: `${activeCard.startRect.left}px`,
+                    top: `${activeCard.startRect.top}px`,
+                    width: `${activeCard.startRect.width}px`,
+                    height: `${activeCard.startRect.height}px`,
+                    transform: "translate(0, 0)",
+                  }),
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Card Inner with 3D transform-style */}
+            <div
+              className="relative w-full h-full transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: isOpening && !isTransitioningBack ? "rotateY(180deg)" : "rotateY(0deg)",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              {/* Back Face (Card Back Image) */}
+              <div
+                className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden border border-sky-400/20 bg-[#060c24]/90 shadow-[0_25px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.12),inset_0_0_15px_rgba(56,189,248,0.25)]"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(0deg)",
+                }}
+              >
+                <img
+                  src={`/tarot/tarot-back-${activeCard.idx}.jpg`}
+                  alt={`Tarot Card Back ${activeCard.idx}`}
+                  className="w-full h-full object-cover pointer-events-none select-none"
+                />
+                <div 
+                  className="absolute inset-0 pointer-events-none rounded-2xl" 
+                  style={{
+                    boxShadow: "inset 0 0 16px rgba(56, 189, 248, 0.45)",
+                    border: "1px solid rgba(56, 189, 248, 0.25)"
+                  }}
+                />
+              </div>
+
+              {/* Front Face (Blank Testimonial Card Image) */}
+              <div
+                className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden border border-sky-300/40 bg-[#060c24]/95 shadow-[0_0_50px_rgba(56,189,248,0.55),0_0_100px_rgba(56,189,248,0.25),inset_0_0_20px_rgba(56,189,248,0.4)]"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                }}
+              >
+                <img
+                  src="/tarot/tarot-blank.png"
+                  alt="Testimonial Card Front"
+                  className="w-full h-full object-cover pointer-events-none select-none"
+                />
+                
+                {/* Center Content Area for Testimonials */}
+                <div className="absolute inset-0 flex items-center justify-center p-8 select-text">
+                  {/* Empty placeholder for now */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
