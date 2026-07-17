@@ -79,6 +79,7 @@ export default function TestimonialsBlurOverlay() {
     if (idx === 10) return "5%"; // Sea Lion
     if (idx === 9) return "6%";  // Octopus
     if (idx === 7 || idx === 8 || idx === 11) return "8%"; // Lobster, Whale, Shark
+    if (idx === 4) return "10%"; // Sea Turtle (moved up)
     return "9%"; // Default
   };
 
