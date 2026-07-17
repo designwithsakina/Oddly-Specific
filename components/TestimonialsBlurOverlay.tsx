@@ -423,9 +423,14 @@ export default function TestimonialsBlurOverlay() {
                       }}
                     />
                     {/* Card Title overlay on card back */}
-                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                    <div 
+                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                      style={{
+                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
+                      }}
+                    >
                       <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
                         style={{
                           filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
                         }}
@@ -471,9 +476,14 @@ export default function TestimonialsBlurOverlay() {
                       }}
                     />
                     {/* Card Title overlay on card back */}
-                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                    <div 
+                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                      style={{
+                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
+                      }}
+                    >
                       <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
                         style={{
                           filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
                         }}
@@ -519,9 +529,14 @@ export default function TestimonialsBlurOverlay() {
                       }}
                     />
                     {/* Card Title overlay on card back */}
-                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                    <div 
+                      className="absolute inset-x-0 text-center pointer-events-none z-10 px-2"
+                      style={{
+                        bottom: (imgIdx === 9 || imgIdx === 10) ? "6%" : "9%"
+                      }}
+                    >
                       <span 
-                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.68rem,0.78vw,0.98rem)] font-light tracking-wide uppercase whitespace-nowrap block"
                         style={{
                           filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
                         }}
