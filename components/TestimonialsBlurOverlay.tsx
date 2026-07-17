@@ -57,6 +57,24 @@ export default function TestimonialsBlurOverlay() {
     }, 600);
   };
 
+  const getCardTitle = (idx: number) => {
+    switch (idx) {
+      case 1: return "The Silent Force";
+      case 2: return "The Pathfinder";
+      case 3: return "The Catalyst";
+      case 4: return "The Voyager";
+      case 5: return "The Craftsman";
+      case 6: return "The Guardian";
+      case 7: return "The Legacy";
+      case 8: return "The Giant";
+      case 9: return "The Architect";
+      case 10: return "The Vanguard";
+      case 11: return "The Visionary";
+      case 12: return "The Current";
+      default: return "";
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -404,6 +422,17 @@ export default function TestimonialsBlurOverlay() {
                         border: "1px solid rgba(56, 189, 248, 0.25)"
                       }}
                     />
+                    {/* Card Title overlay on card back */}
+                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                      <span 
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        style={{
+                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                        }}
+                      >
+                        {getCardTitle(imgIdx)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -441,6 +470,17 @@ export default function TestimonialsBlurOverlay() {
                         border: "1px solid rgba(56, 189, 248, 0.25)"
                       }}
                     />
+                    {/* Card Title overlay on card back */}
+                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                      <span 
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        style={{
+                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                        }}
+                      >
+                        {getCardTitle(imgIdx)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -478,6 +518,17 @@ export default function TestimonialsBlurOverlay() {
                         border: "1px solid rgba(56, 189, 248, 0.25)"
                       }}
                     />
+                    {/* Card Title overlay on card back */}
+                    <div className="absolute bottom-[9%] inset-x-0 text-center pointer-events-none z-10 px-2">
+                      <span 
+                        className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.55rem,0.65vw,0.85rem)] font-light tracking-wide uppercase whitespace-nowrap block"
+                        style={{
+                          filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                        }}
+                      >
+                        {getCardTitle(imgIdx)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -577,6 +628,18 @@ export default function TestimonialsBlurOverlay() {
                   alt="Testimonial Card Front"
                   className="w-full h-full object-cover pointer-events-none select-none"
                 />
+
+                {/* Card Title on the Front face */}
+                <div className="absolute top-[8%] inset-x-0 text-center pointer-events-none">
+                  <span 
+                    className="hero-glow-text hero-glow-text-waterfall font-display text-[clamp(0.9rem,1.2vw,1.4rem)] font-light tracking-wide uppercase"
+                    style={{
+                      filter: "drop-shadow(0 2px 4px rgba(6, 18, 56, 0.8))",
+                    }}
+                  >
+                    {getCardTitle(activeCard.idx)}
+                  </span>
+                </div>
                 
                 {/* Center Content Area for Testimonials */}
                 <div className="absolute inset-0 flex items-center justify-center p-8 select-text">
