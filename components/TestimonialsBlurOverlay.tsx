@@ -62,24 +62,26 @@ export default function TestimonialsBlurOverlay() {
       case 1: return "The Silent Force";
       case 2: return "The Pathfinder";
       case 3: return "The Catalyst";
-      case 4: return "The Voyager";
+      case 4: return "The Vanguard";
       case 5: return "The Craftsman";
-      case 6: return "The Guardian";
-      case 7: return "The Legacy";
+      case 6: return "The Architect";
+      case 7: return "The Visionary";
       case 8: return "The Giant";
-      case 9: return "The Architect";
-      case 10: return "The Vanguard";
-      case 11: return "The Visionary";
-      case 12: return "The Current";
+      case 9: return "The Guardian";
+      case 10: return "The Current";
+      case 11: return "The Legacy";
+      case 12: return "The Voyager";
       default: return "";
     }
   };
 
   const getCardBottom = (idx: number) => {
-    if (idx === 10) return "5%"; // Sea Lion
-    if (idx === 9) return "6%";  // Octopus
-    if (idx === 7 || idx === 8 || idx === 11) return "8%"; // Lobster, Whale, Shark
-    if (idx === 4) return "10%"; // Sea Turtle (moved up)
+    if (idx === 10) return "4%"; // Sea Lion (The Current)
+    if (idx === 9) return "5%";  // Octopus (The Guardian)
+    if (idx === 11) return "7%"; // Shark (The Legacy)
+    if (idx === 7 || idx === 8) return "8%"; // Lobster (The Visionary), Whale (The Giant)
+    if (idx === 12) return "10%"; // Dolphin (The Voyager)
+    if (idx === 4) return "11%"; // Sea Turtle (The Vanguard)
     return "9%"; // Default
   };
 
