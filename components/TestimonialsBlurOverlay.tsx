@@ -76,9 +76,10 @@ export default function TestimonialsBlurOverlay() {
   };
 
   const getCardBottom = (idx: number) => {
-    if (idx === 4) return "11%";   // Sea Turtle (The Voyager): pushed down by 2 points from default 13%
-    if (idx === 12) return "15%";  // Dolphin (The Current): shifted up by 2 points from default 13%
-    return "13%"; // Default for all cards to sit cleanly above embedded titles
+    if (idx === 4) return "12%";   // Sea Turtle (The Voyager)
+    if (idx === 10) return "13.5%"; // Sea Lion (The Vanguard)
+    if (idx === 9) return "12.5%";  // Octopus (The Architect)
+    return "9%"; // Default
   };
 
   useEffect(() => {
