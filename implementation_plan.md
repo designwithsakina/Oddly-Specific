@@ -1,63 +1,50 @@
-# Implementation Plan - Buttery 2-Scroll Blur Transition Between Services and Testimonials
+# Implementation Plan - Testimonials Fish Video Scroll-Trigger & Seamless Crossfade Loop
 
-## User Requirement
-- Restore the cinematic blur fade-out transition effect between Services and Testimonials.
-- Ensure the blur effect **does not overlap the Services cards** while they are fully visible.
-- Make the transition trigger **2 scrolls after the cards are fully visible**:
-  - **Cards Visible (Step 15 at 24.2vh):** 6 liquid glass cards are 100% visible, sharp, and interactive (zero blur overlap).
-  - **Scroll 1 (Step 16 at 27.2vh):** Cards smoothly dissolve out into the **atmospheric blurry landing scene** (underwater ocean with 20px blur and dark vignette).
-  - **Scroll 2 (Step 17 at 30.2vh):** The blur smoothly lifts and dissolves away to 0px, revealing the crisp Testimonials intro text (*"THE WORK SPEAKS FOR ITSELF. Fortunately, other people decided to speak too."*).
-  - **Scroll 3+ (Step 18-21):** The Tarot Cards Grid zoom entrance and 3-column parallax scroll.
-- The scroll motion must feel **"like butter"** using Lenis smooth scrolling with refined cubic easing and durations.
+## User Requirements
+1. **Scroll-Triggered Video Playback:**
+   - The fish video (`testimonial.mp4` in `TestimonialsSection.tsx`) must only start playing once the blur fades in (as the user scrolls past the Services cards towards Step 16).
+   - When resting on Step 15 (Services cards visible), the fish video remains paused at `currentTime = 0` so it doesn't run ahead in the background.
+2. **Continuous Seamless Crossfade Loop:**
+   - The dual-video crossfade (`v1` and `v2`) must loop seamlessly with zero stutter, freeze, or black frames.
+   - Smooth cubic crossfade ratio over 2.0 seconds.
+   - Pre-warm metadata on mount (`preload="auto"` and `.load()`).
+   - Fail-safe `onEnded` event handlers so playback can never stall under any browser throttling condition.
+3. **Preserve Previous Work:**
+   - Zero changes to `ProjectsSection.tsx`, `ServicesSection.tsx`, or `TestimonialsBlurOverlay.tsx`.
+   - Cards display, blur sequence, and butter scroll easing remain 100% untouched.
+4. **Clarification on Video Assets:**
+   - Explain how videos are hosted and served in the portfolio (Cloudflare R2 links vs. local uploads).
 
-## Architecture & Step Mapping
+## Technical Implementation in `components/TestimonialsSection.tsx`
 
-### Snap Targets in `components/ProjectsSection.tsx`
+### 1. Scroll-Trigger Condition
+Update the active playback trigger from:
 ```typescript
-section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
-section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services methodology text visible)
-section3Start + 19.0 * vh, // Step 15: 24.2 * vh (Services cards fully visible & interactive)
-section3Start + 22.0 * vh, // Step 16: 27.2 * vh (NEW: Blurry Atmospheric Ocean Landing Page)
-section3Start + 25.0 * vh, // Step 17: 30.2 * vh (Testimonials text visible, blur lifted)
-section3Start + 27.5 * vh, // Step 18: 32.7 * vh (Tarot Cards Grid zoom entry completes)
-section3Start + 30.5 * vh, // Step 19: 35.7 * vh (Tarot Cards Grid - Scroll 1)
-section3Start + 33.5 * vh, // Step 20: 38.7 * vh (Tarot Cards Grid - Scroll 2)
-section3Start + 36.5 * vh, // Step 21: 41.7 * vh (Tarot Cards Grid - Scroll 3)
-section3Start + 37.5 * vh  // Step 22: 42.7 * vh (Testimonials exit)
+const active = isTestimonialsRoute || rawScroll >= (section5Start - 100) || p4 > 0.42;
 ```
-Total step count: **22 steps (0 to 22)**.
+to:
+```typescript
+const active = isTestimonialsRoute || rawScroll >= (section5Start - 100) || p4 >= 0.70;
+```
+- At Step 15 (`p4 = 0.40`): `active` is `false`. The video stays paused at `currentTime = 0`.
+- As the user scrolls towards Step 16 (`p4 >= 0.70`), the blur fades in and the fish video begins playing in sync with the scene.
 
-### Easing & Motion ("Like Butter")
-- Upgrade transition easing for snap steps 16 and 17 to a buttery smooth cubic in-out curve:
-  `easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2`
-  with a 1.4s duration for a silky, gliding momentum.
-
-### Component Updates
-
-1. **`components/ProjectsSection.tsx`:**
-   - Insert Step 16 at `section3Start + 22.0 * vh` (`27.2 * vh`).
-   - Shift subsequent steps (17, 18, 19, 20, 21, 22).
-   - Update `initialStep`, `triggerStepTransition`, wheel handler, touch handler, keyboard handler, and scroll sync listeners for 22 total steps.
-
-2. **`components/ServicesSection.tsx`:**
-   - Keep cards 100% visible and interactive while at Step 15 (`scroll.section4 = 0.40`).
-   - As the user scrolls from Step 15 to Step 16 (`scroll.section4` from `0.42` to `1.0`), smoothly crossfade `exitOpacity` from 1.0 to 0.0 with subtle zoom factor.
-
-3. **`components/TestimonialsSection.tsx`:**
-   - Crossfade the background video in smoothly as the user scrolls from Step 15 to Step 16 (`scroll.section4` from `0.42` to `1.0`), reaching full opacity at Step 16 (`27.2 * vh`).
-
-4. **`components/TestimonialsBlurOverlay.tsx`:**
-   - Activate the overlay at Step 16 (`rawScroll >= section5Start - 20`).
-   - At Step 16 (`27.2 * vh`), display the atmospheric 20px blur with `containerOpacity: 0` (no cards, no text, pure atmospheric blur).
-   - As scroll glides from Step 16 to Step 17 (`27.2 * vh` to `30.2 * vh`), smoothly lift the blur from 20px to 0px while fading in the intro text.
-
-5. **`components/SparkleCursor.tsx`:**
-   - Smoothly fade out the stardust trail and sparkle cursor as the user leaves Step 15 towards Step 16.
+### 2. Bulletproof Dual-Video Crossfade
+- Set `preload="auto"` on both `<video>` elements.
+- Pre-warm buffers on mount:
+  ```typescript
+  if (v1) v1.load();
+  if (v2) v2.load();
+  ```
+- Use a 2.0s cubic-eased crossfade window (`crossfadeTime = 2.0`).
+- When switching active video at `duration - 0.15s`:
+  - Reset the inactive video's `currentTime = 0` and pause it.
+  - Set active video to next.
+- Add fail-safe `onended` callbacks to both video elements to instantly switch and restart if an edge-case frame skip occurs.
 
 ## Verification Plan
-1. Restart the dev server on port 3000 with cache cleared (`.next`).
-2. Scroll to Step 15: Verify 6 cards are sharp, unblurred, and 100% interactive.
-3. Scroll 1 tick down: Verify smooth glide to Step 16 (cards dissolve, blurry deep-ocean atmosphere appears).
-4. Scroll 1 tick down: Verify smooth glide to Step 17 (blur lifts cleanly to 0px, *"THE WORK SPEAKS FOR ITSELF"* text fades in).
-5. Scroll 1 tick down: Verify Tarot cards zoom in smoothly.
-6. Test reverse scrolling (upwards): Verify smooth reverse transition without stutter or jump.
+1. Dev server cache clearing & restart on port 3000.
+2. At Step 15: Verify Services cards are sharp and the fish video is paused.
+3. Scroll towards Step 16: Verify the fish video starts playing as the atmospheric blur fades in.
+4. Observe through video duration: Verify `v1` and `v2` crossfade seamlessly with no pause or freeze.
+5. Scroll back up to Step 15: Verify video pauses and resets cleanly.
