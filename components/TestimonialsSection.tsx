@@ -50,8 +50,8 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
         scale = 1.05 + scroll.section5 * 0.02; // Zooms up to 1.07
       } else {
         // Transition from Section 4 (Services) into Section 5 (Testimonials)
-        if (p4 > 3.9 / 5.0) {
-          const t = (p4 - 3.9 / 5.0) / (1.1 / 5.0);
+        if (p4 > 0.42) {
+          const t = (p4 - 0.42) / (1.0 - 0.42);
           const easedT = t * t * (3 - 2 * t);
           opacity = easedT;
           scale = 1.05; // Entry baseline zoom
@@ -66,7 +66,7 @@ export default function TestimonialsSection({ isTestimonialsRoute = false }: Tes
 
       const v1 = vRef1.current;
       const v2 = vRef2.current;
-      const active = isTestimonialsRoute || rawScroll >= (section5Start - 100) || p4 > 3.9 / 5.0;
+      const active = isTestimonialsRoute || rawScroll >= (section5Start - 100) || p4 > 0.42;
 
       if (v1 && v2) {
         if (!active) {

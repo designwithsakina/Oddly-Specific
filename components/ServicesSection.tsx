@@ -242,8 +242,8 @@ export default function ServicesSection({ isServicesRoute = false }: ServicesSec
 
       let exitOpacity = 1.0;
       let exitZoomFactor = 1.0;
-      if (scroll.section4 > 3.9 / 5.0) {
-        const tExit = Math.min(Math.max((scroll.section4 - 3.9 / 5.0) / (1.1 / 5.0), 0.0), 1.0);
+      if (scroll.section4 > 0.42) {
+        const tExit = Math.min(Math.max((scroll.section4 - 0.42) / (1.0 - 0.42), 0.0), 1.0);
         exitOpacity = 1.0 - tExit * tExit * (3 - 2 * tExit);
         exitZoomFactor = 1.0 + tExit * 0.28;
       }

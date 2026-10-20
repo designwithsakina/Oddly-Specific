@@ -1,39 +1,63 @@
-# Implementation Plan - Fix Premature Blur Transition Between Services and Testimonials
+# Implementation Plan - Buttery 2-Scroll Blur Transition Between Services and Testimonials
 
-## Problem Summary
-When scrolling to Step 15 (Services Cards screen, at `24.2 * vh`), the page gets completely blurred with a 20px backdrop filter and a dark blue film (`rgba(6, 12, 36, 0.4)`), as seen in the user's second image. The six liquid glass cards become blurred out, and mouse hover interactions are completely blocked.
+## User Requirement
+- Restore the cinematic blur fade-out transition effect between Services and Testimonials.
+- Ensure the blur effect **does not overlap the Services cards** while they are fully visible.
+- Make the transition trigger **2 scrolls after the cards are fully visible**:
+  - **Cards Visible (Step 15 at 24.2vh):** 6 liquid glass cards are 100% visible, sharp, and interactive (zero blur overlap).
+  - **Scroll 1 (Step 16 at 27.2vh):** Cards smoothly dissolve out into the **atmospheric blurry landing scene** (underwater ocean with 20px blur and dark vignette).
+  - **Scroll 2 (Step 17 at 30.2vh):** The blur smoothly lifts and dissolves away to 0px, revealing the crisp Testimonials intro text (*"THE WORK SPEAKS FOR ITSELF. Fortunately, other people decided to speak too."*).
+  - **Scroll 3+ (Step 18-21):** The Tarot Cards Grid zoom entrance and 3-column parallax scroll.
+- The scroll motion must feel **"like butter"** using Lenis smooth scrolling with refined cubic easing and durations.
 
-## Root Cause Analysis
-1. **Trigger Threshold Set at Step 15:**
-   - Step 15 is at `24.2 * vh` (where Section 4 started at `22.2 * vh` and spans `5.0 * vh`).
-   - At Step 15, normalized `scroll.section4` is exactly `(24.2 - 22.2) / 5.0 = 2.0 / 5.0 = 0.4`.
-   - In `components/TestimonialsBlurOverlay.tsx` (line 119) and `components/ServicesSection.tsx` (line 245), the transition was set to trigger whenever `scroll.section4 > 2.0 / 5.0`.
-   - Due to floating-point precision (`2.0000000000000018 / 5.0 = 0.40000000000000036`), as soon as the user arrives at Step 15, `scroll.section4 > 2.0 / 5.0` immediately evaluates to `true`.
-2. **Premature 20px Blur Overlay:**
-   - Section 5 (Testimonials) does not begin until `27.2 * vh` (300vh further down).
-   - While the user is at Step 15 (`24.2 * vh`), `scroll.section5` (`p`) is `0.0`.
-   - In `TestimonialsBlurOverlay.tsx`, when `p = 0.0`, the blur amount is calculated as `blurAmount = (1.0 - 0.0) * 20.0 = 20px`.
-   - The overlay drops a `backdrop-filter: blur(20px)` and `pointer-events: auto` directly on top of the Services cards, blurring them into oblivion and disabling all hover interactions.
-3. **Premature Services Exit:**
-   - `ServicesSection.tsx` begins reducing `exitOpacity` as soon as `scroll.section4 > 2.0 / 5.0`, causing the cards to prematurely begin fading away right as they are supposed to be presented.
+## Architecture & Step Mapping
 
-## Proposed Changes
+### Snap Targets in `components/ProjectsSection.tsx`
+```typescript
+section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
+section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services methodology text visible)
+section3Start + 19.0 * vh, // Step 15: 24.2 * vh (Services cards fully visible & interactive)
+section3Start + 22.0 * vh, // Step 16: 27.2 * vh (NEW: Blurry Atmospheric Ocean Landing Page)
+section3Start + 25.0 * vh, // Step 17: 30.2 * vh (Testimonials text visible, blur lifted)
+section3Start + 27.5 * vh, // Step 18: 32.7 * vh (Tarot Cards Grid zoom entry completes)
+section3Start + 30.5 * vh, // Step 19: 35.7 * vh (Tarot Cards Grid - Scroll 1)
+section3Start + 33.5 * vh, // Step 20: 38.7 * vh (Tarot Cards Grid - Scroll 2)
+section3Start + 36.5 * vh, // Step 21: 41.7 * vh (Tarot Cards Grid - Scroll 3)
+section3Start + 37.5 * vh  // Step 22: 42.7 * vh (Testimonials exit)
+```
+Total step count: **22 steps (0 to 22)**.
 
-### 1. Update `components/TestimonialsBlurOverlay.tsx`
-- Change `isTransitionActive` so that the Testimonials blur overlay only activates when actually entering Section 5 (`rawScroll >= section5Start - 50` or `scroll.section4 >= 1.0` or `scroll.section5 > 0.001`).
-- Ensure that at Step 15 (`24.2 * vh`), `TestimonialsBlurOverlay` is strictly `display: "none"` with `opacity: "0"` and `pointerEvents: "none"`.
-- When transitioning from Step 15 (`24.2 * vh`) to Step 16 (`30.2 * vh`), the blur will engage smoothly only as Section 5 enters, lifting cleanly to 0px at Step 16.
+### Easing & Motion ("Like Butter")
+- Upgrade transition easing for snap steps 16 and 17 to a buttery smooth cubic in-out curve:
+  `easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2`
+  with a 1.4s duration for a silky, gliding momentum.
 
-### 2. Update `components/ServicesSection.tsx`
-- Adjust `exitOpacity` and `exitZoomFactor` trigger from `scroll.section4 > 2.0 / 5.0` to `scroll.section4 > 3.9 / 5.0` (matching `TestimonialsSection.tsx` and `SparkleCursor.tsx` which begin their crossfade at `3.9 / 5.0` = `26.1 * vh`).
-- This guarantees the Services cards stay 100% visible, sharp, and interactive through the entire duration of Step 15.
+### Component Updates
+
+1. **`components/ProjectsSection.tsx`:**
+   - Insert Step 16 at `section3Start + 22.0 * vh` (`27.2 * vh`).
+   - Shift subsequent steps (17, 18, 19, 20, 21, 22).
+   - Update `initialStep`, `triggerStepTransition`, wheel handler, touch handler, keyboard handler, and scroll sync listeners for 22 total steps.
+
+2. **`components/ServicesSection.tsx`:**
+   - Keep cards 100% visible and interactive while at Step 15 (`scroll.section4 = 0.40`).
+   - As the user scrolls from Step 15 to Step 16 (`scroll.section4` from `0.42` to `1.0`), smoothly crossfade `exitOpacity` from 1.0 to 0.0 with subtle zoom factor.
+
+3. **`components/TestimonialsSection.tsx`:**
+   - Crossfade the background video in smoothly as the user scrolls from Step 15 to Step 16 (`scroll.section4` from `0.42` to `1.0`), reaching full opacity at Step 16 (`27.2 * vh`).
+
+4. **`components/TestimonialsBlurOverlay.tsx`:**
+   - Activate the overlay at Step 16 (`rawScroll >= section5Start - 20`).
+   - At Step 16 (`27.2 * vh`), display the atmospheric 20px blur with `containerOpacity: 0` (no cards, no text, pure atmospheric blur).
+   - As scroll glides from Step 16 to Step 17 (`27.2 * vh` to `30.2 * vh`), smoothly lift the blur from 20px to 0px while fading in the intro text.
+
+5. **`components/SparkleCursor.tsx`:**
+   - Smoothly fade out the stardust trail and sparkle cursor as the user leaves Step 15 towards Step 16.
 
 ## Verification Plan
-1. Start the dev server on port 3000 (with `.next` cache cleared).
-2. Scroll to Step 14 (Services methodology text) -> verify smooth text display.
-3. Scroll to Step 15 (Services cards) -> verify:
-   - Six liquid glass cards are 100% visible, sharp, and centered.
-   - No blur overlay or dark veil is active.
-   - Hovering over cards triggers 3D tilt, 180° flip, and text scramble.
-   - "THE DARKNESS ISN'T EMPTY. IT'S WAITING. HOVER TO DISCOVER." is crisp.
-4. Scroll from Step 15 to Step 16 -> verify smooth transition into Testimonials ("THE WORK SPEAKS FOR ITSELF") without premature blurring of Step 15.
+1. Restart the dev server on port 3000 with cache cleared (`.next`).
+2. Scroll to Step 15: Verify 6 cards are sharp, unblurred, and 100% interactive.
+3. Scroll 1 tick down: Verify smooth glide to Step 16 (cards dissolve, blurry deep-ocean atmosphere appears).
+4. Scroll 1 tick down: Verify smooth glide to Step 17 (blur lifts cleanly to 0px, *"THE WORK SPEAKS FOR ITSELF"* text fades in).
+5. Scroll 1 tick down: Verify Tarot cards zoom in smoothly.
+6. Test reverse scrolling (upwards): Verify smooth reverse transition without stutter or jump.

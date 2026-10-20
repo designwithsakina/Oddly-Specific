@@ -179,16 +179,18 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       
       let initialStep = 0;
       if (currentScroll >= section3Start + 37.5 * vh - 20) {
-        initialStep = 21;
+        initialStep = 22;
       } else if (currentScroll >= section3Start + 36.5 * vh - 20) {
-        initialStep = 20;
+        initialStep = 21;
       } else if (currentScroll >= section3Start + 33.5 * vh - 20) {
-        initialStep = 19;
+        initialStep = 20;
       } else if (currentScroll >= section3Start + 30.5 * vh - 20) {
-        initialStep = 18;
+        initialStep = 19;
       } else if (currentScroll >= section3Start + 27.5 * vh - 20) {
-        initialStep = 17;
+        initialStep = 18;
       } else if (currentScroll >= section3Start + 25.0 * vh - 20) {
+        initialStep = 17;
+      } else if (currentScroll >= section3Start + 22.0 * vh - 20) {
         initialStep = 16;
       } else if (currentScroll >= section3Start + 19.0 * vh - 20) {
         initialStep = 15;
@@ -251,17 +253,18 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         section3Start + 17.0 * vh, // Step 13: 22.2 * vh (Services start / zoom completes)
         section3Start + 18.0 * vh, // Step 14: 23.2 * vh (Services text visible)
         section3Start + 19.0 * vh, // Step 15: 24.2 * vh (Services cards visible)
-        section3Start + 25.0 * vh, // Step 16: Testimonials text fully visible (30.2 * vh)
-        section3Start + 27.5 * vh, // Step 17: Tarot Cards Grid - fade/zoom entry completes (32.7 * vh)
-        section3Start + 30.5 * vh, // Step 18: Tarot Cards Grid - Scroll 1 (35.7 * vh)
-        section3Start + 33.5 * vh, // Step 19: Tarot Cards Grid - Scroll 2 (38.7 * vh)
-        section3Start + 36.5 * vh, // Step 20: Tarot Cards Grid - Scroll 3 (41.7 * vh)
-        section3Start + 37.5 * vh  // Step 21: Testimonials exit (42.7 * vh)
+        section3Start + 22.0 * vh, // Step 16: 27.2 * vh (Testimonials blurry landing page)
+        section3Start + 25.0 * vh, // Step 17: 30.2 * vh (Testimonials text fully visible)
+        section3Start + 27.5 * vh, // Step 18: 32.7 * vh (Tarot Cards Grid - fade/zoom entry completes)
+        section3Start + 30.5 * vh, // Step 19: 35.7 * vh (Tarot Cards Grid - Scroll 1)
+        section3Start + 33.5 * vh, // Step 20: 38.7 * vh (Tarot Cards Grid - Scroll 2)
+        section3Start + 36.5 * vh, // Step 21: 41.7 * vh (Tarot Cards Grid - Scroll 3)
+        section3Start + 37.5 * vh  // Step 22: 42.7 * vh (Testimonials exit)
       ];
 
-      const duration = (targetStep === 17) ? 2.0 : (targetStep === 1 || targetStep === 16 || targetStep === 18 || targetStep === 19 || targetStep === 20) ? 1.5 : 1.0;
-      const easing = (targetStep === 1 || targetStep === 16 || targetStep === 17 || targetStep === 18 || targetStep === 19 || targetStep === 20)
-        ? (t: number) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2
+      const duration = (targetStep === 18) ? 2.0 : (targetStep === 1 || targetStep === 16 || targetStep === 17 || targetStep === 19 || targetStep === 20 || targetStep === 21) ? 1.4 : 1.0;
+      const easing = (targetStep === 1 || targetStep === 16 || targetStep === 17 || targetStep === 18 || targetStep === 19 || targetStep === 20 || targetStep === 21)
+        ? (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
         : (t: number) => t * (2 - t);
 
       // Safety fallback to release the input lock after transition duration + buffer
@@ -295,7 +298,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const isScrollingDown = e.deltaY > 0;
 
       // Snapping down: intercept if we are at/near Section 3 start or inside it, and not yet at Step 21
-      if (isScrollingDown && activeStepRef.current < 21) {
+      if (isScrollingDown && activeStepRef.current < 22) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
@@ -336,7 +339,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
 
       if (Math.abs(deltaY) > 10) {
         // Snapping down
-        if (isScrollingDown && activeStepRef.current < 21) {
+        if (isScrollingDown && activeStepRef.current < 22) {
           if (currentScroll >= section3Start - 80) {
             e.preventDefault();
             e.stopPropagation();
@@ -373,7 +376,7 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
       const isDownKey = e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ";
       const isUpKey = e.key === "ArrowUp" || e.key === "PageUp";
 
-      if (isDownKey && activeStepRef.current < 21) {
+      if (isDownKey && activeStepRef.current < 22) {
         if (currentScroll >= section3Start - 80) {
           e.preventDefault();
           e.stopPropagation();
@@ -406,16 +409,18 @@ export default function ProjectsSection({ isWorkRoute = false, setVideo1, setVid
         const currentScroll = scroll.raw;
         let currentStep = 0;
         if (currentScroll >= section3Start + 37.5 * vh - 20) {
-          currentStep = 21;
+          currentStep = 22;
         } else if (currentScroll >= section3Start + 36.5 * vh - 20) {
-          currentStep = 20;
+          currentStep = 21;
         } else if (currentScroll >= section3Start + 33.5 * vh - 20) {
-          currentStep = 19;
+          currentStep = 20;
         } else if (currentScroll >= section3Start + 30.5 * vh - 20) {
-          currentStep = 18;
+          currentStep = 19;
         } else if (currentScroll >= section3Start + 27.5 * vh - 20) {
-          currentStep = 17;
+          currentStep = 18;
         } else if (currentScroll >= section3Start + 25.0 * vh - 20) {
+          currentStep = 17;
+        } else if (currentScroll >= section3Start + 22.0 * vh - 20) {
           currentStep = 16;
         } else if (currentScroll >= section3Start + 19.0 * vh - 20) {
           currentStep = 15;
