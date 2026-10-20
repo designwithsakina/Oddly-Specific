@@ -63,10 +63,10 @@ export default function TestimonialsBlurOverlay() {
       case 2: return "The Pathfinder";
       case 3: return "The Catalyst";
       case 4: return "The Voyager";
-      case 5: return "The Craftsman";
+      case 5: return "The Giant";
       case 6: return "The Guardian";
       case 7: return "The Legacy";
-      case 8: return "The Giant";
+      case 8: return "The Craftsman";
       case 9: return "The Architect";
       case 10: return "The Vanguard";
       case 11: return "The Visionary";
@@ -79,6 +79,7 @@ export default function TestimonialsBlurOverlay() {
     if (idx === 4) return "12%";   // Sea Turtle (The Voyager)
     if (idx === 10) return "13.5%"; // Sea Lion (The Vanguard)
     if (idx === 9) return "12.5%";  // Octopus (The Architect)
+    if (idx === 8) return "12.5%";  // Blue Whale (The Craftsman)
     return "9%"; // Default
   };
 
@@ -113,9 +114,9 @@ export default function TestimonialsBlurOverlay() {
         const section5Start = section4Start + section4Span; // 27.2 * vh
 
         // Active state checking:
-        // Transition is active when scroll.section4 is past 2.0/5.0, and scroll.section5 is less than 1.0 (since section5 span is 8.0vh)
+        // Transition is active once inside Section 5 (section5Start) and before section 5 exit completes
         const isTransitionActive =
-          scroll.section4 > 2.0 / 5.0 && scroll.section5 < 1.0;
+          rawScroll >= section5Start && scroll.section5 < 1.0;
 
         if (isTransitionActive) {
           overlayRef.current.style.display = "flex";
